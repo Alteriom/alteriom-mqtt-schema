@@ -1,0 +1,27 @@
+{
+  "name": "@alteriom/mqtt-schema",
+  "version": "0.1.0",
+  "description": "MQTT schema definitions for Alteriom platform",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "npm run build && node dist/test.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mqtt",
+    "schema",
+    "alteriom",
+    "iot"
+  ],
+  "author": "Alteriom",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^18.0.0"
+  }
+}
