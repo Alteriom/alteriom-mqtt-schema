@@ -1,0 +1,1 @@
+# alteriom-mqtt-schema
