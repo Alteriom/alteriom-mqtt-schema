@@ -86,8 +86,13 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          npm publish --provenance --access public
-          echo "published=true" >> $GITHUB_OUTPUT
+          if npm view @alteriom/mqtt-schema@${{ steps.pkg.outputs.version }} > /dev/null 2>&1; then
+            echo "Version already on npm (likely rebuild or workflow re-run) -> skipping npm publish.";
+            echo "published=false" >> $GITHUB_OUTPUT;
+          else
+            npm publish --provenance --access public;
+            echo "published=true" >> $GITHUB_OUTPUT;
+          fi
 
       - name: Mirror publish to GitHub Packages
         if: steps.tagcheck.outputs.exists == 'false' && startsWith(steps.commit.outputs.message, 'release:')

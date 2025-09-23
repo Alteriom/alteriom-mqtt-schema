@@ -6,6 +6,10 @@ on:
       version:
         description: 'Version to publish (must match package.json)'
         required: true
+      mirrorOnly:
+        description: 'Skip npm publish and only mirror to GitHub Packages (true/false)'
+        required: false
+        default: 'false'
 
 permissions:
   contents: read
@@ -55,7 +59,13 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          npm publish --provenance --access public
+          if [ "${{ github.event.inputs.mirrorOnly }}" = "true" ]; then
+            echo "mirrorOnly=true -> skipping npm publish";
+          elif npm view @alteriom/mqtt-schema@${{ steps.pkg.outputs.version }} > /dev/null 2>&1; then
+            echo "Version already exists on npm -> skipping npm publish";
+          else
+            npm publish --provenance --access public;
+          fi
 
       - name: Mirror publish to GitHub Packages
         env:
