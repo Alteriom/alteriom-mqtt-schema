@@ -58,6 +58,12 @@ jobs:
           npm ci
           npm run build
 
+      - name: Verify schemas & changelog
+        if: steps.tagcheck.outputs.exists == 'false'
+        run: |
+          npm run verify:schemas
+          npm run verify:release
+
       - name: Create and push tag
         if: steps.tagcheck.outputs.exists == 'false'
         run: |
@@ -82,6 +88,19 @@ jobs:
           npm publish --provenance --access public
           echo "published=true" >> $GITHUB_OUTPUT
 
+      - name: Mirror publish to GitHub Packages
+        if: steps.tagcheck.outputs.exists == 'false' && startsWith(steps.commit.outputs.message, 'release:')
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "@alteriom:registry=https://npm.pkg.github.com" > .npmrc
+          if npm view @alteriom/mqtt-schema@${{ steps.pkg.outputs.version }} --registry=https://npm.pkg.github.com > /dev/null 2>&1; then
+            echo "Already exists on GitHub Packages. Skipping mirror publish.";
+          else
+            npm publish --registry=https://npm.pkg.github.com --ignore-scripts;
+            echo "Mirror publish to GitHub Packages complete.";
+          fi
+
       - name: Skip notice (no publish conditions)
         if: steps.tagcheck.outputs.exists == 'false' && !startsWith(steps.commit.outputs.message, 'release:')
         run: echo "Version changed but commit message not prefixed with 'release:' -> skipping auto-publish."
@@ -92,3 +111,5 @@ jobs:
           echo "Tag existed: ${{ steps.tagcheck.outputs.exists }}" >> $GITHUB_STEP_SUMMARY
           echo "Commit message: ${{ steps.commit.outputs.message }}" >> $GITHUB_STEP_SUMMARY
           echo "Auto-publish: ${{ steps.commit.outputs.message && startsWith(steps.commit.outputs.message, 'release:') && steps.tagcheck.outputs.exists == 'false' }}" >> $GITHUB_STEP_SUMMARY
+          echo "GitHub Packages mirror attempted (conditional)" >> $GITHUB_STEP_SUMMARY
+          echo "Schema / CHANGELOG verification executed" >> $GITHUB_STEP_SUMMARY

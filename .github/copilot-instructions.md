@@ -44,6 +44,14 @@ npm run build:esm  # ESM only + post-processing
 
 **Critical**: `npm run prebuild` must run before any build to copy schemas from local `docs/mqtt_schema/` directory.
 
+### Verification (CI Guard Rails)
+Use integrity scripts before release:
+```bash
+npm run verify          # schema diff + changelog presence + tests
+npm run verify:schemas  # only schema sync guard
+npm run verify:release  # changelog version check
+```
+
 ### Testing
 ```bash
 npm test  # Validates against fixtures from docs/mqtt_schema/fixtures/

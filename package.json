@@ -6,11 +6,11 @@
   "author": "Alteriom Development Team",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Alteriom/alteriom-firmware.git"
+    "url": "https://github.com/Alteriom/alteriom-mqtt-schema.git"
   },
-  "homepage": "https://github.com/Alteriom/alteriom-firmware/tree/main/docs/mqtt_schema",
+  "homepage": "https://github.com/Alteriom/alteriom-mqtt-schema#readme",
   "bugs": {
-    "url": "https://github.com/Alteriom/alteriom-firmware/issues"
+    "url": "https://github.com/Alteriom/alteriom-mqtt-schema/issues"
   },
   "type": "commonjs",
   "main": "dist/cjs/index.js",
@@ -60,6 +60,9 @@
     "README.md",
     "LICENSE"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "prebuild": "npm run clean && node scripts/copy-schemas.cjs",
     "build:cjs": "tsc -p tsconfig.json",
@@ -69,6 +72,9 @@
     "prepare": "npm run build",
     "lint": "echo 'No linter configured'",
     "test": "node test/validate-fixtures.cjs",
+    "verify:schemas": "node scripts/check-schema-sync.cjs",
+    "verify:release": "node scripts/check-release-integrity.cjs",
+    "verify": "npm run verify:schemas && npm run verify:release && npm test",
     "release:prepare": "node scripts/release-prepare.cjs"
   },
   "keywords": [
