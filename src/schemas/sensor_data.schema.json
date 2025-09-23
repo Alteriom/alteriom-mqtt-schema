@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/sensor_data.schema.json",
+  "title": "Sensor Data Message v1",
+  "allOf": [{"$ref": "envelope.schema.json"}],
+  "type": "object",
+  "required": ["sensors"],
+  "properties": {
+    "sensors": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["value"],
+        "properties": {
+          "value": {"type": ["number", "integer"]},
+          "unit": {"type": "string"},
+          "raw_value": {"type": ["number", "integer"]},
+          "calibrated_value": {"type": ["number", "integer"]},
+          "quality_score": {"type": "number", "minimum": 0, "maximum": 1},
+          "name": {"type": "string"},
+          "location": {"type": "string"},
+          "additional_data": {"type": "object"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "battery_level": {"type": "integer", "minimum": 0, "maximum": 100},
+    "signal_strength": {"type": "integer", "minimum": -200, "maximum": 0},
+    "additional": {"type": "object"}
+  },
+  "additionalProperties": true
+}

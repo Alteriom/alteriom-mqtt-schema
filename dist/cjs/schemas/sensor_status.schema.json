@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/sensor_status.schema.json",
+  "title": "Sensor Status v1",
+  "allOf": [{"$ref": "envelope.schema.json"}],
+  "type": "object",
+  "required": ["status"],
+  "properties": {
+    "status": {"type": "string", "enum": ["online", "offline", "updating", "error"]},
+    "battery_level": {"type": "integer", "minimum": 0, "maximum": 100},
+    "signal_strength": {"type": "integer", "minimum": -200, "maximum": 0}
+  },
+  "additionalProperties": true
+}

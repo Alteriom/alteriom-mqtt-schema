@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/gateway_metrics.schema.json",
+  "title": "Gateway Metrics v1",
+  "allOf": [{"$ref": "envelope.schema.json"}],
+  "type": "object",
+  "required": ["metrics"],
+  "properties": {
+    "metrics": {
+      "type": "object",
+      "required": ["uptime_s"],
+      "properties": {
+        "uptime_s": {"type": "integer", "minimum": 0},
+        "cpu_usage_pct": {"type": "number", "minimum": 0, "maximum": 100},
+        "memory_usage_pct": {"type": "number", "minimum": 0, "maximum": 100},
+        "temperature_c": {"type": "number"},
+        "connected_devices": {"type": "integer", "minimum": 0},
+        "mesh_nodes": {"type": "integer", "minimum": 0},
+        "packet_loss_pct": {"type": "number", "minimum": 0, "maximum": 100},
+        "data_throughput_kbps": {"type": "number", "minimum": 0}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

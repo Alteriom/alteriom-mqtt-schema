@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/gateway_info.schema.json",
+  "title": "Gateway Info v1",
+  "allOf": [{"$ref": "envelope.schema.json"}],
+  "type": "object",
+  "properties": {
+    "mac_address": {"type": "string", "pattern": "^[0-9A-Fa-f:]{17}$"},
+    "ip_address": {"type": "string", "format": "ipv4"},
+    "capabilities": {
+      "type": "object",
+      "properties": {
+        "max_nodes": {"type": "integer", "minimum": 0},
+        "supports_mesh": {"type": "boolean"},
+        "firmware_update": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

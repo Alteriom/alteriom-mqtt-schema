@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/firmware_status.schema.json",
+  "title": "Firmware Update Status v1",
+  "allOf": [{"$ref": "envelope.schema.json"}],
+  "type": "object",
+  "required": ["status"],
+  "properties": {
+    "event": {"type": "string"},
+    "from_version": {"type": "string"},
+    "to_version": {"type": "string"},
+    "status": {"type": "string", "enum": ["pending", "downloading", "flashing", "verifying", "rebooting", "completed", "failed"]},
+    "progress_pct": {"type": "number", "minimum": 0, "maximum": 100},
+    "error": {"type": ["string", "null"]}
+  },
+  "additionalProperties": true
+}

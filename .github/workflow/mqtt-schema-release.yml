@@ -1,0 +1,94 @@
+name: MQTT Schema Auto Tag & Conditional Publish
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'package.json'
+      - 'scripts/release-prepare.cjs'
+      - 'README.md'
+      - 'docs/mqtt_schema/CHANGELOG.md'
+
+permissions:
+  contents: write
+  id-token: write
+  actions: read
+
+jobs:
+  tag-and-build:
+    name: Tag & optionally publish if version changed
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Capture commit message
+        id: commit
+        run: |
+          MSG="$(git log -1 --pretty=%B | head -n1)"
+          echo "message=${MSG}" >> $GITHUB_OUTPUT
+
+      - name: Read current version
+        id: pkg
+        run: |
+          VERSION=$(jq -r .version package.json)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check existing tag
+        id: tagcheck
+        run: |
+          if git rev-parse -q --verify "refs/tags/mqtt-schema-v${{ steps.pkg.outputs.version }}" >/dev/null; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set up Node
+        if: steps.tagcheck.outputs.exists == 'false'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install deps & build (dry verification)
+        if: steps.tagcheck.outputs.exists == 'false'
+        run: |
+          npm ci
+          npm run build
+
+      - name: Create and push tag
+        if: steps.tagcheck.outputs.exists == 'false'
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git tag -a mqtt-schema-v${{ steps.pkg.outputs.version }} -m "@alteriom/mqtt-schema v${{ steps.pkg.outputs.version }}"
+          git push origin mqtt-schema-v${{ steps.pkg.outputs.version }}
+      
+      - name: Set up Node for publish (provenance)
+        if: steps.tagcheck.outputs.exists == 'false' && startsWith(steps.commit.outputs.message, 'release:')
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+
+      - name: Publish to npm with provenance
+        if: steps.tagcheck.outputs.exists == 'false' && startsWith(steps.commit.outputs.message, 'release:')
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm publish --provenance --access public
+          echo "published=true" >> $GITHUB_OUTPUT
+
+      - name: Skip notice (no publish conditions)
+        if: steps.tagcheck.outputs.exists == 'false' && !startsWith(steps.commit.outputs.message, 'release:')
+        run: echo "Version changed but commit message not prefixed with 'release:' -> skipping auto-publish."
+
+      - name: Summary
+        run: |
+          echo "Version: ${{ steps.pkg.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "Tag existed: ${{ steps.tagcheck.outputs.exists }}" >> $GITHUB_STEP_SUMMARY
+          echo "Commit message: ${{ steps.commit.outputs.message }}" >> $GITHUB_STEP_SUMMARY
+          echo "Auto-publish: ${{ steps.commit.outputs.message && startsWith(steps.commit.outputs.message, 'release:') && steps.tagcheck.outputs.exists == 'false' }}" >> $GITHUB_STEP_SUMMARY

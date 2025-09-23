@@ -1,0 +1,57 @@
+name: MQTT Schema Manual Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (must match package.json)'
+        required: true
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read version
+        id: pkg
+        run: |
+          VERSION=$(jq -r .version package.json)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Validate input version
+        run: |
+          if [ "${{ github.event.inputs.version }}" != "${{ steps.pkg.outputs.version }}" ]; then
+            echo "Input version does not match package.json (input=${{ github.event.inputs.version }}, pkg=${{ steps.pkg.outputs.version }})" >&2
+            exit 1
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+
+      - name: Install & Build
+        run: |
+          npm ci
+          npm run build
+
+      - name: Publish (provenance)
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm publish --provenance --access public
+
+      - name: Summary
+        run: |
+          echo "Published version: ${{ steps.pkg.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "Manual provenance publish successful" >> $GITHUB_STEP_SUMMARY
