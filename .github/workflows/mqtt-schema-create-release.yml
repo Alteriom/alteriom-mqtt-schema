@@ -1,0 +1,89 @@
+name: MQTT Schema Create GitHub Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag (e.g., mqtt-schema-v0.2.1)'
+        required: true
+      override:
+        description: 'Overwrite existing GitHub Release if present (true/false)'
+        required: false
+        default: 'false'
+  push:
+    tags:
+      - 'mqtt-schema-v*'
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine tag
+        id: meta
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG_INPUT='${{ github.event.inputs.tag }}'
+          else
+            TAG_INPUT='${GITHUB_REF_NAME}'
+          fi
+          echo "tag=${TAG_INPUT}" >> $GITHUB_OUTPUT
+          VERSION=${TAG_INPUT#mqtt-schema-v}
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Extract changelog section
+        id: changelog
+        run: |
+          VERSION='${{ steps.meta.outputs.version }}'
+          FILE=docs/mqtt_schema/CHANGELOG.md
+          if [ ! -f "$FILE" ]; then echo "CHANGELOG missing" >&2; exit 1; fi
+          # Grab lines from heading containing vX.Y.Z until next heading starting with '## '
+          awk -v ver="v$VERSION" 'BEGIN{found=0} /^## /{ if(found){ exit } } index($0,ver){ found=1 } found{ print }' "$FILE" > section.md
+          echo '--- SECTION START ---'
+          cat section.md
+          echo '--- SECTION END ---'
+          if ! grep -q "v$VERSION" section.md; then echo "Failed to extract changelog section for v$VERSION" >&2; exit 1; fi
+          # Escape % for GitHub output
+          ESCAPED=$(sed 's/%/%25/g;s/\n/%0A/g;s/\r/%0D/g' section.md)
+          echo "body=$ESCAPED" >> $GITHUB_OUTPUT
+
+      - name: Check existing release
+        id: existing
+        run: |
+          if gh release view "${{ steps.meta.outputs.tag }}" >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create or update release
+        if: steps.existing.outputs.exists == 'false' || github.event.inputs.override == 'true'
+        run: |
+          TITLE="@alteriom/mqtt-schema ${{ steps.meta.outputs.version }}"
+          gh release delete "${{ steps.meta.outputs.tag }}" -y >/dev/null 2>&1 || true
+          gh release create "${{ steps.meta.outputs.tag }}" --title "$TITLE" --notes-file section.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Skip (already exists)
+        if: steps.existing.outputs.exists == 'true' && github.event.inputs.override != 'true'
+        run: echo "Release already exists; use override=true to replace."
+
+      - name: Summary
+        run: |
+          echo "Tag: ${{ steps.meta.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
+          echo "Version: ${{ steps.meta.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "Existing Release: ${{ steps.existing.outputs.exists }}" >> $GITHUB_STEP_SUMMARY
+          echo "Override Requested: ${{ github.event.inputs.override }}" >> $GITHUB_STEP_SUMMARY
+          echo "Changelog section included above." >> $GITHUB_STEP_SUMMARY
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
