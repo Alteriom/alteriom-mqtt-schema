@@ -1,0 +1,54 @@
+name: Wiki Sync
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'README.md'
+      - 'PUBLISH_CHECKLIST.md'
+      - 'docs/mqtt_schema/**'
+      - 'scripts/generate-wiki.cjs'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-push-wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate wiki pages
+        run: |
+          npm run wiki:generate
+
+      - name: Push to wiki
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          REPO="${GITHUB_REPOSITORY}.wiki.git"
+          git clone "https://x-access-token:${GH_TOKEN}@github.com/${REPO}" wiki_repo
+          cp -v wiki_build/*.md wiki_repo/
+          cd wiki_repo
+          if git diff --quiet; then
+            echo "No wiki changes";
+            exit 0
+          fi
+          git config user.name "github-actions"
+            git config user.email "github-actions@users.noreply.github.com"
+          git add .
+          git commit -m "docs: automated wiki sync"
+          git push
+
+      - name: Summary
+        run: |
+          echo "Wiki sync completed" >> $GITHUB_STEP_SUMMARY

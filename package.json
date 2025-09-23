@@ -75,7 +75,8 @@
     "verify:schemas": "node scripts/check-schema-sync.cjs",
     "verify:release": "node scripts/check-release-integrity.cjs",
     "verify": "npm run verify:schemas && npm run verify:release && npm test",
-    "release:prepare": "node scripts/release-prepare.cjs"
+    "release:prepare": "node scripts/release-prepare.cjs",
+    "wiki:generate": "node scripts/generate-wiki.cjs"
   },
   "keywords": [
     "alteriom",
