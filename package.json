@@ -63,6 +63,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "scripts": {
     "prebuild": "npm run clean && node scripts/copy-schemas.cjs",
     "build:cjs": "tsc -p tsconfig.json",

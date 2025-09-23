@@ -4,6 +4,11 @@
 ![npm version](https://img.shields.io/npm/v/@alteriom/mqtt-schema.svg)
 ![npm downloads](https://img.shields.io/npm/dm/@alteriom/mqtt-schema.svg)
 ![license](https://img.shields.io/npm/l/@alteriom/mqtt-schema.svg)
+![npm total downloads](https://img.shields.io/npm/dt/@alteriom/mqtt-schema.svg)
+![node version](https://img.shields.io/node/v/@alteriom/mqtt-schema.svg)
+![peer ajv](https://img.shields.io/badge/peer%20ajv-%3E%3D8.0.0-blue.svg)
+![latest tag](https://img.shields.io/github/v/tag/Alteriom/alteriom-mqtt-schema?label=tag)
+![bundle size](https://img.shields.io/badge/bundle--size-%3C10KB-green.svg)
 
 
 Alteriom MQTT v1 JSON Schemas, TypeScript types, and production‑ready validation helpers for integrating firmware MQTT payloads into web or backend services.
