@@ -50,9 +50,6 @@ jobs:
           cat section.md
           echo '--- SECTION END ---'
           if ! grep -q "v$VERSION" section.md; then echo "Failed to extract changelog section for v$VERSION" >&2; exit 1; fi
-          # Escape % for GitHub output
-          ESCAPED=$(sed 's/%/%25/g;s/\n/%0A/g;s/\r/%0D/g' section.md)
-          echo "body=$ESCAPED" >> $GITHUB_OUTPUT
 
       - name: Check existing release
         id: existing
