@@ -36,7 +36,14 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           REPO="${GITHUB_REPOSITORY}.wiki.git"
-          git clone "https://x-access-token:${GH_TOKEN}@github.com/${REPO}" wiki_repo
+          echo "Attempting to clone wiki repo: $REPO"
+          if ! git clone "https://x-access-token:${GH_TOKEN}@github.com/${REPO}" wiki_repo 2> clone_err.log; then
+            echo "Wiki repository not found. This usually means the Wiki feature is disabled for this repository." >&2
+            echo "To enable: GitHub UI -> Settings -> General -> Features -> check 'Wikis'. Then re-run this workflow." >&2
+            echo "(Raw clone error:)" >&2
+            cat clone_err.log >&2
+            exit 1
+          fi
           cp -v wiki_build/*.md wiki_repo/
           cd wiki_repo
           if git diff --quiet; then
