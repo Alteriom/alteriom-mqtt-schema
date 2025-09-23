@@ -76,7 +76,9 @@
     "verify:release": "node scripts/check-release-integrity.cjs",
     "verify": "npm run verify:schemas && npm run verify:release && npm test",
     "release:prepare": "node scripts/release-prepare.cjs",
-    "wiki:generate": "node scripts/generate-wiki.cjs"
+    "wiki:generate": "node scripts/generate-wiki.cjs",
+    "metadata:report": "alteriom-metadata report --org-tag alteriom || echo 'metadata report failed'",
+    "metadata:validate": "alteriom-metadata validate --org-tag alteriom || echo 'metadata validate failed'"
   },
   "keywords": [
     "alteriom",
@@ -92,6 +94,7 @@
   "devDependencies": {
     "ajv": "^8.17.0",
     "ajv-formats": "^2.1.1",
+    "@alteriom/repository-metadata-manager": "^1.2.4",
     "rimraf": "^5.0.5",
     "typescript": "^5.4.0"
   }

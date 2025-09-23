@@ -226,3 +226,41 @@ npm view @alteriom/mqtt-schema version --registry=https://npm.pkg.github.com
 ```
 
 Both should return the same version.
+
+## Repository Metadata Compliance
+
+This repository integrates the `@alteriom/repository-metadata-manager` tooling to continuously validate and report on repository metadata health (description, topics, documentation signals, etc.) within the Alteriom organization standards.
+
+### Local Usage
+
+Run a validation (non‑destructive):
+
+```bash
+npm run metadata:validate
+```
+
+Generate a detailed report:
+
+```bash
+npm run metadata:report
+```
+
+Configuration lives in `metadata-config.json` (organizationTag `alteriom`). Default detection is auto; adjust if repository classification needs overriding.
+
+### CI Workflow
+
+Workflow file: `.github/workflows/metadata-compliance.yml`
+
+On each push / PR against `main` it will:
+
+1. Install dependencies
+2. Run `metadata:validate` (fails job on hard non‑compliance)
+3. Always attempt a best‑effort report (`metadata:report`) for visibility
+
+### Tokens / Permissions
+
+The workflow relies only on the default `GITHUB_TOKEN` for read operations. If future auto‑apply operations are desired, a token with elevated repo scope would be needed and the `metadata:apply` script could be wired (currently omitted to keep CI read‑only).
+
+### Extending
+
+If you add new categories of tooling or documentation, re‑run the report to see updated recommendations. For cross‑repo analytics or policy generation, use the original project directly.
