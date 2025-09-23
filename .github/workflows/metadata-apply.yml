@@ -1,0 +1,42 @@
+name: Repository Metadata Apply
+
+on:
+  workflow_dispatch:
+    inputs:
+      dryRun:
+        description: "Run in dry-run mode (no changes applied)"
+        required: false
+        default: 'true'
+        type: choice
+        options: ['true','false']
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Decide command
+        id: cmd
+        run: |
+          if [ "${{ github.event.inputs.dryRun }}" = "true" ]; then
+            echo "run_cmd=npm run metadata:apply:dry" >> $GITHUB_OUTPUT
+          else
+            echo "run_cmd=npm run metadata:apply" >> $GITHUB_OUTPUT
+          fi
+      - name: Execute metadata apply
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Running: ${{ steps.cmd.outputs.run_cmd }}"
+          ${{ steps.cmd.outputs.run_cmd }}

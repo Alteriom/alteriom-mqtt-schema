@@ -1,5 +1,7 @@
 # @alteriom/mqtt-schema
 
+![Metadata Compliance](https://github.com/Alteriom/alteriom-mqtt-schema/actions/workflows/metadata-compliance.yml/badge.svg)
+
 Alteriom MQTT v1 JSON Schemas, TypeScript types, and production‑ready validation helpers for integrating firmware MQTT payloads into web or backend services.
 
 ## Why this exists
@@ -101,9 +103,11 @@ interface ValidationResult {
 ```
 
 ### Performance Notes
+
 All Ajv validator functions are compiled once at module load. For typical web usage (tens to hundreds of validations per page/session) this is faster and simpler than on‑demand compilation. If you need custom Ajv options (e.g., different formats), open an issue—an override hook can be added without breaking changes.
 
 ### Embedded Schemas
+
 `schema_data.ts` is auto‑generated during build. This avoids dynamic `require()` / `import` of JSON and works cleanly in both Node ESM and bundlers without JSON import assertions. The original JSON files are still published under `schemas/` for tooling or documentation pipelines.
 
 ## Provided Schemas (v1)
@@ -131,6 +135,7 @@ All Ajv validator functions are compiled once at module load. For typical web us
 | `schemas/*.json` | JSON | Original schema assets (optional) |
 
 ### Validator Keys
+
 `sensorData`, `sensorHeartbeat`, `sensorStatus`, `gatewayInfo`, `gatewayMetrics`, `firmwareStatus`, `controlResponse`
 
 ### Classification Heuristics (Simplified)
@@ -264,3 +269,20 @@ The workflow relies only on the default `GITHUB_TOKEN` for read operations. If f
 ### Extending
 
 If you add new categories of tooling or documentation, re‑run the report to see updated recommendations. For cross‑repo analytics or policy generation, use the original project directly.
+
+### Applying Metadata (Manual Workflow)
+
+For authorized maintainers you can run adjustments via GitHub Actions:
+
+1. Open the "Repository Metadata Apply" workflow under the Actions tab.
+2. Choose whether to keep `dryRun` (default) or set to `false` to apply.
+3. Run the workflow; the log will show proposed or applied changes.
+
+Local dry‑run vs apply:
+
+```bash
+npm run metadata:apply:dry  # show what would change
+npm run metadata:apply      # apply changes (requires proper permissions via GITHUB_TOKEN)
+```
+
+Note: Applying metadata modifies repository settings (description, topics) through the GitHub API; ensure the default token has the necessary repo scopes (in public repositories the workflow GITHUB_TOKEN normally suffices for these fields).

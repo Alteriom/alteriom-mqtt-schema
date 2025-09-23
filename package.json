@@ -78,7 +78,9 @@
     "release:prepare": "node scripts/release-prepare.cjs",
     "wiki:generate": "node scripts/generate-wiki.cjs",
     "metadata:report": "alteriom-metadata report --org-tag alteriom || echo 'metadata report failed'",
-    "metadata:validate": "alteriom-metadata validate --org-tag alteriom || echo 'metadata validate failed'"
+    "metadata:validate": "alteriom-metadata validate --org-tag alteriom || echo 'metadata validate failed'",
+    "metadata:apply": "alteriom-metadata apply --org-tag alteriom",
+    "metadata:apply:dry": "alteriom-metadata dry-run --org-tag alteriom"
   },
   "keywords": [
     "alteriom",
@@ -92,10 +94,13 @@
     "ajv": ">=8.0.0"
   },
   "devDependencies": {
+    "@alteriom/repository-metadata-manager": "^1.2.4",
     "ajv": "^8.17.0",
     "ajv-formats": "^2.1.1",
-    "@alteriom/repository-metadata-manager": "^1.2.4",
     "rimraf": "^5.0.5",
     "typescript": "^5.4.0"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.2"
   }
 }
