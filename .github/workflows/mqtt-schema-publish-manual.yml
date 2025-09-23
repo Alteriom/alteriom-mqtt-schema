@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: read
+  packages: write
   id-token: write
 
 jobs:
@@ -61,6 +62,8 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "@alteriom:registry=https://npm.pkg.github.com" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+          echo "always-auth=true" >> .npmrc
           if npm view @alteriom/mqtt-schema@${{ steps.pkg.outputs.version }} --registry=https://npm.pkg.github.com > /dev/null 2>&1; then
             echo "Already exists on GitHub Packages. Skipping mirror publish.";
           else
