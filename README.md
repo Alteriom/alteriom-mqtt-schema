@@ -134,6 +134,7 @@ All Ajv validator functions are compiled once at module load. For typical web us
 `sensorData`, `sensorHeartbeat`, `sensorStatus`, `gatewayInfo`, `gatewayMetrics`, `firmwareStatus`, `controlResponse`
 
 ### Classification Heuristics (Simplified)
+
 - `metrics` → `gatewayMetrics`
 - `sensors` → `sensorData`
 - `progress_pct` or OTA status keywords → `firmwareStatus`
@@ -154,21 +155,74 @@ Schema stability is paramount. We track two related versions:
 Backward‑compatible additions: new optional properties or enums, documented in CHANGELOG. Breaking: new required fields, structural changes, or removed properties (triggers parallel `v2` schema path & coordinated firmware rollout).
 
 ## TypeScript / Bundler Notes
+
 - Works in TS >= 5, Node >= 16, Vite / Webpack / ESBuild.
 - Tree shaking: unused validators pruned when using ESM builds.
 - No side effects besides Ajv instance creation.
 
 ## Roadmap
+
 - Optional custom Ajv injection hook
 - JSON Schema → Zod conversion example
 - Runtime metrics helper (count validation categories)
 
 ## Contributing
+
 Issues & PRs welcome. Ensure firmware repo schemas remain the authoritative source—do not manually edit generated `schema_data.ts`.
 
 ## Security
+
 Schemas are static. No network access. Supply-chain risk minimized by keeping dependencies minimal (Ajv + formats only).
 
 ## License
 
 MIT
+
+## Registry Mirrors
+
+This package is published to BOTH:
+
+- Public npm registry: `https://registry.npmjs.org` (primary)
+- GitHub Packages registry: `https://npm.pkg.github.com` (mirror for visibility in repo Packages tab)
+
+### Installing from GitHub Packages (optional)
+
+Create or update an `.npmrc` with a scoped registry override (auth token with `read:packages` required):
+
+```
+@alteriom:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+```
+
+Then install normally:
+
+```
+npm install @alteriom/mqtt-schema ajv ajv-formats
+```
+
+If you omit the override, npmjs.org is used (recommended for most consumers).
+
+### Why dual publish?
+
+- GitHub Packages listing provides provenance + quick visibility in the repo UI.
+- npm remains the canonical public distribution source (faster, anonymous installs allowed).
+
+### Operational Notes
+
+| Aspect | Behavior |
+|--------|----------|
+| Build artifact | Built once, same tarball published to both registries. |
+| Version uniqueness | Same version must not be republished; bump if any change needed. |
+| Auth (GitHub) | Always required for install from GitHub Packages, even for public repos. |
+| Tarball parity | Do not rebuild between publishes; workflows ensure single build. |
+| Fallback strategy | If mirror publish fails (e.g., transient), primary npm publish still stands. |
+| Provenance flag | Applied for npm (GitHub ignores currently). |
+
+### Verifying a Release
+
+```bash
+npm view @alteriom/mqtt-schema version
+npm view @alteriom/mqtt-schema version --registry=https://npm.pkg.github.com
+```
+
+Both should return the same version.

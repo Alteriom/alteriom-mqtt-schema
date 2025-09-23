@@ -1,5 +1,16 @@
 # MQTT Schema Artifacts Changelog
 
+## 2025-09-22 (v0.2.1)
+
+### Fixed (v0.2.1)
+
+- Moved GitHub Actions YAML files from `.github/workflow/` to `.github/workflows/` so automation triggers correctly.
+- Added verification steps to manual publish workflow (schema + changelog guards).
+
+### Notes (v0.2.1)
+
+- Patch release: infrastructure/CI only; no schema JSON or validator logic changes.
+
 ## 2025-09-22 (v0.2.0)
 
 ### Added (v0.2.0)

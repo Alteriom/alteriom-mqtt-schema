@@ -45,6 +45,11 @@ jobs:
           npm ci
           npm run build
 
+      - name: Verify schemas & changelog
+        run: |
+          npm run verify:schemas
+          npm run verify:release
+
       - name: Publish (provenance)
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -68,3 +73,4 @@ jobs:
           echo "Published version: ${{ steps.pkg.outputs.version }}" >> $GITHUB_STEP_SUMMARY
           echo "Manual provenance publish successful" >> $GITHUB_STEP_SUMMARY
           echo "GitHub Packages mirror attempted (conditional)" >> $GITHUB_STEP_SUMMARY
+          echo "Schema / CHANGELOG verification executed" >> $GITHUB_STEP_SUMMARY
