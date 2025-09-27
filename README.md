@@ -1,6 +1,7 @@
 # @alteriom/mqtt-schema
 
 ![Metadata Compliance](https://github.com/Alteriom/alteriom-mqtt-schema/actions/workflows/metadata-compliance.yml/badge.svg)
+![OTA Manifest Validation](https://github.com/Alteriom/alteriom-mqtt-schema/actions/workflows/validate-ota-manifest.yml/badge.svg)
 ![npm version](https://img.shields.io/npm/v/@alteriom/mqtt-schema.svg)
 ![npm downloads](https://img.shields.io/npm/dm/@alteriom/mqtt-schema.svg)
 ![license](https://img.shields.io/npm/l/@alteriom/mqtt-schema.svg)
@@ -12,9 +13,9 @@
 
 Alteriom MQTT v1 JSON Schemas, TypeScript types, and production‑ready validation helpers for integrating firmware MQTT payloads into web or backend services.
 
-> NOTE: OTA manifest CI validation workflow file could not be added via automated API due to path constraints; it can be added manually post-merge if still absent.
-
 See also: `docs/SCHEMA_MAP.md` for complete schema listing.
+
+> NEW: Automated OTA manifest validation workflow ensures schema + fixture integrity on PRs touching OTA assets.
 
 ## OTA Firmware Manifest Schema (NEW in 0.3.0)
 
