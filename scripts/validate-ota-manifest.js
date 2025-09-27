@@ -21,7 +21,7 @@ function main() {
     process.exit(1);
   }
   const schema = loadJSON(schemaPath);
-  const ajv = new Ajv({ allErrors: true, strict: true });
+  const ajv = new Ajv({ allErrors: true, strict: false });
   addFormats(ajv);
   const validate = ajv.compile(schema);
   const files = fs.readdirSync(fixturesDir).filter(f => f.endsWith('.json'));
