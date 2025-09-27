@@ -1,0 +1,20 @@
+{
+  "environment": "universal-sensor",
+  "branch": "main",
+  "manifests": {
+    "prod": {
+      "build_type": "prod",
+      "file": "firmware-prod.bin",
+      "size": 234567,
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "firmware_version": "1.2.3",
+      "built": "2025-09-27T12:10:00Z",
+      "ota_url": "https://firmware.alteriom.dev/universal-sensor/prod/firmware-prod.bin",
+      "chunk_size": 8192,
+      "chunks": [
+        "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+      ]
+    }
+  }
+}
