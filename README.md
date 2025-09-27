@@ -14,6 +14,8 @@ Alteriom MQTT v1 JSON Schemas, TypeScript types, and production‑ready validati
 
 > NOTE: OTA manifest CI validation workflow file could not be added via automated API due to path constraints; it can be added manually post-merge if still absent.
 
+See also: `docs/SCHEMA_MAP.md` for complete schema listing.
+
 ## OTA Firmware Manifest Schema (NEW in 0.3.0)
 
 The package now includes the OTA firmware manifest schema used by build + deployment tooling.
