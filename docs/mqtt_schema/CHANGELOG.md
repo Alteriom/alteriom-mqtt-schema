@@ -1,5 +1,19 @@
 # MQTT Schema Artifacts Changelog
 
+## 2025-09-27 (v0.3.0)
+
+### Added (v0.3.0)
+
+- OTA firmware manifest JSON Schema (`schemas/ota/ota-manifest.schema.json`) supporting both rich and minimal manifest variants.
+- Validation fixtures for four manifest shapes (rich dev, rich prod w/chunk objects, rich prod w/hash array, minimal dev) under `test/artifacts/ota/`.
+- Validation script `scripts/validate-ota-manifest.js` (invoked via `npm run validate:ota`).
+- TypeScript definitions `types/ota-manifest.d.ts` including discriminated union helpers.
+
+### Notes (v0.3.0)
+
+- Pending CI: Dedicated GitHub Actions workflow to automatically validate OTA manifest fixtures will be added in a follow-up (previous attempt blocked by path creation limitation in automation interface).
+- Minor version bump justified by new publicly consumable schema & types (no breaking changes to existing MQTT payload schemas; `schema_version: 1` unchanged).
+
 ## 2025-09-22 (v0.2.1)
 
 ### Fixed (v0.2.1)
