@@ -1,0 +1,51 @@
+name: OTA Manifest Validation
+
+on:
+  pull_request:
+    paths:
+      - 'schemas/ota/**'
+      - 'types/ota-manifest.d.ts'
+      - 'scripts/validate-ota-manifest.js'
+      - 'test/artifacts/ota/**'
+      - 'package.json'
+      - 'package-lock.json'
+  push:
+    branches: [ main ]
+    paths:
+      - 'schemas/ota/**'
+      - 'types/ota-manifest.d.ts'
+      - 'scripts/validate-ota-manifest.js'
+      - 'test/artifacts/ota/**'
+      - 'package.json'
+      - 'package-lock.json'
+  workflow_dispatch: {}
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run OTA manifest validation
+        run: npm run validate:ota
+
+      - name: Run schema + release guards
+        run: npm run verify:schemas && npm run verify:release
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "# OTA Manifest Validation" >> $GITHUB_STEP_SUMMARY
+          echo "All validation steps completed." >> $GITHUB_STEP_SUMMARY
