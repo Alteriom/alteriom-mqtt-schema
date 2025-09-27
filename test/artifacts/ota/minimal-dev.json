@@ -1,0 +1,11 @@
+{
+  "universal-sensor": {
+    "dev": {
+      "file": "firmware-dev.bin",
+      "size": 123456,
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "version": "1.2.3-dev+build.45",
+      "timestamp": "2025-09-27T12:00:00Z"
+    }
+  }
+}
