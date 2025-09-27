@@ -13,7 +13,56 @@
 
 Alteriom MQTT v1 JSON Schemas, TypeScript types, and production‑ready validation helpers for integrating firmware MQTT payloads into web or backend services.
 
- 
+## OTA Firmware Manifest Schema (NEW in 0.3.0)
+
+The package now includes the OTA firmware manifest schema used by build + deployment tooling.
+
+Import the schema JSON directly:
+```ts
+import otaManifestSchema from '@alteriom/mqtt-schema/schemas/ota/ota-manifest.schema.json';
+```
+
+Types:
+```ts
+import { OtaManifest, isRichManifest } from '@alteriom/mqtt-schema/types/ota-manifest';
+```
+
+Shapes supported (oneOf):
+- Rich manifest:
+```json
+{
+  "environment": "universal-sensor",
+  "branch": "main",
+  "manifests": { "dev": { /* richEntry */ }, "prod": { /* richEntry */ } }
+}
+```
+- Minimal environment map:
+```json
+{
+  "universal-sensor": { "dev": { /* minimalChannel */ } }
+}
+```
+
+Chunk hashing variants (mutually exclusive):
+1. Structured objects (offset + size + sha256)
+2. Array of lowercase sha256 strings
+
+Validation example:
+```ts
+import Ajv from 'ajv';
+import schema from '@alteriom/mqtt-schema/schemas/ota/ota-manifest.schema.json';
+import { OtaManifest } from '@alteriom/mqtt-schema/types/ota-manifest';
+
+const ajv = new Ajv({ allErrors: true });
+const validate = ajv.compile<OtaManifest>(schema as any);
+const manifest: OtaManifest = JSON.parse(raw);
+if (!validate(manifest)) {
+  console.error(validate.errors);
+}
+```
+
+---
+
 ## Why this exists
 Firmware emits structured MQTT payloads that must remain tightly aligned with web, analytics, and gateway logic. This package is the single source of truth for:
 
@@ -143,6 +192,8 @@ All Ajv validator functions are compiled once at module load. For typical web us
 | `SensorDataMessage` etc. | TS interfaces | Strongly typed shapes |
 | `isSensorDataMessage` etc. | type guards | Runtime narrowing helpers |
 | `schemas/*.json` | JSON | Original schema assets (optional) |
+| `schemas/ota/ota-manifest.schema.json` | JSON | OTA firmware manifest schema (rich + minimal) |
+| `types/ota-manifest` | TS types | OtaManifest union + helpers |
 
 ### Validator Keys
 
@@ -169,6 +220,8 @@ Schema stability is paramount. We track two related versions:
 
 Backward‑compatible additions: new optional properties or enums, documented in CHANGELOG. Breaking: new required fields, structural changes, or removed properties (triggers parallel `v2` schema path & coordinated firmware rollout).
 
+Backward-compatible schema additions to OTA manifest WILL use minor bumps.
+
 ## TypeScript / Bundler Notes
 
 - Works in TS >= 5, Node >= 16, Vite / Webpack / ESBuild.
@@ -180,6 +233,8 @@ Backward‑compatible additions: new optional properties or enums, documented in
 - Optional custom Ajv injection hook
 - JSON Schema → Zod conversion example
 - Runtime metrics helper (count validation categories)
+- Signed OTA manifest extension
+- Delta / compressed OTA metadata fields
 
 ## Contributing
 
@@ -192,107 +247,3 @@ Schemas are static. No network access. Supply-chain risk minimized by keeping de
 ## License
 
 MIT
-
-## Registry Mirrors
-
-This package is published to BOTH:
-
-- Public npm registry: `https://registry.npmjs.org` (primary)
-- GitHub Packages registry: `https://npm.pkg.github.com` (mirror for visibility in repo Packages tab)
-
-### Installing from GitHub Packages (optional)
-
-Create or update an `.npmrc` with a scoped registry override (auth token with `read:packages` required):
-
-```bash
-@alteriom:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
-```
-
-Then install normally:
-
-```bash
-npm install @alteriom/mqtt-schema ajv ajv-formats
-```
-
-If you omit the override, npmjs.org is used (recommended for most consumers).
-
-### Why dual publish?
-
-- GitHub Packages listing provides provenance + quick visibility in the repo UI.
-- npm remains the canonical public distribution source (faster, anonymous installs allowed).
-
-### Operational Notes
-
-| Aspect | Behavior |
-|--------|----------|
-| Build artifact | Built once, same tarball published to both registries. |
-| Version uniqueness | Same version must not be republished; bump if any change needed. |
-| Auth (GitHub) | Always required for install from GitHub Packages, even for public repos. |
-| Tarball parity | Do not rebuild between publishes; workflows ensure single build. |
-| Fallback strategy | If mirror publish fails (e.g., transient), primary npm publish still stands. |
-| Provenance flag | Applied for npm (GitHub ignores currently). |
-
-### Verifying a Release
-
-```bash
-npm view @alteriom/mqtt-schema version
-npm view @alteriom/mqtt-schema version --registry=https://npm.pkg.github.com
-```
-
-Both should return the same version.
-
-## Repository Metadata Compliance
-
-This repository integrates the `@alteriom/repository-metadata-manager` tooling to continuously validate and report on repository metadata health (description, topics, documentation signals, etc.) within the Alteriom organization standards.
-
-### Local Usage
-
-Run a validation (non‑destructive):
-
-```bash
-npm run metadata:validate
-```
-
-Generate a detailed report:
-
-```bash
-npm run metadata:report
-```
-
-Configuration lives in `metadata-config.json` (organizationTag `alteriom`). Default detection is auto; adjust if repository classification needs overriding.
-
-### CI Workflow
-
-Workflow file: `.github/workflows/metadata-compliance.yml`
-
-On each push / PR against `main` it will:
-
-1. Install dependencies
-2. Run `metadata:validate` (fails job on hard non‑compliance)
-3. Always attempt a best‑effort report (`metadata:report`) for visibility
-
-### Tokens / Permissions
-
-The workflow relies only on the default `GITHUB_TOKEN` for read operations. If future auto‑apply operations are desired, a token with elevated repo scope would be needed and the `metadata:apply` script could be wired (currently omitted to keep CI read‑only).
-
-### Extending
-
-If you add new categories of tooling or documentation, re‑run the report to see updated recommendations. For cross‑repo analytics or policy generation, use the original project directly.
-
-### Applying Metadata (Manual Workflow)
-
-For authorized maintainers you can run adjustments via GitHub Actions:
-
-1. Open the "Repository Metadata Apply" workflow under the Actions tab.
-2. Choose whether to keep `dryRun` (default) or set to `false` to apply.
-3. Run the workflow; the log will show proposed or applied changes.
-
-Local dry‑run vs apply:
-
-```bash
-npm run metadata:apply:dry  # show what would change
-npm run metadata:apply      # apply changes (requires proper permissions via GITHUB_TOKEN)
-```
-
-Note: Applying metadata modifies repository settings (description, topics) through the GitHub API; ensure the default token has the necessary repo scopes (in public repositories the workflow GITHUB_TOKEN normally suffices for these fields).
