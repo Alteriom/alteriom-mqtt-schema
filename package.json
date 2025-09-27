@@ -1,6 +1,6 @@
 {
   "name": "@alteriom/mqtt-schema",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Alteriom MQTT v1 schemas, TypeScript types, and validation helpers for web integration",
   "license": "MIT",
   "author": "Alteriom Development Team",
@@ -39,6 +39,13 @@
     "./schemas/*": {
       "default": "./schemas/*"
     },
+    "./schemas/ota/ota-manifest.schema.json": {
+      "default": "./schemas/ota/ota-manifest.schema.json"
+    },
+    "./types/ota-manifest": {
+      "types": "./types/ota-manifest.d.ts",
+      "default": "./types/ota-manifest.d.ts"
+    },
     "./package.json": "./package.json"
   },
   "typesVersions": {
@@ -51,14 +58,19 @@
       ],
       "schemas/*": [
         "schemas/*"
+      ],
+      "types/ota-manifest": [
+        "types/ota-manifest.d.ts"
       ]
     }
   },
   "files": [
     "dist/",
     "schemas/",
+    "types/",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "publishConfig": {
     "access": "public"
@@ -83,7 +95,8 @@
     "metadata:report": "alteriom-metadata report --org-tag alteriom || echo 'metadata report failed'",
     "metadata:validate": "alteriom-metadata validate --org-tag alteriom || echo 'metadata validate failed'",
     "metadata:apply": "alteriom-metadata apply --org-tag alteriom",
-    "metadata:apply:dry": "alteriom-metadata dry-run --org-tag alteriom"
+    "metadata:apply:dry": "alteriom-metadata dry-run --org-tag alteriom",
+    "validate:ota": "node scripts/validate-ota-manifest.js"
   },
   "keywords": [
     "alteriom",
@@ -91,7 +104,8 @@
     "iot",
     "schema",
     "validation",
-    "typescript"
+    "typescript",
+    "ota"
   ],
   "peerDependencies": {
     "ajv": ">=8.0.0"
