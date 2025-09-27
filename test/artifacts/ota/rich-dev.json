@@ -1,0 +1,15 @@
+{
+  "environment": "universal-sensor",
+  "branch": "main",
+  "manifests": {
+    "dev": {
+      "build_type": "dev",
+      "file": "firmware-dev.bin",
+      "size": 123456,
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "firmware_version": "1.2.3-dev+build.45",
+      "built": "2025-09-27T12:00:00Z",
+      "ota_url": "https://firmware.alteriom.dev/universal-sensor/dev/firmware-dev.bin"
+    }
+  }
+}
