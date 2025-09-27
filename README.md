@@ -10,8 +10,9 @@
 ![latest tag](https://img.shields.io/github/v/tag/Alteriom/alteriom-mqtt-schema?label=tag)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@alteriom/mqtt-schema)](https://bundlephobia.com/package/@alteriom/mqtt-schema)
 
-
 Alteriom MQTT v1 JSON Schemas, TypeScript types, and production‑ready validation helpers for integrating firmware MQTT payloads into web or backend services.
+
+> NOTE: OTA manifest CI validation workflow will be added (if missing) after merge if directory creation limitations persist in automated tooling.
 
 ## OTA Firmware Manifest Schema (NEW in 0.3.0)
 
