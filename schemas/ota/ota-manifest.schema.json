@@ -67,7 +67,7 @@
         "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
         "version": { "type": "string" },
         "timestamp": { "type": "string" },
-        "chunk_size": { "type": "integer", "minimum": 1 },
+        "chunk_size": { "type": "integer", "minimum": 4096 },
         "chunks": { "type": "array", "items": { "type": "string", "pattern": "^[a-f0-9]{64}$" } }
       },
       "additionalProperties": false
