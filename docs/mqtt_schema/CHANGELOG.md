@@ -1,5 +1,28 @@
 # MQTT Schema Artifacts Changelog
 
+## 2025-09-28 (v0.3.1)
+
+### Added (v0.3.1)
+
+- Added stable OTA manifest alias export (`@alteriom/mqtt-schema/ota-manifest`)
+- Added multi-runtime Node validation matrix (18.x, 20.x) for OTA manifest validation workflow
+- Added general schema verification workflow (Ajv compile + fixture validation + id/ref checks)
+- Added unified verify script & `npm run verify:all`
+- Added README badges and usage examples
+- Internal: improved validation consistency (duplicate id & ref checks)
+
+### Fixed (v0.3.1)
+
+- Fixed schema verification script to handle cross-schema references properly
+- Fixed copy-schemas script to handle subdirectories (ota/) correctly
+
+### Notes (v0.3.1)
+
+- CI hardening release: enhanced validation workflows and tooling
+- No breaking changes to existing schema JSON or validator logic
+- Node 18+ tested; Node 20 primary support
+- Deep path import remains fully supported for backward compatibility
+
 ## 2025-09-27 (v0.3.0)
 
 ### Added (v0.3.0)
@@ -64,9 +87,9 @@
 - Introduced base envelope schema (`envelope.schema.json`).
 - Added sensor data (`sensor_data.schema.json`).
 - Added sensor heartbeat (`sensor_heartbeat.schema.json`).
+- Added sensor status (`sensor_status.schema.json`).
 - Added gateway metrics (`gateway_metrics.schema.json`).
 - Added gateway info (`gateway_info.schema.json`).
-- Added sensor status (`sensor_status.schema.json`).
 - Added firmware update status (`firmware_status.schema.json`).
 - Added control/command response (`control_response.schema.json`).
 - Added operational validation rules (`validation_rules.md`).

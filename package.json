@@ -1,6 +1,6 @@
 {
   "name": "@alteriom/mqtt-schema",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Alteriom MQTT v1 schemas, TypeScript types, and validation helpers for web integration",
   "license": "MIT",
   "author": "Alteriom Development Team",
@@ -42,6 +42,11 @@
     "./schemas/ota/ota-manifest.schema.json": {
       "default": "./schemas/ota/ota-manifest.schema.json"
     },
+    "./ota-manifest": {
+      "import": "./schemas/ota/ota-manifest.schema.json",
+      "require": "./schemas/ota/ota-manifest.schema.json",
+      "default": "./schemas/ota/ota-manifest.schema.json"
+    },
     "./types/ota-manifest": {
       "types": "./types/ota-manifest.d.ts",
       "default": "./types/ota-manifest.d.ts"
@@ -61,6 +66,9 @@
       ],
       "types/ota-manifest": [
         "types/ota-manifest.d.ts"
+      ],
+      "ota-manifest": [
+        "schemas/ota/ota-manifest.schema.json"
       ]
     }
   },
@@ -90,6 +98,7 @@
     "verify:schemas": "node scripts/check-schema-sync.cjs",
     "verify:release": "node scripts/check-release-integrity.cjs",
     "verify": "npm run verify:schemas && npm run verify:release && npm test",
+    "verify:all": "node scripts/verify_all.cjs",
     "release:prepare": "node scripts/release-prepare.cjs",
     "wiki:generate": "node scripts/generate-wiki.cjs",
     "metadata:report": "alteriom-metadata report --org-tag alteriom || echo 'metadata report failed'",

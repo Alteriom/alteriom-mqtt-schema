@@ -25,7 +25,8 @@ const copyList = [
   'firmware_status.schema.json',
   'control_response.schema.json',
   'mqtt_v1_bundle.json',
-  'validation_rules.md'
+  'validation_rules.md',
+  'ota/ota-manifest.schema.json'
 ];
 
 // Also copy types.ts into src/generated directory for isolated build (avoids external path at runtime)
@@ -38,8 +39,11 @@ if (fs.existsSync(typesSource)) {
 
 for (const file of copyList) {
   const src = path.join(srcDir, file);
+  const dest = path.join(destDir, file);
   if (fs.existsSync(src)) {
-    fs.copyFileSync(src, path.join(destDir, file));
+    // Ensure destination directory exists for subdirectories
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    fs.copyFileSync(src, dest);
   } else {
     console.warn('[warn] missing expected schema asset:', file);
   }
@@ -56,6 +60,20 @@ for (const cand of integrityCandidates) {
 
 console.log('Schema assets copied to', destDir);
 
+// Copy to root schemas directory for package consumption  
+const rootSchemasDir = path.resolve(__dirname, '../schemas');
+fs.rmSync(rootSchemasDir, { recursive: true, force: true });
+fs.mkdirSync(rootSchemasDir, { recursive: true });
+for (const file of copyList.concat(integrityCandidates)) {
+  const src = path.join(destDir, file);
+  const dest = path.join(rootSchemasDir, file);
+  if (fs.existsSync(src)) {
+    // Ensure destination directory exists for subdirectories
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    fs.copyFileSync(src, dest);
+  }
+}
+
 // Also ensure dist schema copies if dist already exists (incremental builds)
 const distCjs = path.resolve(__dirname, '../dist/cjs/schemas');
 const distEsm = path.resolve(__dirname, '../dist/esm/schemas');
@@ -65,7 +83,12 @@ for (const d of [distCjs, distEsm]) {
     fs.mkdirSync(d, { recursive: true });
     for (const file of copyList.concat(integrityCandidates)) {
       const src = path.join(destDir, file);
-      if (fs.existsSync(src)) fs.copyFileSync(src, path.join(d, file));
+      const dest = path.join(d, file);
+      if (fs.existsSync(src)) {
+        // Ensure destination directory exists for subdirectories
+        fs.mkdirSync(path.dirname(dest), { recursive: true });
+        fs.copyFileSync(src, dest);
+      }
     }
   }
 }
@@ -81,7 +104,7 @@ function readJsonIfExists(name){
 }
 const jsonSchemaFiles = copyList.filter(f => f.endsWith('.json'));
 for (const file of jsonSchemaFiles) {
-  const varName = file.replace(/[-.]/g,'_').replace(/_schema_json$/,'_schema').replace(/\.json$/,'');
+  const varName = file.replace(/[-.\/]/g,'_').replace(/_schema_json$/,'_schema').replace(/\.json$/,'');
   const data = readJsonIfExists(file);
   if (data) {
     schemaTs += `export const ${varName} = ${JSON.stringify(data, null, 2)} as const;\n`;

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/control_response.schema.json",
+  "title": "Control / Command Response v1",
+  "allOf": [{"$ref": "envelope.schema.json"}],
+  "type": "object",
+  "required": ["status"],
+  "properties": {
+    "command": {"type": "string"},
+    "status": {"type": "string", "enum": ["ok", "error"]},
+    "message": {"type": "string"},
+    "result": {"type": ["object", "array", "string", "number", "boolean", "null"]}
+  },
+  "additionalProperties": true
+}
