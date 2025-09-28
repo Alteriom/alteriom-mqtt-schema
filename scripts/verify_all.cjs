@@ -98,18 +98,39 @@ function compileAllSchemas() {
 
 function runOtaFixtureValidation() {
   if (!fs.existsSync(otaValidatorScript)) {
-    console.warn('[verify_all] OTA validator script missing, skipping OTA fixtures.');
+    console.warn('⚠️  [verify_all] OTA validator script missing, skipping OTA fixtures.');
     return 0;
   }
-  const result = require('child_process').spawnSync('node', [otaValidatorScript], { stdio: 'inherit' });
+  const result = require('child_process').spawnSync('node', [otaValidatorScript], { 
+    stdio: ['inherit', 'pipe', 'pipe'],
+    encoding: 'utf8'
+  });
+  
+  if (result.stdout) {
+    // Re-output the OTA validation results with proper formatting
+    result.stdout.split('\n').forEach(line => {
+      if (line.trim()) console.log(`   ${line}`);
+    });
+  }
+  
+  if (result.stderr && result.stderr.trim()) {
+    console.error('   OTA validation errors:', result.stderr.trim());
+  }
+  
   return result.status || 0;
 }
 
 function main() {
-  console.log('[verify_all] Starting unified schema verification');
+  console.log('🔍 [verify_all] Starting unified schema verification\n');
+  
   const { compileFailures, refFailures, total } = compileAllSchemas();
-  console.log(`[verify_all] Compiled ${total} schema file(s)`);
+  if (compileFailures === 0 && refFailures === 0) {
+    console.log(`✅ [verify_all] Successfully compiled ${total} schema file(s)`);
+  } else {
+    console.error(`❌ [verify_all] Schema compilation issues found`);
+  }
 
+  console.log('\n🔍 [verify_all] Validating OTA manifest fixtures...');
   const otaStatus = runOtaFixtureValidation();
 
   let exitCode = 0;
@@ -117,10 +138,16 @@ function main() {
   if (refFailures) exitCode = 1;
   if (otaStatus !== 0) exitCode = 1;
 
+  console.log('\n📊 [verify_all] Summary:');
+  console.log(`   Schema files compiled: ${total}`);
+  console.log(`   Compilation failures: ${compileFailures}`);
+  console.log(`   Reference failures: ${refFailures}`);
+  console.log(`   OTA validation status: ${otaStatus === 0 ? 'PASS' : 'FAIL'}`);
+
   if (exitCode !== 0) {
-    console.error(`[verify_all] FAIL: compileFailures=${compileFailures} refFailures=${refFailures} otaStatus=${otaStatus}`);
+    console.error(`\n❌ [verify_all] FAILED with errors`);
   } else {
-    console.log('[verify_all] SUCCESS');
+    console.log(`\n🎉 [verify_all] SUCCESS - All validations passed!`);
   }
   process.exit(exitCode);
 }

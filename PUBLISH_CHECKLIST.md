@@ -32,19 +32,21 @@ npm run build
 
 Expect: `dist/cjs`, `dist/esm`, `dist/esm/package.json`, `schemas/`.
 
-Optional fast integrity check (runs schema diff + changelog presence + tests):
+Optional comprehensive validation check (recommended for releases):
 
 ```powershell
-npm run verify
+npm run verify        # Core validation (schema sync + changelog + fixtures)
+npm run verify:all    # Extended validation (schema compilation + OTA manifests)
 ```
 
 ## 4. Test
 
 ```powershell
-npm test
+npm test              # Enhanced CJS/ESM fixture validation with detailed reporting
+npm run test:ota      # OTA manifest validation
 ```
 
-Expect CJS & ESM fixtures all valid.
+Expect all fixtures valid under both CJS and ESM with detailed success reporting.
 
 ## 5. Optional Smoke Import
 

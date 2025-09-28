@@ -1,5 +1,61 @@
 # Changelog
 
+## 2025-09-28 (v0.3.2 - Pending)
+
+### Added (v0.3.2)
+
+- Enhanced documentation review and validation for better release preparation
+- Improved script error reporting and consistency
+- Better package.json script organization and documentation
+
+### Fixed (v0.3.2)
+
+- Enhanced validation script output formatting for better user experience
+- Improved release preparation process documentation
+
+### Notes (v0.3.2)
+
+- Patch release focused on documentation improvements and validation script enhancements
+- No breaking changes to schema JSON or validator logic
+- Continued Node 18+ support with Node 20 as primary target
+
+## 2025-09-28 (v0.3.1)
+
+### Added (v0.3.1)
+
+- Added stable OTA manifest alias export (`@alteriom/mqtt-schema/ota-manifest`)
+- Added multi-runtime Node validation matrix (18.x, 20.x) for OTA manifest validation workflow
+- Added general schema verification workflow (Ajv compile + fixture validation + id/ref checks)
+- Added unified verify script & `npm run verify:all`
+- Added README badges and usage examples
+- Internal: improved validation consistency (duplicate id & ref checks)
+
+### Fixed (v0.3.1)
+
+- Fixed schema verification script to handle cross-schema references properly
+- Fixed copy-schemas script to handle subdirectories (ota/) correctly
+
+### Notes (v0.3.1)
+
+- CI hardening release: enhanced validation workflows and tooling
+- No breaking changes to existing schema JSON or validator logic
+- Node 18+ tested; Node 20 primary support
+- Deep path import remains fully supported for backward compatibility
+
+## 2025-09-27 (v0.3.0)
+
+### Added (v0.3.0)
+
+- OTA firmware manifest JSON Schema (`schemas/ota/ota-manifest.schema.json`) supporting both rich and minimal manifest variants.
+- Validation fixtures for four manifest shapes (rich dev, rich prod w/chunk objects, rich prod w/hash array, minimal dev) under `test/artifacts/ota/`.
+- Validation script `scripts/validate-ota-manifest.js` (invoked via `npm run validate:ota`).
+- TypeScript definitions `types/ota-manifest.d.ts` including discriminated union helpers.
+
+### Notes (v0.3.0)
+
+- Pending CI: Dedicated GitHub Actions workflow to automatically validate OTA manifest fixtures will be added in a follow-up (previous attempt blocked by path creation limitation in automation interface).
+- Minor version bump justified by new publicly consumable schema & types (no breaking changes to existing MQTT payload schemas; `schema_version: 1` unchanged).
+
 ## 2025-09-22 (v0.2.1)
 
 ### Fixed (v0.2.1)
@@ -50,9 +106,9 @@
 - Introduced base envelope schema (`envelope.schema.json`).
 - Added sensor data (`sensor_data.schema.json`).
 - Added sensor heartbeat (`sensor_heartbeat.schema.json`).
+- Added sensor status (`sensor_status.schema.json`).
 - Added gateway metrics (`gateway_metrics.schema.json`).
 - Added gateway info (`gateway_info.schema.json`).
-- Added sensor status (`sensor_status.schema.json`).
 - Added firmware update status (`firmware_status.schema.json`).
 - Added control/command response (`control_response.schema.json`).
 - Added operational validation rules (`validation_rules.md`).

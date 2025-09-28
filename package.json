@@ -1,6 +1,6 @@
 {
   "name": "@alteriom/mqtt-schema",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Alteriom MQTT v1 schemas, TypeScript types, and validation helpers for web integration",
   "license": "MIT",
   "author": "Alteriom Development Team",
@@ -87,25 +87,35 @@
     "node": ">=16.0.0"
   },
   "scripts": {
+    "// Build Scripts": "====================",
     "prebuild": "npm run clean && node scripts/copy-schemas.cjs",
     "build:cjs": "tsc -p tsconfig.json",
     "build:esm": "tsc -p tsconfig.esm.json && node scripts/post-esm.cjs",
     "build": "npm run build:cjs && npm run build:esm && node scripts/copy-schemas.cjs",
     "clean": "rimraf dist schemas",
     "prepare": "npm run build",
-    "lint": "echo 'No linter configured'",
+    
+    "// Testing & Validation": "====================",
+    "lint": "echo 'No linter configured - consider adding ESLint for future releases'",
     "test": "node test/validate-fixtures.cjs",
+    "test:ota": "node scripts/validate-ota-manifest.js",
     "verify:schemas": "node scripts/check-schema-sync.cjs",
     "verify:release": "node scripts/check-release-integrity.cjs",
     "verify": "npm run verify:schemas && npm run verify:release && npm test",
     "verify:all": "node scripts/verify_all.cjs",
+    
+    "// Release Management": "====================",
     "release:prepare": "node scripts/release-prepare.cjs",
     "wiki:generate": "node scripts/generate-wiki.cjs",
+    
+    "// Repository Metadata": "====================",
     "metadata:report": "alteriom-metadata report --org-tag alteriom || echo 'metadata report failed'",
     "metadata:validate": "alteriom-metadata validate --org-tag alteriom || echo 'metadata validate failed'",
     "metadata:apply": "alteriom-metadata apply --org-tag alteriom",
     "metadata:apply:dry": "alteriom-metadata dry-run --org-tag alteriom",
-    "validate:ota": "node scripts/validate-ota-manifest.js"
+    
+    "// Legacy Aliases": "====================",
+    "validate:ota": "npm run test:ota"
   },
   "keywords": [
     "alteriom",

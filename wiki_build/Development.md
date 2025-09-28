@@ -4,6 +4,8 @@
 npm install @alteriom/mqtt-schema ajv ajv-formats
 ```
 
+**Support & Compatibility**: Node 18+ tested; Node 20 primary. Dual CJS/ESM builds.
+
 Validate a JSON payload (object already parsed):
 
 ```ts

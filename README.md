@@ -226,7 +226,38 @@ Backward‑compatible additions: new optional properties or enums, documented in
 
 Issues & PRs welcome. Ensure firmware repo schemas remain the authoritative source—do not manually edit generated `schema_data.ts`.
 
-**Before opening a PR:** Run `npm run verify` to validate schemas, changelog, and tests.
+### Development Workflow
+
+**Before opening a PR:** Run the comprehensive validation suite:
+
+```bash
+npm run verify        # Schema sync + changelog + fixtures
+npm run verify:all    # Additional schema compilation + OTA manifest validation  
+npm test              # Enhanced fixture validation with detailed reporting
+```
+
+**Available validation scripts:**
+- `npm run test` - Cross-platform fixture validation (CJS/ESM) with enhanced error reporting
+- `npm run test:ota` - OTA manifest fixture validation
+- `npm run verify:schemas` - Ensure schemas are synced from source directory
+- `npm run verify:release` - Check changelog contains current version
+- `npm run verify:all` - Comprehensive schema compilation and fixture validation
+
+### Script Organization
+
+Scripts are organized by category in `package.json`:
+- **Build Scripts**: `build`, `build:cjs`, `build:esm`, `clean`, etc.
+- **Testing & Validation**: `test`, `verify:*`, etc.  
+- **Release Management**: `release:prepare`, `wiki:generate`
+- **Repository Metadata**: `metadata:*` (organization compliance)
+
+### Release Process
+
+See `PUBLISH_CHECKLIST.md` for detailed release procedures. Quick summary:
+1. Update schemas in `docs/mqtt_schema/`
+2. Run `npm run verify` to ensure everything is valid
+3. Use `npm run release:prepare -- patch|minor|major` for version bumping
+4. Follow checklist for tagging and publishing
 
 ## Security
 
