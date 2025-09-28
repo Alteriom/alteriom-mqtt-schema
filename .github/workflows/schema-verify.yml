@@ -1,0 +1,68 @@
+name: Schema Verify
+
+on:
+  pull_request:
+    paths:
+      - 'schemas/**'
+      - 'types/**'
+      - 'scripts/**'
+      - 'test/**'
+      - 'package.json'
+      - 'package-lock.json'
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  verify:
+    name: verify (node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [18.x, 20.x]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'npm'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Core verify
+        run: npm run verify
+        continue-on-error: false
+
+      - name: Unified verify_all
+        run: npm run verify:all
+        continue-on-error: false
+
+      - name: Collect debug info (on failure)
+        if: failure()
+        run: |
+          echo '--- SCHEMAS TREE ---' > verify_debug.txt
+          find schemas -maxdepth 3 -type f -name '*.json' >> verify_debug.txt
+          echo '\n--- GIT STATUS ---' >> verify_debug.txt
+          git status -sb >> verify_debug.txt
+          echo '\n--- PACKAGE.JSON EXPORTS ---' >> verify_debug.txt
+          jq '.exports' package.json >> verify_debug.txt || true
+
+      - name: Upload debug artifact
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: schema-verify-debug-${{ matrix.node }}
+          path: verify_debug.txt
+
+      - name: Summary
+        if: always()
+        run: |
+          echo \"# Schema Verify (${ { matrix.node } })\" >> $GITHUB_STEP_SUMMARY
+          echo \"Result: ${{ job.status }}\" >> $GITHUB_STEP_SUMMARY
