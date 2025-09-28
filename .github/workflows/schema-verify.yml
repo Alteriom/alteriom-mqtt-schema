@@ -66,5 +66,5 @@ jobs:
       - name: Summary
         if: always()
         run: |
-          echo \"# Schema Verify (${ { matrix.node } })\" >> $GITHUB_STEP_SUMMARY
-          echo \"Result: ${{ job.status }}\" >> $GITHUB_STEP_SUMMARY
+          echo "# Schema Verify (${{ matrix.node }})" >> $GITHUB_STEP_SUMMARY
+          echo "Result: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
