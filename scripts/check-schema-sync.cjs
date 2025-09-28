@@ -30,10 +30,20 @@ function readJson(p){
   try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch (e) { return { __read_error: e.message }; }
 }
 
-// Collect expected schema JSON files (explicit pattern: *.schema.json + mqtt_v1_bundle.json)
-const docFiles = fs.readdirSync(docsDir)
-  .filter(f => (f.endsWith('.schema.json') || f === 'mqtt_v1_bundle.json'))
-  .sort();
+// Recursively collect expected schema JSON files (explicit pattern: *.schema.json + mqtt_v1_bundle.json)
+function* walkJsonFiles(dir, relativeDir = '') {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const relativePath = relativeDir ? path.join(relativeDir, entry.name) : entry.name;
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      yield* walkJsonFiles(fullPath, relativePath);
+    } else if (entry.name.endsWith('.schema.json') || entry.name === 'mqtt_v1_bundle.json') {
+      yield relativePath;
+    }
+  }
+}
+
+const docFiles = Array.from(walkJsonFiles(docsDir)).sort();
 
 let failures = 0;
 const results = [];
