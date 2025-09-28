@@ -22,17 +22,22 @@ on:
 
 jobs:
   validate:
+    name: validate (node ${{ matrix.node }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [18.x, 20.x]
     permissions:
       contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Use Node.js 20.x
+      - name: Use Node.js ${{ matrix.node }}
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ matrix.node }}
           cache: 'npm'
 
       - name: Install dependencies
@@ -47,5 +52,5 @@ jobs:
       - name: Summary
         if: always()
         run: |
-          echo "# OTA Manifest Validation" >> $GITHUB_STEP_SUMMARY
+          echo "# OTA Manifest Validation (${{ matrix.node }})" >> $GITHUB_STEP_SUMMARY
           echo "All validation steps completed." >> $GITHUB_STEP_SUMMARY

@@ -1,6 +1,8 @@
 # @alteriom/mqtt-schema
 
 ![Metadata Compliance](https://github.com/Alteriom/alteriom-mqtt-schema/actions/workflows/metadata-compliance.yml/badge.svg)
+![OTA Manifest Validation](https://github.com/Alteriom/alteriom-mqtt-schema/actions/workflows/validate-ota-manifest.yml/badge.svg)
+![Schema Verify](https://github.com/Alteriom/alteriom-mqtt-schema/actions/workflows/schema-verify.yml/badge.svg)
 ![npm version](https://img.shields.io/npm/v/@alteriom/mqtt-schema.svg)
 ![npm downloads](https://img.shields.io/npm/dm/@alteriom/mqtt-schema.svg)
 ![license](https://img.shields.io/npm/l/@alteriom/mqtt-schema.svg)
@@ -37,6 +39,8 @@ Firmware emits structured MQTT payloads that must remain tightly aligned with we
 ```bash
 npm install @alteriom/mqtt-schema ajv ajv-formats
 ```
+
+**Support & Compatibility**: Node 18+ tested; Node 20 primary. Dual CJS/ESM builds.
 
 ## Quick Start
 
@@ -84,6 +88,43 @@ Access raw schema JSON (if you need to introspect or power form generation):
 ```ts
 import envelopeSchema from '@alteriom/mqtt-schema/schemas/envelope.schema.json';
 ```
+
+## OTA Firmware Manifest Schema (v0.3.1+)
+
+The package includes OTA firmware manifest schema with both rich and minimal formats.
+
+**Preferred: Stable alias import** (v0.3.1+):
+```ts
+import otaManifestSchema from '@alteriom/mqtt-schema/ota-manifest';
+import { OtaManifest, isRichManifest } from '@alteriom/mqtt-schema/types/ota-manifest';
+```
+
+**Legacy: Deep path import** (still supported):
+```ts
+import otaManifestSchema from '@alteriom/mqtt-schema/schemas/ota/ota-manifest.schema.json';
+```
+
+**Usage example:**
+```ts
+import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
+import otaManifestSchema from '@alteriom/mqtt-schema/ota-manifest';
+import { OtaManifest } from '@alteriom/mqtt-schema/types/ota-manifest';
+
+const ajv = new Ajv({ allErrors: true, strict: false });
+addFormats(ajv);
+const validate = ajv.compile<OtaManifest>(otaManifestSchema as any);
+
+const manifest: OtaManifest = JSON.parse(manifestJson);
+if (!validate(manifest)) {
+  console.error('Invalid OTA manifest:', validate.errors);
+}
+```
+
+Supported formats:
+- **Rich manifest**: environment + branch + manifests object
+- **Minimal environment map**: environment → channels mapping  
+- **Chunk variants**: structured objects or SHA256 array
 
 ## API Surface
 
@@ -184,6 +225,8 @@ Backward‑compatible additions: new optional properties or enums, documented in
 ## Contributing
 
 Issues & PRs welcome. Ensure firmware repo schemas remain the authoritative source—do not manually edit generated `schema_data.ts`.
+
+**Before opening a PR:** Run `npm run verify` to validate schemas, changelog, and tests.
 
 ## Security
 
