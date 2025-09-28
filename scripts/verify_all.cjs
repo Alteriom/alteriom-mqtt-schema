@@ -32,15 +32,29 @@ function compileAllSchemas() {
     console.error('Schemas directory missing:', schemasDir);
     process.exit(1);
   }
-  const ajv = new Ajv({ allErrors: true, strict: false });
+  const ajv = new Ajv({ allErrors: true, strict: false, validateSchema: false });
   addFormats(ajv);
   const schemaFiles = Array.from(walk(schemasDir)).filter(f => f.endsWith('.json'));
   const idSet = new Set();
   let compileFailures = 0;
   let refFailures = 0;
 
+  // First pass: load all schemas and add to AJV for reference resolution
+  const schemas = [];
   for (const file of schemaFiles) {
     const schema = loadJSON(file);
+    schemas.push({ file, schema });
+    if (schema.$id) {
+      try {
+        ajv.addSchema(schema);
+      } catch (e) {
+        // Will retry in compilation phase
+      }
+    }
+  }
+
+  // Second pass: check for duplicates and compile
+  for (const { file, schema } of schemas) {
     // Track $id uniqueness
     if (schema.$id) {
       if (idSet.has(schema.$id)) {

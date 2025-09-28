@@ -1,0 +1,187 @@
+{
+  "$id": "https://schemas.alteriom.com/ota/ota-manifest.schema.json",
+  "title": "Alteriom OTA Firmware Manifest",
+  "description": "Schema for Alteriom OTA firmware manifests supporting both rich and minimal variants",
+  "type": "object",
+  "oneOf": [
+    {
+      "title": "Rich Manifest",
+      "description": "Rich manifest format with environment, branch, and manifests object",
+      "type": "object",
+      "properties": {
+        "environment": {
+          "type": "string",
+          "description": "Target environment (e.g., universal-sensor)"
+        },
+        "branch": {
+          "type": "string",
+          "description": "Source control branch the build originated from"
+        },
+        "manifests": {
+          "type": "object",
+          "description": "Build variants keyed by type (dev, prod, etc.)",
+          "patternProperties": {
+            "^[a-z][a-z0-9-]*$": {
+              "$ref": "#/$defs/richEntry"
+            }
+          },
+          "additionalProperties": false,
+          "minProperties": 1
+        }
+      },
+      "required": ["environment", "branch", "manifests"],
+      "additionalProperties": true
+    },
+    {
+      "title": "Minimal Environment Map",
+      "description": "Minimal manifest format as environment -> channels mapping",
+      "type": "object",
+      "patternProperties": {
+        "^[a-z][a-z0-9-]*$": {
+          "type": "object",
+          "description": "Environment entry with channel mappings",
+          "patternProperties": {
+            "^[a-z][a-z0-9-]*$": {
+              "$ref": "#/$defs/minimalChannel"
+            }
+          },
+          "additionalProperties": false,
+          "minProperties": 1
+        }
+      },
+      "additionalProperties": false,
+      "minProperties": 1
+    }
+  ],
+  "$defs": {
+    "richEntry": {
+      "title": "Rich Build Entry",
+      "description": "Rich manifest build entry (dev or prod)",
+      "type": "object",
+      "properties": {
+        "build_type": {
+          "type": "string",
+          "enum": ["dev", "prod"],
+          "description": "Build type identifier"
+        },
+        "file": {
+          "type": "string",
+          "description": "Firmware binary filename"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Total firmware size in bytes"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA256 hash of the full firmware binary (lowercase hex)"
+        },
+        "firmware_version": {
+          "type": "string",
+          "description": "Semantic or build version string"
+        },
+        "built": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO8601 timestamp when built"
+        },
+        "ota_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Absolute or relative URL to fetch the firmware"
+        },
+        "chunk_size": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Size of each chunk except possibly the last"
+        },
+        "chunks": {
+          "description": "Either structured chunk objects or array of SHA256 strings",
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/chunkObject"
+              },
+              "description": "Array of structured chunk objects with metadata"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$",
+                "description": "SHA256 hash of chunk (lowercase hex)"
+              },
+              "description": "Array of SHA256 strings for chunks"
+            }
+          ]
+        }
+      },
+      "required": ["build_type", "file", "size", "sha256", "firmware_version", "built", "ota_url"],
+      "additionalProperties": true
+    },
+    "chunkObject": {
+      "title": "OTA Chunk Object",
+      "description": "Structured chunk metadata with offset and size",
+      "type": "object",
+      "properties": {
+        "index": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "0-based sequential chunk index"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Byte offset within firmware binary"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Chunk size in bytes"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA256 hash of the chunk (lowercase hex)"
+        }
+      },
+      "required": ["index", "offset", "size", "sha256"],
+      "additionalProperties": true
+    },
+    "minimalChannel": {
+      "title": "Minimal Channel Entry",
+      "description": "Minimal manifest channel entry",
+      "type": "object",
+      "properties": {
+        "file": {
+          "type": "string",
+          "description": "Firmware binary filename"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Total firmware size in bytes"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA256 hash of the firmware binary (lowercase hex)"
+        },
+        "version": {
+          "type": "string",
+          "description": "Firmware version string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO8601 timestamp"
+        }
+      },
+      "required": ["file", "size", "sha256", "version", "timestamp"],
+      "additionalProperties": true
+    }
+  }
+}
