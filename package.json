@@ -1,6 +1,6 @@
 {
   "name": "@alteriom/mqtt-schema",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Alteriom MQTT v1 schemas, TypeScript types, and validation helpers for web integration",
   "license": "MIT",
   "author": "Alteriom Development Team",

@@ -1,22 +1,27 @@
 # MQTT Schema Artifacts Changelog
 
-## Unreleased (v0.3.1)
+## 2025-09-28 (v0.3.1)
 
-### Planned / Pending
-- Add multi-runtime Node matrix to OTA manifest validation workflow (18.x, 20.x)
-- Add new `schema-verify.yml` general workflow (compile + fixtures + id/ref checks)
-- Implement unified verify script (`scripts/verify_all.cjs`) – INITIAL IMPLEMENTATION ADDED
-- Add README badges for Schema Verify + matrix OTA validation
-- Introduce stable alias export `@alteriom/mqtt-schema/ota-manifest` (ADDED)
-- Add changelog entry finalization + version bump prior to release tag
+### Added (v0.3.1)
 
-### Added (so far)
-- Alias export path `@alteriom/mqtt-schema/ota-manifest` (non-breaking, deep path retained)
-- Unified verification script framework with compilation, fixture, id/ref checks
+- Added stable OTA manifest alias export (`@alteriom/mqtt-schema/ota-manifest`)
+- Added multi-runtime Node validation matrix (18.x, 20.x) for OTA manifest validation workflow
+- Added general schema verification workflow (Ajv compile + fixture validation + id/ref checks)
+- Added unified verify script & `npm run verify:all`
+- Added README badges and usage examples
+- Internal: improved validation consistency (duplicate id & ref checks)
 
-### Notes
-- Version not yet bumped; will change from 0.3.0 -> 0.3.1 once workflows and README updates are merged.
-- Deep path import remains fully supported for backward compatibility.
+### Fixed (v0.3.1)
+
+- Fixed schema verification script to handle cross-schema references properly
+- Fixed copy-schemas script to handle subdirectories (ota/) correctly
+
+### Notes (v0.3.1)
+
+- CI hardening release: enhanced validation workflows and tooling
+- No breaking changes to existing schema JSON or validator logic
+- Node 18+ tested; Node 20 primary support
+- Deep path import remains fully supported for backward compatibility
 
 ## 2025-09-27 (v0.3.0)
 
