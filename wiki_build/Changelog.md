@@ -1,5 +1,24 @@
 # Changelog
 
+## 2025-09-28 (v0.3.2 - Pending)
+
+### Added (v0.3.2)
+
+- Enhanced documentation review and validation for better release preparation
+- Improved script error reporting and consistency
+- Better package.json script organization and documentation
+
+### Fixed (v0.3.2)
+
+- Enhanced validation script output formatting for better user experience
+- Improved release preparation process documentation
+
+### Notes (v0.3.2)
+
+- Patch release focused on documentation improvements and validation script enhancements
+- No breaking changes to schema JSON or validator logic
+- Continued Node 18+ support with Node 20 as primary target
+
 ## 2025-09-28 (v0.3.1)
 
 ### Added (v0.3.1)
