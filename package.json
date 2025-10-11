@@ -1,6 +1,6 @@
 {
   "name": "@alteriom/mqtt-schema",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "Alteriom MQTT v1 schemas, TypeScript types, and validation helpers for web integration",
   "license": "MIT",
   "author": "Alteriom Development Team",
@@ -94,7 +94,6 @@
     "build": "npm run build:cjs && npm run build:esm && node scripts/copy-schemas.cjs",
     "clean": "rimraf dist schemas",
     "prepare": "npm run build",
-    
     "// Testing & Validation": "====================",
     "lint": "echo 'No linter configured - consider adding ESLint for future releases'",
     "test": "node test/validate-fixtures.cjs",
@@ -103,17 +102,14 @@
     "verify:release": "node scripts/check-release-integrity.cjs",
     "verify": "npm run verify:schemas && npm run verify:release && npm test",
     "verify:all": "node scripts/verify_all.cjs",
-    
     "// Release Management": "====================",
     "release:prepare": "node scripts/release-prepare.cjs",
     "wiki:generate": "node scripts/generate-wiki.cjs",
-    
     "// Repository Metadata": "====================",
     "metadata:report": "alteriom-metadata report --org-tag alteriom || echo 'metadata report failed'",
     "metadata:validate": "alteriom-metadata validate --org-tag alteriom || echo 'metadata validate failed'",
     "metadata:apply": "alteriom-metadata apply --org-tag alteriom",
     "metadata:apply:dry": "alteriom-metadata dry-run --org-tag alteriom",
-    
     "// Legacy Aliases": "====================",
     "validate:ota": "npm run test:ota"
   },

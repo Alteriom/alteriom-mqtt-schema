@@ -1,7 +1,7 @@
 import Ajv from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 // Schemas embedded via generated schema_data.ts (copy-schemas.cjs) to avoid filesystem dependency
-import { envelope_schema, sensor_data_schema, sensor_heartbeat_schema, sensor_status_schema, gateway_info_schema, gateway_metrics_schema, firmware_status_schema, control_response_schema } from './schema_data.js';
+import { envelope_schema, sensor_data_schema, sensor_heartbeat_schema, sensor_status_schema, gateway_info_schema, gateway_metrics_schema, firmware_status_schema, control_response_schema, mesh_node_list_schema, mesh_topology_schema, mesh_alert_schema } from './schema_data.js';
 // Load JSON schemas via createRequire so it works in both CJS and ESM builds without import assertions.
 // Bind embedded schema objects for Ajv consumption
 const envelope = envelope_schema;
@@ -12,6 +12,9 @@ const gatewayInfo = gateway_info_schema;
 const gatewayMetrics = gateway_metrics_schema;
 const firmwareStatus = firmware_status_schema;
 const controlResponse = control_response_schema;
+const meshNodeList = mesh_node_list_schema;
+const meshTopology = mesh_topology_schema;
+const meshAlert = mesh_alert_schema;
 // Lazy singleton Ajv instance so consumers can optionally supply their own if needed.
 let _ajv = null;
 function getAjv(opts) {
@@ -43,6 +46,9 @@ const gatewayInfoValidate = ajv.compile(gatewayInfo);
 const gatewayMetricsValidate = ajv.compile(gatewayMetrics);
 const firmwareStatusValidate = ajv.compile(firmwareStatus);
 const controlResponseValidate = ajv.compile(controlResponse);
+const meshNodeListValidate = ajv.compile(meshNodeList);
+const meshTopologyValidate = ajv.compile(meshTopology);
+const meshAlertValidate = ajv.compile(meshAlert);
 export const validators = {
     sensorData: (d) => toResult(sensorDataValidate, d),
     sensorHeartbeat: (d) => toResult(sensorHeartbeatValidate, d),
@@ -50,7 +56,10 @@ export const validators = {
     gatewayInfo: (d) => toResult(gatewayInfoValidate, d),
     gatewayMetrics: (d) => toResult(gatewayMetricsValidate, d),
     firmwareStatus: (d) => toResult(firmwareStatusValidate, d),
-    controlResponse: (d) => toResult(controlResponseValidate, d)
+    controlResponse: (d) => toResult(controlResponseValidate, d),
+    meshNodeList: (d) => toResult(meshNodeListValidate, d),
+    meshTopology: (d) => toResult(meshTopologyValidate, d),
+    meshAlert: (d) => toResult(meshAlertValidate, d)
 };
 export function validateMessage(kind, data) {
     return validators[kind](data);
@@ -63,6 +72,12 @@ export function classifyAndValidate(data) {
         return { kind: 'gatewayMetrics', result: validators.gatewayMetrics(data) };
     if (data.sensors)
         return { kind: 'sensorData', result: validators.sensorData(data) };
+    if (Array.isArray(data.nodes))
+        return { kind: 'meshNodeList', result: validators.meshNodeList(data) };
+    if (Array.isArray(data.connections))
+        return { kind: 'meshTopology', result: validators.meshTopology(data) };
+    if (Array.isArray(data.alerts))
+        return { kind: 'meshAlert', result: validators.meshAlert(data) };
     if (data.progress_pct !== undefined || (data.status && ['pending', 'downloading', 'flashing', 'verifying', 'rebooting', 'completed', 'failed'].includes(data.status)))
         return { kind: 'firmwareStatus', result: validators.firmwareStatus(data) };
     if (data.status && ['online', 'offline', 'updating', 'error'].includes(data.status) && data.device_type === 'sensor')

@@ -383,6 +383,211 @@ export const control_response_schema = {
     },
     "additionalProperties": true
 };
+export const mesh_node_list_schema = {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://schemas.alteriom.io/mqtt/v1/mesh_node_list.schema.json",
+    "title": "Mesh Node List v1",
+    "allOf": [
+        {
+            "$ref": "envelope.schema.json"
+        }
+    ],
+    "type": "object",
+    "required": [
+        "nodes"
+    ],
+    "properties": {
+        "nodes": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "node_id"
+                ],
+                "properties": {
+                    "node_id": {
+                        "type": "string",
+                        "description": "Unique node identifier"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "online",
+                            "offline",
+                            "unreachable"
+                        ],
+                        "description": "Current node status"
+                    },
+                    "last_seen": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Last communication timestamp"
+                    },
+                    "signal_strength": {
+                        "type": "integer",
+                        "minimum": -200,
+                        "maximum": 0,
+                        "description": "Signal strength in dBm"
+                    }
+                },
+                "additionalProperties": true
+            }
+        },
+        "node_count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Total number of nodes"
+        },
+        "mesh_id": {
+            "type": "string",
+            "description": "Mesh network identifier"
+        }
+    },
+    "additionalProperties": true
+};
+export const mesh_topology_schema = {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://schemas.alteriom.io/mqtt/v1/mesh_topology.schema.json",
+    "title": "Mesh Network Topology v1",
+    "allOf": [
+        {
+            "$ref": "envelope.schema.json"
+        }
+    ],
+    "type": "object",
+    "required": [
+        "connections"
+    ],
+    "properties": {
+        "connections": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "from_node",
+                    "to_node"
+                ],
+                "properties": {
+                    "from_node": {
+                        "type": "string",
+                        "description": "Source node ID"
+                    },
+                    "to_node": {
+                        "type": "string",
+                        "description": "Destination node ID"
+                    },
+                    "link_quality": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1,
+                        "description": "Link quality score (0-1)"
+                    },
+                    "latency_ms": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "Link latency in milliseconds"
+                    },
+                    "hop_count": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "description": "Number of hops in path"
+                    }
+                },
+                "additionalProperties": true
+            }
+        },
+        "root_node": {
+            "type": "string",
+            "description": "Root node ID (gateway/bridge)"
+        },
+        "total_connections": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Total number of connections"
+        }
+    },
+    "additionalProperties": true
+};
+export const mesh_alert_schema = {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://schemas.alteriom.io/mqtt/v1/mesh_alert.schema.json",
+    "title": "Mesh Network Alert v1",
+    "allOf": [
+        {
+            "$ref": "envelope.schema.json"
+        }
+    ],
+    "type": "object",
+    "required": [
+        "alerts"
+    ],
+    "properties": {
+        "alerts": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "alert_type",
+                    "severity",
+                    "message"
+                ],
+                "properties": {
+                    "alert_type": {
+                        "type": "string",
+                        "enum": [
+                            "low_memory",
+                            "node_offline",
+                            "connection_lost",
+                            "high_latency",
+                            "packet_loss",
+                            "firmware_mismatch",
+                            "configuration_error",
+                            "security_warning",
+                            "other"
+                        ],
+                        "description": "Type of alert"
+                    },
+                    "severity": {
+                        "type": "string",
+                        "enum": [
+                            "critical",
+                            "warning",
+                            "info"
+                        ],
+                        "description": "Alert severity level"
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Human-readable alert message"
+                    },
+                    "node_id": {
+                        "type": "string",
+                        "description": "Related node ID (if applicable)"
+                    },
+                    "metric_value": {
+                        "type": "number",
+                        "description": "Related metric value (if applicable)"
+                    },
+                    "threshold": {
+                        "type": "number",
+                        "description": "Threshold that triggered alert"
+                    },
+                    "alert_id": {
+                        "type": "string",
+                        "description": "Unique alert identifier"
+                    }
+                },
+                "additionalProperties": true
+            }
+        },
+        "alert_count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Total number of active alerts"
+        }
+    },
+    "additionalProperties": true
+};
 export const mqtt_v1_bundle_json = {
     "$comment": "Convenience bundle referencing all v1 schema artifact filenames for tooling discovery.",
     "version": 1,
@@ -394,7 +599,10 @@ export const mqtt_v1_bundle_json = {
         "gateway_info": "gateway_info.schema.json",
         "gateway_metrics": "gateway_metrics.schema.json",
         "firmware_status": "firmware_status.schema.json",
-        "control_response": "control_response.schema.json"
+        "control_response": "control_response.schema.json",
+        "mesh_node_list": "mesh_node_list.schema.json",
+        "mesh_topology": "mesh_topology.schema.json",
+        "mesh_alert": "mesh_alert.schema.json"
     }
 };
 export const ota_ota_manifest_schema = {

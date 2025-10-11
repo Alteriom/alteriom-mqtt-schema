@@ -173,6 +173,9 @@ All Ajv validator functions are compiled once at module load. For typical web us
 | gateway_metrics.schema.json | Gateway performance metrics |
 | firmware_status.schema.json | Firmware update lifecycle events |
 | control_response.schema.json | Command/control response messages |
+| mesh_node_list.schema.json | Mesh network node list with status |
+| mesh_topology.schema.json | Mesh network topology and connections |
+| mesh_alert.schema.json | Mesh network alerts and warnings |
 
 ## Exports
 
@@ -187,12 +190,15 @@ All Ajv validator functions are compiled once at module load. For typical web us
 
 ### Validator Keys
 
-`sensorData`, `sensorHeartbeat`, `sensorStatus`, `gatewayInfo`, `gatewayMetrics`, `firmwareStatus`, `controlResponse`
+`sensorData`, `sensorHeartbeat`, `sensorStatus`, `gatewayInfo`, `gatewayMetrics`, `firmwareStatus`, `controlResponse`, `meshNodeList`, `meshTopology`, `meshAlert`
 
 ### Classification Heuristics (Simplified)
 
 - `metrics` → `gatewayMetrics`
 - `sensors` → `sensorData`
+- `nodes` array → `meshNodeList`
+- `connections` array → `meshTopology`
+- `alerts` array → `meshAlert`
 - `progress_pct` or OTA status keywords → `firmwareStatus`
 - `status` + `device_type: sensor` → `sensorStatus`
 - `status: ok|error` (no other match) → `controlResponse`

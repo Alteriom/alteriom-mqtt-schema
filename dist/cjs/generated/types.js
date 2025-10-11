@@ -13,6 +13,9 @@ exports.isGatewayInfoMessage = isGatewayInfoMessage;
 exports.isGatewayMetricsMessage = isGatewayMetricsMessage;
 exports.isFirmwareStatusMessage = isFirmwareStatusMessage;
 exports.isControlResponseMessage = isControlResponseMessage;
+exports.isMeshNodeListMessage = isMeshNodeListMessage;
+exports.isMeshTopologyMessage = isMeshTopologyMessage;
+exports.isMeshAlertMessage = isMeshAlertMessage;
 exports.classifyMessage = classifyMessage;
 exports.basicValidate = basicValidate;
 exports.parseMessage = parseMessage;
@@ -38,10 +41,25 @@ function isFirmwareStatusMessage(msg) {
 function isControlResponseMessage(msg) {
     return msg && msg.schema_version === 1 && (msg.status === 'ok' || msg.status === 'error') && 'timestamp' in msg;
 }
+function isMeshNodeListMessage(msg) {
+    return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && Array.isArray(msg.nodes);
+}
+function isMeshTopologyMessage(msg) {
+    return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && Array.isArray(msg.connections);
+}
+function isMeshAlertMessage(msg) {
+    return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && Array.isArray(msg.alerts);
+}
 function classifyMessage(msg) {
     if (isSensorDataMessage(msg))
         return msg;
     if (isGatewayMetricsMessage(msg))
+        return msg;
+    if (isMeshNodeListMessage(msg))
+        return msg;
+    if (isMeshTopologyMessage(msg))
+        return msg;
+    if (isMeshAlertMessage(msg))
         return msg;
     if (isSensorStatusMessage(msg))
         return msg;

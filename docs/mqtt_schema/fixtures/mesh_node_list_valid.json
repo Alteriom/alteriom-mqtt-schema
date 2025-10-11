@@ -1,0 +1,1 @@
+{"schema_version":1,"device_id":"gateway-001","device_type":"gateway","timestamp":"2024-10-11T18:00:00Z","firmware_version":"2.1.0","nodes":[{"node_id":"123456","status":"online","last_seen":"2024-10-11T18:00:00Z","signal_strength":-45},{"node_id":"789012","status":"online","last_seen":"2024-10-11T17:59:58Z","signal_strength":-62}],"node_count":2,"mesh_id":"AlteriomMesh"}

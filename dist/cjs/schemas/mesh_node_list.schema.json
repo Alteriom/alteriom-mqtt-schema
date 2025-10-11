@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/mesh_node_list.schema.json",
+  "title": "Mesh Node List v1",
+  "allOf": [{"$ref": "envelope.schema.json"}],
+  "type": "object",
+  "required": ["nodes"],
+  "properties": {
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["node_id"],
+        "properties": {
+          "node_id": {
+            "type": "string",
+            "description": "Unique node identifier"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["online", "offline", "unreachable"],
+            "description": "Current node status"
+          },
+          "last_seen": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last communication timestamp"
+          },
+          "signal_strength": {
+            "type": "integer",
+            "minimum": -200,
+            "maximum": 0,
+            "description": "Signal strength in dBm"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "node_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of nodes"
+    },
+    "mesh_id": {
+      "type": "string",
+      "description": "Mesh network identifier"
+    }
+  },
+  "additionalProperties": true
+}

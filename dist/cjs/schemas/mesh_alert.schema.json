@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/mesh_alert.schema.json",
+  "title": "Mesh Network Alert v1",
+  "allOf": [{"$ref": "envelope.schema.json"}],
+  "type": "object",
+  "required": ["alerts"],
+  "properties": {
+    "alerts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["alert_type", "severity", "message"],
+        "properties": {
+          "alert_type": {
+            "type": "string",
+            "enum": [
+              "low_memory",
+              "node_offline",
+              "connection_lost",
+              "high_latency",
+              "packet_loss",
+              "firmware_mismatch",
+              "configuration_error",
+              "security_warning",
+              "other"
+            ],
+            "description": "Type of alert"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "warning", "info"],
+            "description": "Alert severity level"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable alert message"
+          },
+          "node_id": {
+            "type": "string",
+            "description": "Related node ID (if applicable)"
+          },
+          "metric_value": {
+            "type": "number",
+            "description": "Related metric value (if applicable)"
+          },
+          "threshold": {
+            "type": "number",
+            "description": "Threshold that triggered alert"
+          },
+          "alert_id": {
+            "type": "string",
+            "description": "Unique alert identifier"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "alert_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of active alerts"
+    }
+  },
+  "additionalProperties": true
+}
