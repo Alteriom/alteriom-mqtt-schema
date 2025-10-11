@@ -1,5 +1,25 @@
 # MQTT Schema Artifacts Changelog
 
+## Unreleased (v0.4.0)
+
+### Added (v0.4.0)
+
+- Added `mesh_node_list.schema.json` for reporting active mesh network nodes with status
+- Added `mesh_topology.schema.json` for reporting mesh network topology and connections
+- Added `mesh_alert.schema.json` for reporting mesh network alerts and warnings
+- Added corresponding TypeScript interfaces: `MeshNodeListMessage`, `MeshTopologyMessage`, `MeshAlertMessage`
+- Added type guards: `isMeshNodeListMessage`, `isMeshTopologyMessage`, `isMeshAlertMessage`
+- Added validators: `meshNodeList`, `meshTopology`, `meshAlert`
+- Enhanced classification heuristics to detect mesh message types (`nodes`, `connections`, `alerts` arrays)
+- Added test fixtures for all three new mesh schemas
+
+### Notes (v0.4.0)
+
+- Minor version bump justified by new mesh network schemas for painlessMesh integration
+- All mesh schemas extend base envelope and follow established patterns
+- No breaking changes to existing MQTT payload schemas; `schema_version: 1` unchanged
+- Maintains backward compatibility with all existing message types
+
 ## 2025-09-28 (v0.3.2)
 
 ### Added (v0.3.2)

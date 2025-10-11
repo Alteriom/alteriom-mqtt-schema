@@ -84,7 +84,49 @@ export interface ControlResponseMessage extends BaseEnvelope {
     message?: string;
     result?: unknown;
 }
-export type AnyMqttV1Message = SensorDataMessage | SensorHeartbeatMessage | SensorStatusMessage | GatewayInfoMessage | GatewayMetricsMessage | FirmwareStatusMessage | ControlResponseMessage;
+export interface MeshNodeListMessage extends BaseEnvelope {
+    device_type: 'gateway';
+    firmware_version: string;
+    nodes: Array<{
+        node_id: string;
+        status?: 'online' | 'offline' | 'unreachable';
+        last_seen?: string;
+        signal_strength?: number;
+        [k: string]: unknown;
+    }>;
+    node_count?: number;
+    mesh_id?: string;
+}
+export interface MeshTopologyMessage extends BaseEnvelope {
+    device_type: 'gateway';
+    firmware_version: string;
+    connections: Array<{
+        from_node: string;
+        to_node: string;
+        link_quality?: number;
+        latency_ms?: number;
+        hop_count?: number;
+        [k: string]: unknown;
+    }>;
+    root_node?: string;
+    total_connections?: number;
+}
+export interface MeshAlertMessage extends BaseEnvelope {
+    device_type: 'gateway';
+    firmware_version: string;
+    alerts: Array<{
+        alert_type: 'low_memory' | 'node_offline' | 'connection_lost' | 'high_latency' | 'packet_loss' | 'firmware_mismatch' | 'configuration_error' | 'security_warning' | 'other';
+        severity: 'critical' | 'warning' | 'info';
+        message: string;
+        node_id?: string;
+        metric_value?: number;
+        threshold?: number;
+        alert_id?: string;
+        [k: string]: unknown;
+    }>;
+    alert_count?: number;
+}
+export type AnyMqttV1Message = SensorDataMessage | SensorHeartbeatMessage | SensorStatusMessage | GatewayInfoMessage | GatewayMetricsMessage | FirmwareStatusMessage | ControlResponseMessage | MeshNodeListMessage | MeshTopologyMessage | MeshAlertMessage;
 export declare function isSensorDataMessage(msg: any): msg is SensorDataMessage;
 export declare function isSensorHeartbeatMessage(msg: any): msg is SensorHeartbeatMessage;
 export declare function isSensorStatusMessage(msg: any): msg is SensorStatusMessage;
@@ -92,6 +134,9 @@ export declare function isGatewayInfoMessage(msg: any): msg is GatewayInfoMessag
 export declare function isGatewayMetricsMessage(msg: any): msg is GatewayMetricsMessage;
 export declare function isFirmwareStatusMessage(msg: any): msg is FirmwareStatusMessage;
 export declare function isControlResponseMessage(msg: any): msg is ControlResponseMessage;
+export declare function isMeshNodeListMessage(msg: any): msg is MeshNodeListMessage;
+export declare function isMeshTopologyMessage(msg: any): msg is MeshTopologyMessage;
+export declare function isMeshAlertMessage(msg: any): msg is MeshAlertMessage;
 export declare function classifyMessage(msg: any): AnyMqttV1Message | null;
 export interface BasicValidationIssue {
     field?: string;

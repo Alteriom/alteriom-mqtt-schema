@@ -303,6 +303,172 @@ export declare const control_response_schema: {
     };
     readonly additionalProperties: true;
 };
+export declare const mesh_node_list_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/mesh_node_list.schema.json";
+    readonly title: "Mesh Node List v1";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }];
+    readonly type: "object";
+    readonly required: readonly ["nodes"];
+    readonly properties: {
+        readonly nodes: {
+            readonly type: "array";
+            readonly items: {
+                readonly type: "object";
+                readonly required: readonly ["node_id"];
+                readonly properties: {
+                    readonly node_id: {
+                        readonly type: "string";
+                        readonly description: "Unique node identifier";
+                    };
+                    readonly status: {
+                        readonly type: "string";
+                        readonly enum: readonly ["online", "offline", "unreachable"];
+                        readonly description: "Current node status";
+                    };
+                    readonly last_seen: {
+                        readonly type: "string";
+                        readonly format: "date-time";
+                        readonly description: "Last communication timestamp";
+                    };
+                    readonly signal_strength: {
+                        readonly type: "integer";
+                        readonly minimum: -200;
+                        readonly maximum: 0;
+                        readonly description: "Signal strength in dBm";
+                    };
+                };
+                readonly additionalProperties: true;
+            };
+        };
+        readonly node_count: {
+            readonly type: "integer";
+            readonly minimum: 0;
+            readonly description: "Total number of nodes";
+        };
+        readonly mesh_id: {
+            readonly type: "string";
+            readonly description: "Mesh network identifier";
+        };
+    };
+    readonly additionalProperties: true;
+};
+export declare const mesh_topology_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/mesh_topology.schema.json";
+    readonly title: "Mesh Network Topology v1";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }];
+    readonly type: "object";
+    readonly required: readonly ["connections"];
+    readonly properties: {
+        readonly connections: {
+            readonly type: "array";
+            readonly items: {
+                readonly type: "object";
+                readonly required: readonly ["from_node", "to_node"];
+                readonly properties: {
+                    readonly from_node: {
+                        readonly type: "string";
+                        readonly description: "Source node ID";
+                    };
+                    readonly to_node: {
+                        readonly type: "string";
+                        readonly description: "Destination node ID";
+                    };
+                    readonly link_quality: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly maximum: 1;
+                        readonly description: "Link quality score (0-1)";
+                    };
+                    readonly latency_ms: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Link latency in milliseconds";
+                    };
+                    readonly hop_count: {
+                        readonly type: "integer";
+                        readonly minimum: 1;
+                        readonly description: "Number of hops in path";
+                    };
+                };
+                readonly additionalProperties: true;
+            };
+        };
+        readonly root_node: {
+            readonly type: "string";
+            readonly description: "Root node ID (gateway/bridge)";
+        };
+        readonly total_connections: {
+            readonly type: "integer";
+            readonly minimum: 0;
+            readonly description: "Total number of connections";
+        };
+    };
+    readonly additionalProperties: true;
+};
+export declare const mesh_alert_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/mesh_alert.schema.json";
+    readonly title: "Mesh Network Alert v1";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }];
+    readonly type: "object";
+    readonly required: readonly ["alerts"];
+    readonly properties: {
+        readonly alerts: {
+            readonly type: "array";
+            readonly items: {
+                readonly type: "object";
+                readonly required: readonly ["alert_type", "severity", "message"];
+                readonly properties: {
+                    readonly alert_type: {
+                        readonly type: "string";
+                        readonly enum: readonly ["low_memory", "node_offline", "connection_lost", "high_latency", "packet_loss", "firmware_mismatch", "configuration_error", "security_warning", "other"];
+                        readonly description: "Type of alert";
+                    };
+                    readonly severity: {
+                        readonly type: "string";
+                        readonly enum: readonly ["critical", "warning", "info"];
+                        readonly description: "Alert severity level";
+                    };
+                    readonly message: {
+                        readonly type: "string";
+                        readonly description: "Human-readable alert message";
+                    };
+                    readonly node_id: {
+                        readonly type: "string";
+                        readonly description: "Related node ID (if applicable)";
+                    };
+                    readonly metric_value: {
+                        readonly type: "number";
+                        readonly description: "Related metric value (if applicable)";
+                    };
+                    readonly threshold: {
+                        readonly type: "number";
+                        readonly description: "Threshold that triggered alert";
+                    };
+                    readonly alert_id: {
+                        readonly type: "string";
+                        readonly description: "Unique alert identifier";
+                    };
+                };
+                readonly additionalProperties: true;
+            };
+        };
+        readonly alert_count: {
+            readonly type: "integer";
+            readonly minimum: 0;
+            readonly description: "Total number of active alerts";
+        };
+    };
+    readonly additionalProperties: true;
+};
 export declare const mqtt_v1_bundle_json: {
     readonly $comment: "Convenience bundle referencing all v1 schema artifact filenames for tooling discovery.";
     readonly version: 1;

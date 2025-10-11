@@ -20,6 +20,9 @@ const gatewayInfo = schema_data_js_1.gateway_info_schema;
 const gatewayMetrics = schema_data_js_1.gateway_metrics_schema;
 const firmwareStatus = schema_data_js_1.firmware_status_schema;
 const controlResponse = schema_data_js_1.control_response_schema;
+const meshNodeList = schema_data_js_1.mesh_node_list_schema;
+const meshTopology = schema_data_js_1.mesh_topology_schema;
+const meshAlert = schema_data_js_1.mesh_alert_schema;
 // Lazy singleton Ajv instance so consumers can optionally supply their own if needed.
 let _ajv = null;
 function getAjv(opts) {
@@ -51,6 +54,9 @@ const gatewayInfoValidate = ajv.compile(gatewayInfo);
 const gatewayMetricsValidate = ajv.compile(gatewayMetrics);
 const firmwareStatusValidate = ajv.compile(firmwareStatus);
 const controlResponseValidate = ajv.compile(controlResponse);
+const meshNodeListValidate = ajv.compile(meshNodeList);
+const meshTopologyValidate = ajv.compile(meshTopology);
+const meshAlertValidate = ajv.compile(meshAlert);
 exports.validators = {
     sensorData: (d) => toResult(sensorDataValidate, d),
     sensorHeartbeat: (d) => toResult(sensorHeartbeatValidate, d),
@@ -58,7 +64,10 @@ exports.validators = {
     gatewayInfo: (d) => toResult(gatewayInfoValidate, d),
     gatewayMetrics: (d) => toResult(gatewayMetricsValidate, d),
     firmwareStatus: (d) => toResult(firmwareStatusValidate, d),
-    controlResponse: (d) => toResult(controlResponseValidate, d)
+    controlResponse: (d) => toResult(controlResponseValidate, d),
+    meshNodeList: (d) => toResult(meshNodeListValidate, d),
+    meshTopology: (d) => toResult(meshTopologyValidate, d),
+    meshAlert: (d) => toResult(meshAlertValidate, d)
 };
 function validateMessage(kind, data) {
     return exports.validators[kind](data);
@@ -71,6 +80,12 @@ function classifyAndValidate(data) {
         return { kind: 'gatewayMetrics', result: exports.validators.gatewayMetrics(data) };
     if (data.sensors)
         return { kind: 'sensorData', result: exports.validators.sensorData(data) };
+    if (Array.isArray(data.nodes))
+        return { kind: 'meshNodeList', result: exports.validators.meshNodeList(data) };
+    if (Array.isArray(data.connections))
+        return { kind: 'meshTopology', result: exports.validators.meshTopology(data) };
+    if (Array.isArray(data.alerts))
+        return { kind: 'meshAlert', result: exports.validators.meshAlert(data) };
     if (data.progress_pct !== undefined || (data.status && ['pending', 'downloading', 'flashing', 'verifying', 'rebooting', 'completed', 'failed'].includes(data.status)))
         return { kind: 'firmwareStatus', result: exports.validators.firmwareStatus(data) };
     if (data.status && ['online', 'offline', 'updating', 'error'].includes(data.status) && data.device_type === 'sensor')

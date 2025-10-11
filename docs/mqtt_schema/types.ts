@@ -103,6 +103,51 @@ export interface ControlResponseMessage extends BaseEnvelope {
   result?: unknown; // Arbitrary result shape
 }
 
+export interface MeshNodeListMessage extends BaseEnvelope {
+  device_type: 'gateway';
+  firmware_version: string;
+  nodes: Array<{
+    node_id: string;
+    status?: 'online' | 'offline' | 'unreachable';
+    last_seen?: string; // ISO 8601
+    signal_strength?: number; // dBm (-200..0)
+    [k: string]: unknown;
+  }>;
+  node_count?: number;
+  mesh_id?: string;
+}
+
+export interface MeshTopologyMessage extends BaseEnvelope {
+  device_type: 'gateway';
+  firmware_version: string;
+  connections: Array<{
+    from_node: string;
+    to_node: string;
+    link_quality?: number; // 0-1
+    latency_ms?: number;
+    hop_count?: number; // >= 1
+    [k: string]: unknown;
+  }>;
+  root_node?: string;
+  total_connections?: number;
+}
+
+export interface MeshAlertMessage extends BaseEnvelope {
+  device_type: 'gateway';
+  firmware_version: string;
+  alerts: Array<{
+    alert_type: 'low_memory' | 'node_offline' | 'connection_lost' | 'high_latency' | 'packet_loss' | 'firmware_mismatch' | 'configuration_error' | 'security_warning' | 'other';
+    severity: 'critical' | 'warning' | 'info';
+    message: string;
+    node_id?: string;
+    metric_value?: number;
+    threshold?: number;
+    alert_id?: string;
+    [k: string]: unknown;
+  }>;
+  alert_count?: number;
+}
+
 // Union of All Known V1 Messages (excluding heartbeat omission nuance)
 export type AnyMqttV1Message =
   | SensorDataMessage
@@ -111,7 +156,10 @@ export type AnyMqttV1Message =
   | GatewayInfoMessage
   | GatewayMetricsMessage
   | FirmwareStatusMessage
-  | ControlResponseMessage;
+  | ControlResponseMessage
+  | MeshNodeListMessage
+  | MeshTopologyMessage
+  | MeshAlertMessage;
 
 // Type Guards ------------------------------------------------
 
@@ -143,9 +191,24 @@ export function isControlResponseMessage(msg: any): msg is ControlResponseMessag
   return msg && msg.schema_version === 1 && (msg.status === 'ok' || msg.status === 'error') && 'timestamp' in msg;
 }
 
+export function isMeshNodeListMessage(msg: any): msg is MeshNodeListMessage {
+  return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && Array.isArray(msg.nodes);
+}
+
+export function isMeshTopologyMessage(msg: any): msg is MeshTopologyMessage {
+  return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && Array.isArray(msg.connections);
+}
+
+export function isMeshAlertMessage(msg: any): msg is MeshAlertMessage {
+  return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && Array.isArray(msg.alerts);
+}
+
 export function classifyMessage(msg: any): AnyMqttV1Message | null {
   if (isSensorDataMessage(msg)) return msg;
   if (isGatewayMetricsMessage(msg)) return msg;
+  if (isMeshNodeListMessage(msg)) return msg;
+  if (isMeshTopologyMessage(msg)) return msg;
+  if (isMeshAlertMessage(msg)) return msg;
   if (isSensorStatusMessage(msg)) return msg;
   if (isGatewayInfoMessage(msg)) return msg;
   if (isFirmwareStatusMessage(msg)) return msg;

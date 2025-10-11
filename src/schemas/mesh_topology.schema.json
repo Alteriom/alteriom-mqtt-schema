@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/mesh_topology.schema.json",
+  "title": "Mesh Network Topology v1",
+  "allOf": [{"$ref": "envelope.schema.json"}],
+  "type": "object",
+  "required": ["connections"],
+  "properties": {
+    "connections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from_node", "to_node"],
+        "properties": {
+          "from_node": {
+            "type": "string",
+            "description": "Source node ID"
+          },
+          "to_node": {
+            "type": "string",
+            "description": "Destination node ID"
+          },
+          "link_quality": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Link quality score (0-1)"
+          },
+          "latency_ms": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Link latency in milliseconds"
+          },
+          "hop_count": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Number of hops in path"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "root_node": {
+      "type": "string",
+      "description": "Root node ID (gateway/bridge)"
+    },
+    "total_connections": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of connections"
+    }
+  },
+  "additionalProperties": true
+}

@@ -24,6 +24,9 @@ const copyList = [
   'gateway_metrics.schema.json',
   'firmware_status.schema.json',
   'control_response.schema.json',
+  'mesh_node_list.schema.json',
+  'mesh_topology.schema.json',
+  'mesh_alert.schema.json',
   'mqtt_v1_bundle.json',
   'validation_rules.md',
   'ota/ota-manifest.schema.json'
