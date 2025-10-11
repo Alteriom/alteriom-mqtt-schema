@@ -1,6 +1,6 @@
 # MQTT Schema Artifacts Changelog
 
-## Unreleased (v0.4.0)
+## 2025-10-11 (v0.4.0)
 
 ### Added (v0.4.0)
 
