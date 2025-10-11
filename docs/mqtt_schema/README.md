@@ -14,6 +14,9 @@ Purpose: Provide stable, machine-consumable schema references and concise human 
 | `gateway_metrics.schema.json` | Gateway periodic metrics. |
 | `firmware_status.schema.json` | Firmware update status / progress events. |
 | `control_response.schema.json` | Command/control response payload. |
+| `mesh_node_list.schema.json` | Mesh network node list with status. |
+| `mesh_topology.schema.json` | Mesh network topology and connections. |
+| `mesh_alert.schema.json` | Mesh network alerts and warnings. |
 | `validation_rules.md` | Non-JSON structural rules (timing, ranges, drop reasons). |
 | `CHANGELOG.md` | Versioned changes to these schema artifacts. |
 

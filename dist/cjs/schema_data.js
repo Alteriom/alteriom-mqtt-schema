@@ -602,7 +602,10 @@ exports.mqtt_v1_bundle_json = {
         "gateway_info": "gateway_info.schema.json",
         "gateway_metrics": "gateway_metrics.schema.json",
         "firmware_status": "firmware_status.schema.json",
-        "control_response": "control_response.schema.json"
+        "control_response": "control_response.schema.json",
+        "mesh_node_list": "mesh_node_list.schema.json",
+        "mesh_topology": "mesh_topology.schema.json",
+        "mesh_alert": "mesh_alert.schema.json"
     }
 };
 exports.ota_ota_manifest_schema = {
