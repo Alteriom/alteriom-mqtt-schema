@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/command.schema.json",
+  "title": "Device Command v1",
+  "description": "Command message sent from MQTT client to IoT device for control operations",
+  "allOf": [{"$ref": "envelope.schema.json"}],
+  "type": "object",
+  "required": ["event", "command"],
+  "properties": {
+    "event": {
+      "type": "string",
+      "const": "command",
+      "description": "Event type discriminator"
+    },
+    "command": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "description": "Command name in snake_case (e.g., read_sensors, set_interval, restart)",
+      "examples": [
+        "read_sensors",
+        "set_interval",
+        "enable_sensor",
+        "update_config",
+        "restart",
+        "get_status"
+      ]
+    },
+    "correlation_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "description": "Unique identifier for tracking command → response lifecycle"
+    },
+    "parameters": {
+      "type": "object",
+      "description": "Command-specific parameters (validated by device)",
+      "additionalProperties": true,
+      "examples": [
+        {"interval": 30000},
+        {"sensor": "temperature", "enabled": true},
+        {"immediate": true, "sensors": ["temperature", "humidity"]}
+      ]
+    },
+    "timeout_ms": {
+      "type": "integer",
+      "minimum": 1000,
+      "maximum": 300000,
+      "default": 5000,
+      "description": "Command execution timeout in milliseconds"
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["low", "normal", "high", "urgent"],
+      "default": "normal",
+      "description": "Command priority for queue management"
+    }
+  },
+  "additionalProperties": true
+}

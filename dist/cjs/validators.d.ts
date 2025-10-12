@@ -14,6 +14,8 @@ export declare const validators: {
     gatewayMetrics: (d: unknown) => ValidationResult;
     firmwareStatus: (d: unknown) => ValidationResult;
     controlResponse: (d: unknown) => ValidationResult;
+    command: (d: unknown) => ValidationResult;
+    commandResponse: (d: unknown) => ValidationResult;
     meshNodeList: (d: unknown) => ValidationResult;
     meshTopology: (d: unknown) => ValidationResult;
     meshAlert: (d: unknown) => ValidationResult;

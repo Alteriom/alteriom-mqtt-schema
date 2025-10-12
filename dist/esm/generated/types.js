@@ -35,6 +35,12 @@ export function isMeshTopologyMessage(msg) {
 export function isMeshAlertMessage(msg) {
     return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && Array.isArray(msg.alerts);
 }
+export function isCommandMessage(msg) {
+    return msg && msg.schema_version === 1 && msg.event === 'command' && typeof msg.command === 'string';
+}
+export function isCommandResponseMessage(msg) {
+    return msg && msg.schema_version === 1 && msg.event === 'command_response' && typeof msg.success === 'boolean';
+}
 export function classifyMessage(msg) {
     if (isSensorDataMessage(msg))
         return msg;
@@ -45,6 +51,10 @@ export function classifyMessage(msg) {
     if (isMeshTopologyMessage(msg))
         return msg;
     if (isMeshAlertMessage(msg))
+        return msg;
+    if (isCommandMessage(msg))
+        return msg;
+    if (isCommandResponseMessage(msg))
         return msg;
     if (isSensorStatusMessage(msg))
         return msg;

@@ -103,6 +103,28 @@ export interface ControlResponseMessage extends BaseEnvelope {
   result?: unknown; // Arbitrary result shape
 }
 
+export interface CommandMessage extends BaseEnvelope {
+  firmware_version: string;
+  event: 'command';
+  command: string; // snake_case pattern (1-64 chars)
+  correlation_id?: string; // Unique tracking ID (1-128 chars)
+  parameters?: Record<string, unknown>; // Command-specific parameters
+  timeout_ms?: number; // 1000-300000 ms
+  priority?: 'low' | 'normal' | 'high' | 'urgent';
+}
+
+export interface CommandResponseMessage extends BaseEnvelope {
+  firmware_version: string;
+  event: 'command_response';
+  command?: string; // Original command name
+  correlation_id?: string; // Links to original command
+  success: boolean; // Execution success/failure
+  result?: unknown; // Command result data
+  message?: string; // Human-readable message (max 256 chars)
+  error_code?: string; // Machine-readable error code (max 64 chars)
+  latency_ms?: number; // Execution time in ms
+}
+
 export interface MeshNodeListMessage extends BaseEnvelope {
   device_type: 'gateway';
   firmware_version: string;
@@ -157,6 +179,8 @@ export type AnyMqttV1Message =
   | GatewayMetricsMessage
   | FirmwareStatusMessage
   | ControlResponseMessage
+  | CommandMessage
+  | CommandResponseMessage
   | MeshNodeListMessage
   | MeshTopologyMessage
   | MeshAlertMessage;
@@ -203,12 +227,22 @@ export function isMeshAlertMessage(msg: any): msg is MeshAlertMessage {
   return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && Array.isArray(msg.alerts);
 }
 
+export function isCommandMessage(msg: any): msg is CommandMessage {
+  return msg && msg.schema_version === 1 && msg.event === 'command' && typeof msg.command === 'string';
+}
+
+export function isCommandResponseMessage(msg: any): msg is CommandResponseMessage {
+  return msg && msg.schema_version === 1 && msg.event === 'command_response' && typeof msg.success === 'boolean';
+}
+
 export function classifyMessage(msg: any): AnyMqttV1Message | null {
   if (isSensorDataMessage(msg)) return msg;
   if (isGatewayMetricsMessage(msg)) return msg;
   if (isMeshNodeListMessage(msg)) return msg;
   if (isMeshTopologyMessage(msg)) return msg;
   if (isMeshAlertMessage(msg)) return msg;
+  if (isCommandMessage(msg)) return msg;
+  if (isCommandResponseMessage(msg)) return msg;
   if (isSensorStatusMessage(msg)) return msg;
   if (isGatewayInfoMessage(msg)) return msg;
   if (isFirmwareStatusMessage(msg)) return msg;

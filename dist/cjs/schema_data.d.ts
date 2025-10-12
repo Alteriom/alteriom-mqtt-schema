@@ -303,6 +303,122 @@ export declare const control_response_schema: {
     };
     readonly additionalProperties: true;
 };
+export declare const command_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/command.schema.json";
+    readonly title: "Device Command v1";
+    readonly description: "Command message sent from MQTT client to IoT device for control operations";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }];
+    readonly type: "object";
+    readonly required: readonly ["event", "command"];
+    readonly properties: {
+        readonly event: {
+            readonly type: "string";
+            readonly const: "command";
+            readonly description: "Event type discriminator";
+        };
+        readonly command: {
+            readonly type: "string";
+            readonly minLength: 1;
+            readonly maxLength: 64;
+            readonly pattern: "^[a-z][a-z0-9_]*$";
+            readonly description: "Command name in snake_case (e.g., read_sensors, set_interval, restart)";
+            readonly examples: readonly ["read_sensors", "set_interval", "enable_sensor", "update_config", "restart", "get_status"];
+        };
+        readonly correlation_id: {
+            readonly type: "string";
+            readonly minLength: 1;
+            readonly maxLength: 128;
+            readonly pattern: "^[A-Za-z0-9_-]+$";
+            readonly description: "Unique identifier for tracking command → response lifecycle";
+        };
+        readonly parameters: {
+            readonly type: "object";
+            readonly description: "Command-specific parameters (validated by device)";
+            readonly additionalProperties: true;
+            readonly examples: readonly [{
+                readonly interval: 30000;
+            }, {
+                readonly sensor: "temperature";
+                readonly enabled: true;
+            }, {
+                readonly immediate: true;
+                readonly sensors: readonly ["temperature", "humidity"];
+            }];
+        };
+        readonly timeout_ms: {
+            readonly type: "integer";
+            readonly minimum: 1000;
+            readonly maximum: 300000;
+            readonly default: 5000;
+            readonly description: "Command execution timeout in milliseconds";
+        };
+        readonly priority: {
+            readonly type: "string";
+            readonly enum: readonly ["low", "normal", "high", "urgent"];
+            readonly default: "normal";
+            readonly description: "Command priority for queue management";
+        };
+    };
+    readonly additionalProperties: true;
+};
+export declare const command_response_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/command_response.schema.json";
+    readonly title: "Command Response v1";
+    readonly description: "Response message from IoT device after executing a command";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }];
+    readonly type: "object";
+    readonly required: readonly ["event", "success"];
+    readonly properties: {
+        readonly event: {
+            readonly type: "string";
+            readonly const: "command_response";
+            readonly description: "Event type discriminator";
+        };
+        readonly command: {
+            readonly type: "string";
+            readonly minLength: 1;
+            readonly maxLength: 64;
+            readonly description: "Original command name that was executed";
+        };
+        readonly correlation_id: {
+            readonly type: "string";
+            readonly minLength: 1;
+            readonly maxLength: 128;
+            readonly pattern: "^[A-Za-z0-9_-]+$";
+            readonly description: "Matches correlation_id from original command";
+        };
+        readonly success: {
+            readonly type: "boolean";
+            readonly description: "Whether command execution succeeded";
+        };
+        readonly result: {
+            readonly type: readonly ["object", "array", "string", "number", "boolean", "null"];
+            readonly description: "Command execution result data";
+        };
+        readonly message: {
+            readonly type: "string";
+            readonly maxLength: 256;
+            readonly description: "Human-readable status message";
+        };
+        readonly error_code: {
+            readonly type: "string";
+            readonly maxLength: 64;
+            readonly description: "Machine-readable error code (e.g., TIMEOUT, INVALID_PARAMS)";
+        };
+        readonly latency_ms: {
+            readonly type: "integer";
+            readonly minimum: 0;
+            readonly description: "Time taken to execute command in milliseconds";
+        };
+    };
+    readonly additionalProperties: true;
+};
 export declare const mesh_node_list_schema: {
     readonly $schema: "https://json-schema.org/draft/2020-12/schema";
     readonly $id: "https://schemas.alteriom.io/mqtt/v1/mesh_node_list.schema.json";

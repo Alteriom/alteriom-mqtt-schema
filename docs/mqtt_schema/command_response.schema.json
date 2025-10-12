@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/command_response.schema.json",
+  "title": "Command Response v1",
+  "description": "Response message from IoT device after executing a command",
+  "allOf": [{"$ref": "envelope.schema.json"}],
+  "type": "object",
+  "required": ["event", "success"],
+  "properties": {
+    "event": {
+      "type": "string",
+      "const": "command_response",
+      "description": "Event type discriminator"
+    },
+    "command": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "description": "Original command name that was executed"
+    },
+    "correlation_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "description": "Matches correlation_id from original command"
+    },
+    "success": {
+      "type": "boolean",
+      "description": "Whether command execution succeeded"
+    },
+    "result": {
+      "type": ["object", "array", "string", "number", "boolean", "null"],
+      "description": "Command execution result data"
+    },
+    "message": {
+      "type": "string",
+      "maxLength": 256,
+      "description": "Human-readable status message"
+    },
+    "error_code": {
+      "type": "string",
+      "maxLength": 64,
+      "description": "Machine-readable error code (e.g., TIMEOUT, INVALID_PARAMS)"
+    },
+    "latency_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Time taken to execute command in milliseconds"
+    }
+  },
+  "additionalProperties": true
+}

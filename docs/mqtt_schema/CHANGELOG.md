@@ -1,5 +1,45 @@
 # MQTT Schema Artifacts Changelog
 
+## 2025-10-12 (v0.5.0)
+
+### Added (v0.5.0)
+
+- Added `command.schema.json` for standardized device control commands with event-based discrimination
+- Added `command_response.schema.json` for enhanced command responses with correlation tracking
+- Added corresponding TypeScript interfaces: `CommandMessage`, `CommandResponseMessage`
+- Added type guards: `isCommandMessage`, `isCommandResponseMessage`
+- Added validators: `command`, `commandResponse`
+- Enhanced classification heuristics to detect command messages using `event` discriminator field
+- Added test fixtures for both command and command_response schemas
+- Introduced event-based message discrimination pattern (`event: "command"`, `event: "command_response"`)
+- Added correlation_id field for tracking command → response lifecycle
+- Added priority field for command queue management
+- Added success boolean field in responses replacing status enum
+- Added error_code field for machine-readable error classification
+- Added latency_ms field for command execution performance tracking
+
+### Changed (v0.5.0)
+
+- Command messages now use `event: "command"` discriminator instead of heuristic detection
+- Command responses use `event: "command_response"` discriminator for clarity
+- Enhanced command response format with success boolean, error_code, and latency_ms fields
+
+### Deprecated (v0.5.0)
+
+- `control_response.schema.json` is now deprecated in favor of `command_response.schema.json`
+- Old control_response format will be maintained for backward compatibility through v0.5.x
+- Planned removal in v0.6.0 with migration guide
+
+### Notes (v0.5.0)
+
+- Minor version bump justified by new command/control flow schemas for bidirectional communication
+- New schemas follow event-based discrimination pattern for clearer message classification
+- All command schemas extend base envelope and require firmware_version field
+- No breaking changes to existing MQTT payload schemas; `schema_version: 1` unchanged
+- Maintains backward compatibility with all existing message types
+- Command pattern enables standardized web app → device control flow
+- Correlation IDs enable reliable request/response tracking for async operations
+
 ## 2025-10-11 (v0.4.0)
 
 ### Added (v0.4.0)

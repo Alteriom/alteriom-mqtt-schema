@@ -24,6 +24,8 @@ const copyList = [
   'gateway_metrics.schema.json',
   'firmware_status.schema.json',
   'control_response.schema.json',
+  'command.schema.json',
+  'command_response.schema.json',
   'mesh_node_list.schema.json',
   'mesh_topology.schema.json',
   'mesh_alert.schema.json',
