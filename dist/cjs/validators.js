@@ -20,6 +20,8 @@ const gatewayInfo = schema_data_js_1.gateway_info_schema;
 const gatewayMetrics = schema_data_js_1.gateway_metrics_schema;
 const firmwareStatus = schema_data_js_1.firmware_status_schema;
 const controlResponse = schema_data_js_1.control_response_schema;
+const command = schema_data_js_1.command_schema;
+const commandResponse = schema_data_js_1.command_response_schema;
 const meshNodeList = schema_data_js_1.mesh_node_list_schema;
 const meshTopology = schema_data_js_1.mesh_topology_schema;
 const meshAlert = schema_data_js_1.mesh_alert_schema;
@@ -54,6 +56,8 @@ const gatewayInfoValidate = ajv.compile(gatewayInfo);
 const gatewayMetricsValidate = ajv.compile(gatewayMetrics);
 const firmwareStatusValidate = ajv.compile(firmwareStatus);
 const controlResponseValidate = ajv.compile(controlResponse);
+const commandValidate = ajv.compile(command);
+const commandResponseValidate = ajv.compile(commandResponse);
 const meshNodeListValidate = ajv.compile(meshNodeList);
 const meshTopologyValidate = ajv.compile(meshTopology);
 const meshAlertValidate = ajv.compile(meshAlert);
@@ -65,6 +69,8 @@ exports.validators = {
     gatewayMetrics: (d) => toResult(gatewayMetricsValidate, d),
     firmwareStatus: (d) => toResult(firmwareStatusValidate, d),
     controlResponse: (d) => toResult(controlResponseValidate, d),
+    command: (d) => toResult(commandValidate, d),
+    commandResponse: (d) => toResult(commandResponseValidate, d),
     meshNodeList: (d) => toResult(meshNodeListValidate, d),
     meshTopology: (d) => toResult(meshTopologyValidate, d),
     meshAlert: (d) => toResult(meshAlertValidate, d)
@@ -76,6 +82,12 @@ function validateMessage(kind, data) {
 function classifyAndValidate(data) {
     if (!data || typeof data !== 'object')
         return { result: { valid: false, errors: ['Not an object'] } };
+    // Check for event discriminators first (new command-based messages)
+    if (data.event === 'command')
+        return { kind: 'command', result: exports.validators.command(data) };
+    if (data.event === 'command_response')
+        return { kind: 'commandResponse', result: exports.validators.commandResponse(data) };
+    // Existing classification heuristics
     if (data.metrics)
         return { kind: 'gatewayMetrics', result: exports.validators.gatewayMetrics(data) };
     if (data.sensors)

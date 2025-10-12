@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "device_id": "ALT-441D64F804A0",
+  "device_type": "sensor",
+  "timestamp": "2025-10-12T14:30:02Z",
+  "firmware_version": "SN 2.3.4",
+  "event": "command_response",
+  "command": "read_sensors",
+  "correlation_id": "cmd-1728745800-001",
+  "success": true,
+  "result": {
+    "sensors_read": ["temperature", "humidity", "pressure"],
+    "values": {
+      "temperature": 23.5,
+      "humidity": 45,
+      "pressure": 1013
+    }
+  },
+  "message": "Sensors read successfully",
+  "latency_ms": 1250
+}

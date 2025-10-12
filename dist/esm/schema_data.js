@@ -383,6 +383,158 @@ export const control_response_schema = {
     },
     "additionalProperties": true
 };
+export const command_schema = {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://schemas.alteriom.io/mqtt/v1/command.schema.json",
+    "title": "Device Command v1",
+    "description": "Command message sent from MQTT client to IoT device for control operations",
+    "allOf": [
+        {
+            "$ref": "envelope.schema.json"
+        }
+    ],
+    "type": "object",
+    "required": [
+        "event",
+        "command"
+    ],
+    "properties": {
+        "event": {
+            "type": "string",
+            "const": "command",
+            "description": "Event type discriminator"
+        },
+        "command": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "description": "Command name in snake_case (e.g., read_sensors, set_interval, restart)",
+            "examples": [
+                "read_sensors",
+                "set_interval",
+                "enable_sensor",
+                "update_config",
+                "restart",
+                "get_status"
+            ]
+        },
+        "correlation_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "description": "Unique identifier for tracking command → response lifecycle"
+        },
+        "parameters": {
+            "type": "object",
+            "description": "Command-specific parameters (validated by device)",
+            "additionalProperties": true,
+            "examples": [
+                {
+                    "interval": 30000
+                },
+                {
+                    "sensor": "temperature",
+                    "enabled": true
+                },
+                {
+                    "immediate": true,
+                    "sensors": [
+                        "temperature",
+                        "humidity"
+                    ]
+                }
+            ]
+        },
+        "timeout_ms": {
+            "type": "integer",
+            "minimum": 1000,
+            "maximum": 300000,
+            "default": 5000,
+            "description": "Command execution timeout in milliseconds"
+        },
+        "priority": {
+            "type": "string",
+            "enum": [
+                "low",
+                "normal",
+                "high",
+                "urgent"
+            ],
+            "default": "normal",
+            "description": "Command priority for queue management"
+        }
+    },
+    "additionalProperties": true
+};
+export const command_response_schema = {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://schemas.alteriom.io/mqtt/v1/command_response.schema.json",
+    "title": "Command Response v1",
+    "description": "Response message from IoT device after executing a command",
+    "allOf": [
+        {
+            "$ref": "envelope.schema.json"
+        }
+    ],
+    "type": "object",
+    "required": [
+        "event",
+        "success"
+    ],
+    "properties": {
+        "event": {
+            "type": "string",
+            "const": "command_response",
+            "description": "Event type discriminator"
+        },
+        "command": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": "Original command name that was executed"
+        },
+        "correlation_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "description": "Matches correlation_id from original command"
+        },
+        "success": {
+            "type": "boolean",
+            "description": "Whether command execution succeeded"
+        },
+        "result": {
+            "type": [
+                "object",
+                "array",
+                "string",
+                "number",
+                "boolean",
+                "null"
+            ],
+            "description": "Command execution result data"
+        },
+        "message": {
+            "type": "string",
+            "maxLength": 256,
+            "description": "Human-readable status message"
+        },
+        "error_code": {
+            "type": "string",
+            "maxLength": 64,
+            "description": "Machine-readable error code (e.g., TIMEOUT, INVALID_PARAMS)"
+        },
+        "latency_ms": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Time taken to execute command in milliseconds"
+        }
+    },
+    "additionalProperties": true
+};
 export const mesh_node_list_schema = {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://schemas.alteriom.io/mqtt/v1/mesh_node_list.schema.json",

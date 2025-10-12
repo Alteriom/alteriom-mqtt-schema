@@ -10,6 +10,8 @@ import {
   gateway_metrics_schema,
   firmware_status_schema,
   control_response_schema,
+  command_schema,
+  command_response_schema,
   mesh_node_list_schema,
   mesh_topology_schema,
   mesh_alert_schema
@@ -24,6 +26,8 @@ const gatewayInfo = gateway_info_schema as any;
 const gatewayMetrics = gateway_metrics_schema as any;
 const firmwareStatus = firmware_status_schema as any;
 const controlResponse = control_response_schema as any;
+const command = command_schema as any;
+const commandResponse = command_response_schema as any;
 const meshNodeList = mesh_node_list_schema as any;
 const meshTopology = mesh_topology_schema as any;
 const meshAlert = mesh_alert_schema as any;
@@ -71,6 +75,8 @@ const gatewayInfoValidate = ajv.compile(gatewayInfo);
 const gatewayMetricsValidate = ajv.compile(gatewayMetrics);
 const firmwareStatusValidate = ajv.compile(firmwareStatus);
 const controlResponseValidate = ajv.compile(controlResponse);
+const commandValidate = ajv.compile(command);
+const commandResponseValidate = ajv.compile(commandResponse);
 const meshNodeListValidate = ajv.compile(meshNodeList);
 const meshTopologyValidate = ajv.compile(meshTopology);
 const meshAlertValidate = ajv.compile(meshAlert);
@@ -83,6 +89,8 @@ export const validators = {
   gatewayMetrics: (d: unknown) => toResult(gatewayMetricsValidate, d),
   firmwareStatus: (d: unknown) => toResult(firmwareStatusValidate, d),
   controlResponse: (d: unknown) => toResult(controlResponseValidate, d),
+  command: (d: unknown) => toResult(commandValidate, d),
+  commandResponse: (d: unknown) => toResult(commandResponseValidate, d),
   meshNodeList: (d: unknown) => toResult(meshNodeListValidate, d),
   meshTopology: (d: unknown) => toResult(meshTopologyValidate, d),
   meshAlert: (d: unknown) => toResult(meshAlertValidate, d)
@@ -97,6 +105,10 @@ export function validateMessage(kind: ValidatorName, data: unknown): ValidationR
 // Classifier using lightweight heuristics to pick a schema validator.
 export function classifyAndValidate(data: any): { kind?: ValidatorName; result: ValidationResult } {
   if (!data || typeof data !== 'object') return { result: { valid: false, errors: ['Not an object'] } };
+  // Check for event discriminators first (new command-based messages)
+  if (data.event === 'command') return { kind: 'command', result: validators.command(data) };
+  if (data.event === 'command_response') return { kind: 'commandResponse', result: validators.commandResponse(data) };
+  // Existing classification heuristics
   if (data.metrics) return { kind: 'gatewayMetrics', result: validators.gatewayMetrics(data) };
   if (data.sensors) return { kind: 'sensorData', result: validators.sensorData(data) };
   if (Array.isArray(data.nodes)) return { kind: 'meshNodeList', result: validators.meshNodeList(data) };

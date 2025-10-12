@@ -84,6 +84,26 @@ export interface ControlResponseMessage extends BaseEnvelope {
     message?: string;
     result?: unknown;
 }
+export interface CommandMessage extends BaseEnvelope {
+    firmware_version: string;
+    event: 'command';
+    command: string;
+    correlation_id?: string;
+    parameters?: Record<string, unknown>;
+    timeout_ms?: number;
+    priority?: 'low' | 'normal' | 'high' | 'urgent';
+}
+export interface CommandResponseMessage extends BaseEnvelope {
+    firmware_version: string;
+    event: 'command_response';
+    command?: string;
+    correlation_id?: string;
+    success: boolean;
+    result?: unknown;
+    message?: string;
+    error_code?: string;
+    latency_ms?: number;
+}
 export interface MeshNodeListMessage extends BaseEnvelope {
     device_type: 'gateway';
     firmware_version: string;
@@ -126,7 +146,7 @@ export interface MeshAlertMessage extends BaseEnvelope {
     }>;
     alert_count?: number;
 }
-export type AnyMqttV1Message = SensorDataMessage | SensorHeartbeatMessage | SensorStatusMessage | GatewayInfoMessage | GatewayMetricsMessage | FirmwareStatusMessage | ControlResponseMessage | MeshNodeListMessage | MeshTopologyMessage | MeshAlertMessage;
+export type AnyMqttV1Message = SensorDataMessage | SensorHeartbeatMessage | SensorStatusMessage | GatewayInfoMessage | GatewayMetricsMessage | FirmwareStatusMessage | ControlResponseMessage | CommandMessage | CommandResponseMessage | MeshNodeListMessage | MeshTopologyMessage | MeshAlertMessage;
 export declare function isSensorDataMessage(msg: any): msg is SensorDataMessage;
 export declare function isSensorHeartbeatMessage(msg: any): msg is SensorHeartbeatMessage;
 export declare function isSensorStatusMessage(msg: any): msg is SensorStatusMessage;
@@ -137,6 +157,8 @@ export declare function isControlResponseMessage(msg: any): msg is ControlRespon
 export declare function isMeshNodeListMessage(msg: any): msg is MeshNodeListMessage;
 export declare function isMeshTopologyMessage(msg: any): msg is MeshTopologyMessage;
 export declare function isMeshAlertMessage(msg: any): msg is MeshAlertMessage;
+export declare function isCommandMessage(msg: any): msg is CommandMessage;
+export declare function isCommandResponseMessage(msg: any): msg is CommandResponseMessage;
 export declare function classifyMessage(msg: any): AnyMqttV1Message | null;
 export interface BasicValidationIssue {
     field?: string;

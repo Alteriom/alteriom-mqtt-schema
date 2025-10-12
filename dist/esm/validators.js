@@ -1,7 +1,7 @@
 import Ajv from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 // Schemas embedded via generated schema_data.ts (copy-schemas.cjs) to avoid filesystem dependency
-import { envelope_schema, sensor_data_schema, sensor_heartbeat_schema, sensor_status_schema, gateway_info_schema, gateway_metrics_schema, firmware_status_schema, control_response_schema, mesh_node_list_schema, mesh_topology_schema, mesh_alert_schema } from './schema_data.js';
+import { envelope_schema, sensor_data_schema, sensor_heartbeat_schema, sensor_status_schema, gateway_info_schema, gateway_metrics_schema, firmware_status_schema, control_response_schema, command_schema, command_response_schema, mesh_node_list_schema, mesh_topology_schema, mesh_alert_schema } from './schema_data.js';
 // Load JSON schemas via createRequire so it works in both CJS and ESM builds without import assertions.
 // Bind embedded schema objects for Ajv consumption
 const envelope = envelope_schema;
@@ -12,6 +12,8 @@ const gatewayInfo = gateway_info_schema;
 const gatewayMetrics = gateway_metrics_schema;
 const firmwareStatus = firmware_status_schema;
 const controlResponse = control_response_schema;
+const command = command_schema;
+const commandResponse = command_response_schema;
 const meshNodeList = mesh_node_list_schema;
 const meshTopology = mesh_topology_schema;
 const meshAlert = mesh_alert_schema;
@@ -46,6 +48,8 @@ const gatewayInfoValidate = ajv.compile(gatewayInfo);
 const gatewayMetricsValidate = ajv.compile(gatewayMetrics);
 const firmwareStatusValidate = ajv.compile(firmwareStatus);
 const controlResponseValidate = ajv.compile(controlResponse);
+const commandValidate = ajv.compile(command);
+const commandResponseValidate = ajv.compile(commandResponse);
 const meshNodeListValidate = ajv.compile(meshNodeList);
 const meshTopologyValidate = ajv.compile(meshTopology);
 const meshAlertValidate = ajv.compile(meshAlert);
@@ -57,6 +61,8 @@ export const validators = {
     gatewayMetrics: (d) => toResult(gatewayMetricsValidate, d),
     firmwareStatus: (d) => toResult(firmwareStatusValidate, d),
     controlResponse: (d) => toResult(controlResponseValidate, d),
+    command: (d) => toResult(commandValidate, d),
+    commandResponse: (d) => toResult(commandResponseValidate, d),
     meshNodeList: (d) => toResult(meshNodeListValidate, d),
     meshTopology: (d) => toResult(meshTopologyValidate, d),
     meshAlert: (d) => toResult(meshAlertValidate, d)
@@ -68,6 +74,12 @@ export function validateMessage(kind, data) {
 export function classifyAndValidate(data) {
     if (!data || typeof data !== 'object')
         return { result: { valid: false, errors: ['Not an object'] } };
+    // Check for event discriminators first (new command-based messages)
+    if (data.event === 'command')
+        return { kind: 'command', result: validators.command(data) };
+    if (data.event === 'command_response')
+        return { kind: 'commandResponse', result: validators.commandResponse(data) };
+    // Existing classification heuristics
     if (data.metrics)
         return { kind: 'gatewayMetrics', result: validators.gatewayMetrics(data) };
     if (data.sensors)

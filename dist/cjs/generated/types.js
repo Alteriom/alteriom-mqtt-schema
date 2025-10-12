@@ -16,6 +16,8 @@ exports.isControlResponseMessage = isControlResponseMessage;
 exports.isMeshNodeListMessage = isMeshNodeListMessage;
 exports.isMeshTopologyMessage = isMeshTopologyMessage;
 exports.isMeshAlertMessage = isMeshAlertMessage;
+exports.isCommandMessage = isCommandMessage;
+exports.isCommandResponseMessage = isCommandResponseMessage;
 exports.classifyMessage = classifyMessage;
 exports.basicValidate = basicValidate;
 exports.parseMessage = parseMessage;
@@ -50,6 +52,12 @@ function isMeshTopologyMessage(msg) {
 function isMeshAlertMessage(msg) {
     return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && Array.isArray(msg.alerts);
 }
+function isCommandMessage(msg) {
+    return msg && msg.schema_version === 1 && msg.event === 'command' && typeof msg.command === 'string';
+}
+function isCommandResponseMessage(msg) {
+    return msg && msg.schema_version === 1 && msg.event === 'command_response' && typeof msg.success === 'boolean';
+}
 function classifyMessage(msg) {
     if (isSensorDataMessage(msg))
         return msg;
@@ -60,6 +68,10 @@ function classifyMessage(msg) {
     if (isMeshTopologyMessage(msg))
         return msg;
     if (isMeshAlertMessage(msg))
+        return msg;
+    if (isCommandMessage(msg))
+        return msg;
+    if (isCommandResponseMessage(msg))
         return msg;
     if (isSensorStatusMessage(msg))
         return msg;

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "device_id": "ALT-441D64F804A0",
+  "device_type": "sensor",
+  "timestamp": "2025-10-12T14:40:01Z",
+  "firmware_version": "SN 2.3.4",
+  "event": "command_response",
+  "command": "enable_sensor",
+  "correlation_id": "cmd-1728746400-003",
+  "success": false,
+  "result": null,
+  "message": "GPS sensor not available on this device",
+  "error_code": "SENSOR_NOT_AVAILABLE",
+  "latency_ms": 120
+}

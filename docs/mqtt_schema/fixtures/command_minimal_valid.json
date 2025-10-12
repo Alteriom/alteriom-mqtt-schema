@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "device_id": "ALT-441D64F804A0",
+  "device_type": "sensor",
+  "timestamp": "2025-10-12T14:35:00Z",
+  "firmware_version": "WEB 1.0.0",
+  "event": "command",
+  "command": "restart"
+}
