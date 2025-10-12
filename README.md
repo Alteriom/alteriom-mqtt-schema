@@ -89,6 +89,64 @@ Access raw schema JSON (if you need to introspect or power form generation):
 import envelopeSchema from '@alteriom/mqtt-schema/schemas/envelope.schema.json';
 ```
 
+## Command & Control (v0.5.0+)
+
+Send commands to devices and receive responses with correlation tracking:
+
+```ts
+import { validators, isCommandMessage, isCommandResponseMessage } from '@alteriom/mqtt-schema';
+
+// Create a command message
+const command = {
+  schema_version: 1,
+  device_id: 'ALT-441D64F804A0',
+  device_type: 'sensor',
+  timestamp: new Date().toISOString(),
+  firmware_version: 'WEB 1.0.0',
+  event: 'command',
+  command: 'read_sensors',
+  correlation_id: `cmd-${Date.now()}-001`,
+  parameters: {
+    immediate: true,
+    sensors: ['temperature', 'humidity']
+  },
+  priority: 'high'
+};
+
+// Validate before sending
+const cmdResult = validators.command(command);
+if (cmdResult.valid) {
+  // Publish to MQTT topic: alteriom/nodes/{device_id}/commands
+  mqttClient.publish(`alteriom/nodes/${command.device_id}/commands`, JSON.stringify(command));
+}
+
+// Handle response from device
+mqttClient.subscribe(`alteriom/nodes/${command.device_id}/responses`, (message) => {
+  const response = JSON.parse(message);
+  const respResult = validators.commandResponse(response);
+  
+  if (respResult.valid && isCommandResponseMessage(response)) {
+    if (response.correlation_id === command.correlation_id) {
+      if (response.success) {
+        console.log('Command succeeded:', response.result);
+        console.log(`Latency: ${response.latency_ms}ms`);
+      } else {
+        console.error(`Command failed: ${response.error_code} - ${response.message}`);
+      }
+    }
+  }
+});
+```
+
+**Command Pattern Features:**
+- Event-based discrimination (`event: "command"` and `event: "command_response"`)
+- Correlation IDs for request/response tracking
+- Command name validation (lowercase snake_case)
+- Flexible parameters object for command-specific data
+- Priority field for queue management
+- Success boolean and error codes in responses
+- Latency tracking for performance monitoring
+
 ## OTA Firmware Manifest Schema (v0.3.1+)
 
 The package includes OTA firmware manifest schema with both rich and minimal formats.
@@ -172,7 +230,9 @@ All Ajv validator functions are compiled once at module load. For typical web us
 | gateway_info.schema.json | Gateway identity & capabilities |
 | gateway_metrics.schema.json | Gateway performance metrics |
 | firmware_status.schema.json | Firmware update lifecycle events |
-| control_response.schema.json | Command/control response messages |
+| control_response.schema.json | Command/control response messages (deprecated, use command_response) |
+| **command.schema.json** | **Device control commands (v0.5.0+)** |
+| **command_response.schema.json** | **Command execution responses with correlation (v0.5.0+)** |
 | mesh_node_list.schema.json | Mesh network node list with status |
 | mesh_topology.schema.json | Mesh network topology and connections |
 | mesh_alert.schema.json | Mesh network alerts and warnings |
@@ -190,10 +250,12 @@ All Ajv validator functions are compiled once at module load. For typical web us
 
 ### Validator Keys
 
-`sensorData`, `sensorHeartbeat`, `sensorStatus`, `gatewayInfo`, `gatewayMetrics`, `firmwareStatus`, `controlResponse`, `meshNodeList`, `meshTopology`, `meshAlert`
+`sensorData`, `sensorHeartbeat`, `sensorStatus`, `gatewayInfo`, `gatewayMetrics`, `firmwareStatus`, `controlResponse`, `command`, `commandResponse`, `meshNodeList`, `meshTopology`, `meshAlert`
 
 ### Classification Heuristics (Simplified)
 
+- `event: "command"` → `command` (v0.5.0+)
+- `event: "command_response"` → `commandResponse` (v0.5.0+)
 - `metrics` → `gatewayMetrics`
 - `sensors` → `sensorData`
 - `nodes` array → `meshNodeList`
