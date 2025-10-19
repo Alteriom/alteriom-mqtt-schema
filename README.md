@@ -33,6 +33,7 @@ Firmware emits structured MQTT payloads that must remain tightly aligned with we
 - Helpful error paths (JSON Pointer style)
 - Lightweight (Ajv peer dependency, schemas embedded)
 - Ships original schema JSON files (optional consumption)
+- **NEW in v0.7.0**: Best-in-class OTA management with security, rollback, and delta updates
 - **NEW in v0.6.0**: Enhanced location/geolocation support for asset tracking
 - **NEW in v0.6.0**: Extended sensor metadata (accuracy, calibration, operational range)
 - **NEW in v0.6.0**: Comprehensive gateway health metrics (storage, network, errors)
@@ -292,9 +293,13 @@ if (result.valid && isGatewayMetricsMessage(metrics)) {
 - Restart tracking with reason codes
 - All metrics are optional for gradual firmware adoption
 
-## OTA Firmware Manifest Schema (v0.3.1+)
+## OTA Firmware Management (v0.7.0+)
 
-The package includes OTA firmware manifest schema with both rich and minimal formats.
+Comprehensive best-in-class OTA solution based on 2024 industry standards.
+
+### OTA Manifest Schema
+
+The package includes OTA firmware manifest schema with both rich and minimal formats, enhanced with enterprise-grade features.
 
 **Preferred: Stable alias import** (v0.3.1+):
 ```ts
@@ -328,6 +333,104 @@ Supported formats:
 - **Rich manifest**: environment + branch + manifests object
 - **Minimal environment map**: environment → channels mapping  
 - **Chunk variants**: structured objects or SHA256 array
+
+### Enhanced OTA Features (v0.7.0+)
+
+**Security & Authenticity:**
+```ts
+const manifest = {
+  environment: "universal-sensor",
+  branch: "main",
+  manifests: {
+    prod: {
+      build_type: "prod",
+      file: "firmware-v2.0.0.bin",
+      size: 456789,
+      sha256: "a1b2c3...",
+      firmware_version: "2.0.0",
+      built: "2025-10-19T12:00:00Z",
+      ota_url: "https://firmware.example.com/v2.0.0.bin",
+      
+      // Digital signature for authenticity
+      signature: "MEUCIQDx...",
+      signature_algorithm: "ECDSA-SHA256",
+      signing_key_id: "prod-signing-key-2025",
+      
+      // Version constraints
+      min_version: "1.5.0",        // Minimum version to upgrade from
+      max_version: "1.9.99",       // Prevent downgrades
+      
+      // Release management
+      release_notes_url: "https://docs.example.com/v2.0.0",
+      criticality: "high",          // low | medium | high | critical
+      mandatory: true,              // Must be installed
+      
+      // Staged rollout
+      rollout_percentage: 25,       // Start with 25% of fleet
+      rollout_target_groups: ["beta-testers", "early-adopters"],
+      
+      // Delta updates (60-90% bandwidth reduction)
+      delta_from_version: "1.9.0",
+      delta_patch_url: "https://firmware.example.com/patches/1.9.0-to-2.0.0.patch",
+      delta_patch_size: 45678,
+      delta_patch_sha256: "c3d4e5..."
+    }
+  }
+};
+```
+
+**Firmware Update Status Tracking:**
+```ts
+import { validators, isFirmwareStatusMessage } from '@alteriom/mqtt-schema';
+
+// Enhanced status tracking
+const status = {
+  schema_version: 1,
+  device_id: "SN789",
+  device_type: "sensor",
+  timestamp: new Date().toISOString(),
+  firmware_version: "2.0.0",
+  
+  status: "downloading",           // New: rolled_back, rollback_pending, rollback_failed
+  progress_pct: 42,
+  
+  // Progress details
+  download_speed_kbps: 125.5,
+  bytes_downloaded: 196608,
+  bytes_total: 456789,
+  eta_seconds: 28,
+  
+  // Rollback support
+  rollback_available: true,
+  previous_version: "1.9.0",
+  
+  // Security verification
+  update_type: "delta",            // full | delta | patch
+  signature_verified: true,
+  checksum_verified: true,
+  
+  // Operational context
+  battery_level_pct: 85,
+  free_space_kb: 2048,
+  retry_count: 0
+};
+
+const result = validators.firmwareStatus(status);
+if (result.valid) {
+  console.log(`Download progress: ${status.progress_pct}% at ${status.download_speed_kbps} kbps`);
+  console.log(`ETA: ${status.eta_seconds} seconds`);
+}
+```
+
+**OTA Best Practices:**
+- **Security**: Always use digital signatures for production firmware
+- **Rollback**: Maintain backup partition for automatic rollback on failures
+- **Delta Updates**: Use delta patches for bandwidth-constrained deployments (60-90% reduction)
+- **Staged Rollout**: Start with 5-10% rollout, monitor, then expand gradually
+- **Version Control**: Use min_version to prevent upgrades from incompatible versions
+- **Criticality**: Mark security patches as "critical" with mandatory: true
+
+See `docs/OTA_MANIFEST.md` for comprehensive guide and best practices.
 
 ## API Surface
 
