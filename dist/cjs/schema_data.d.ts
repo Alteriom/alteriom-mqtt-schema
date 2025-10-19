@@ -160,6 +160,7 @@ export declare const sensor_data_schema: {
                     readonly operational_range: {
                         readonly type: "object";
                         readonly description: "Valid operational range for this sensor";
+                        readonly required: readonly ["min", "max"];
                         readonly properties: {
                             readonly min: {
                                 readonly type: "number";

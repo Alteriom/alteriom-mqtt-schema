@@ -197,6 +197,10 @@ export const sensor_data_schema = {
                     "operational_range": {
                         "type": "object",
                         "description": "Valid operational range for this sensor",
+                        "required": [
+                            "min",
+                            "max"
+                        ],
                         "properties": {
                             "min": {
                                 "type": "number"
