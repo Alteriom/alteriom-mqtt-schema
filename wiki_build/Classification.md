@@ -27,5 +27,11 @@ export function classifyAndValidate(data: any): { kind?: ValidatorName; result: 
   if (data.metrics) return { kind: 'gatewayMetrics', result: validators.gatewayMetrics(data) };
   if (data.sensors) return { kind: 'sensorData', result: validators.sensorData(data) };
   if (Array.isArray(data.nodes)) return { kind: 'meshNodeList', result: validators.meshNodeList(data) };
-// (truncated for brevity)
+  if (Array.isArray(data.connections)) return { kind: 'meshTopology', result: validators.meshTopology(data) };
+  if (Array.isArray(data.alerts)) return { kind: 'meshAlert', result: validators.meshAlert(data) };
+  // ... additional heuristics
+  // Fallback to sensorHeartbeat
+}
 ```
+
+See the complete implementation in `src/validators.ts`.
