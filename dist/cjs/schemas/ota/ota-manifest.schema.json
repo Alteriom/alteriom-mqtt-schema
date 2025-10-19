@@ -117,6 +117,82 @@
               "description": "Array of SHA256 strings for chunks"
             }
           ]
+        },
+        "signature": {
+          "type": "string",
+          "description": "Digital signature of the firmware for authenticity verification (base64 encoded)"
+        },
+        "signature_algorithm": {
+          "type": "string",
+          "enum": ["RSA-SHA256", "ECDSA-SHA256", "Ed25519"],
+          "description": "Algorithm used for digital signature"
+        },
+        "signing_key_id": {
+          "type": "string",
+          "description": "Identifier of the signing key for key rotation support"
+        },
+        "release_notes_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to release notes or changelog for this version"
+        },
+        "min_version": {
+          "type": "string",
+          "description": "Minimum firmware version required to upgrade to this version"
+        },
+        "max_version": {
+          "type": "string",
+          "description": "Maximum firmware version that can upgrade to this version (for preventing downgrades)"
+        },
+        "criticality": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "description": "Update criticality level for prioritization"
+        },
+        "mandatory": {
+          "type": "boolean",
+          "description": "Whether this update must be installed (cannot be skipped)"
+        },
+        "rollout_percentage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage of fleet to receive this update (staged rollout)"
+        },
+        "rollout_target_groups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Specific device groups targeted for this update (A/B testing)"
+        },
+        "delta_from_version": {
+          "type": "string",
+          "description": "Source version for delta/patch update"
+        },
+        "delta_patch_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to download delta patch instead of full firmware"
+        },
+        "delta_patch_size": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Size of delta patch in bytes"
+        },
+        "delta_patch_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA256 hash of the delta patch file"
+        },
+        "deprecated": {
+          "type": "boolean",
+          "description": "Mark this version as deprecated (not recommended for new installs)"
+        },
+        "expiry_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO8601 timestamp when this firmware version expires and should no longer be installed"
         }
       },
       "required": ["build_type", "file", "size", "sha256", "firmware_version", "built", "ota_url"],
@@ -178,6 +254,28 @@
           "type": "string",
           "format": "date-time",
           "description": "ISO8601 timestamp"
+        },
+        "signature": {
+          "type": "string",
+          "description": "Digital signature of the firmware (base64 encoded)"
+        },
+        "signature_algorithm": {
+          "type": "string",
+          "enum": ["RSA-SHA256", "ECDSA-SHA256", "Ed25519"],
+          "description": "Algorithm used for digital signature"
+        },
+        "min_version": {
+          "type": "string",
+          "description": "Minimum firmware version required to upgrade"
+        },
+        "criticality": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "description": "Update criticality level"
+        },
+        "mandatory": {
+          "type": "boolean",
+          "description": "Whether this update must be installed"
         }
       },
       "required": ["file", "size", "sha256", "version", "timestamp"],

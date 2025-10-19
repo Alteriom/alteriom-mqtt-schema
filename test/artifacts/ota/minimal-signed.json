@@ -1,0 +1,16 @@
+{
+  "universal-sensor": {
+    "prod": {
+      "file": "firmware-prod.bin",
+      "size": 234567,
+      "sha256": "d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5",
+      "version": "1.8.5",
+      "timestamp": "2025-10-19T10:00:00Z",
+      "signature": "MEQCIDL5M7N9O1P3Q5R7S9T1U3V5W7X9Y1Z3A5B7C9D1E3F5G7AiA9I1J3K5L7M9N1O3P5Q7R9S1T3U5V7W7X9Y1Z3A5B7C=",
+      "signature_algorithm": "ECDSA-SHA256",
+      "min_version": "1.5.0",
+      "criticality": "critical",
+      "mandatory": true
+    }
+  }
+}

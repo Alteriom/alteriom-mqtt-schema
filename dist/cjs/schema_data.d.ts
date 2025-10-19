@@ -408,7 +408,7 @@ export declare const firmware_status_schema: {
         };
         readonly status: {
             readonly type: "string";
-            readonly enum: readonly ["pending", "downloading", "flashing", "verifying", "rebooting", "completed", "failed"];
+            readonly enum: readonly ["pending", "downloading", "flashing", "verifying", "rebooting", "completed", "failed", "rolled_back", "rollback_pending", "rollback_failed"];
         };
         readonly progress_pct: {
             readonly type: "number";
@@ -417,6 +417,77 @@ export declare const firmware_status_schema: {
         };
         readonly error: {
             readonly type: readonly ["string", "null"];
+        };
+        readonly error_code: {
+            readonly type: "string";
+            readonly description: "Machine-readable error code for diagnostics";
+        };
+        readonly retry_count: {
+            readonly type: "integer";
+            readonly minimum: 0;
+            readonly description: "Number of retry attempts for this update";
+        };
+        readonly download_speed_kbps: {
+            readonly type: "number";
+            readonly minimum: 0;
+            readonly description: "Current download speed in kilobits per second";
+        };
+        readonly bytes_downloaded: {
+            readonly type: "integer";
+            readonly minimum: 0;
+            readonly description: "Number of bytes downloaded so far";
+        };
+        readonly bytes_total: {
+            readonly type: "integer";
+            readonly minimum: 0;
+            readonly description: "Total bytes to download";
+        };
+        readonly eta_seconds: {
+            readonly type: "integer";
+            readonly minimum: 0;
+            readonly description: "Estimated time remaining in seconds";
+        };
+        readonly update_started_at: {
+            readonly type: "string";
+            readonly format: "date-time";
+            readonly description: "ISO8601 timestamp when update began";
+        };
+        readonly update_completed_at: {
+            readonly type: "string";
+            readonly format: "date-time";
+            readonly description: "ISO8601 timestamp when update completed or failed";
+        };
+        readonly rollback_available: {
+            readonly type: "boolean";
+            readonly description: "Whether rollback to previous version is available";
+        };
+        readonly previous_version: {
+            readonly type: "string";
+            readonly description: "Version to rollback to if update fails";
+        };
+        readonly update_type: {
+            readonly type: "string";
+            readonly enum: readonly ["full", "delta", "patch"];
+            readonly description: "Type of update being applied";
+        };
+        readonly signature_verified: {
+            readonly type: "boolean";
+            readonly description: "Whether firmware signature was successfully verified";
+        };
+        readonly checksum_verified: {
+            readonly type: "boolean";
+            readonly description: "Whether firmware checksum was successfully verified";
+        };
+        readonly free_space_kb: {
+            readonly type: "integer";
+            readonly minimum: 0;
+            readonly description: "Available storage space in kilobytes before update";
+        };
+        readonly battery_level_pct: {
+            readonly type: "number";
+            readonly minimum: 0;
+            readonly maximum: 100;
+            readonly description: "Battery level during update (critical for battery-powered devices)";
         };
     };
     readonly additionalProperties: true;
@@ -862,6 +933,82 @@ export declare const ota_ota_manifest_schema: {
                         readonly description: "Array of SHA256 strings for chunks";
                     }];
                 };
+                readonly signature: {
+                    readonly type: "string";
+                    readonly description: "Digital signature of the firmware for authenticity verification (base64 encoded)";
+                };
+                readonly signature_algorithm: {
+                    readonly type: "string";
+                    readonly enum: readonly ["RSA-SHA256", "ECDSA-SHA256", "Ed25519"];
+                    readonly description: "Algorithm used for digital signature";
+                };
+                readonly signing_key_id: {
+                    readonly type: "string";
+                    readonly description: "Identifier of the signing key for key rotation support";
+                };
+                readonly release_notes_url: {
+                    readonly type: "string";
+                    readonly format: "uri";
+                    readonly description: "URL to release notes or changelog for this version";
+                };
+                readonly min_version: {
+                    readonly type: "string";
+                    readonly description: "Minimum firmware version required to upgrade to this version";
+                };
+                readonly max_version: {
+                    readonly type: "string";
+                    readonly description: "Maximum firmware version that can upgrade to this version (for preventing downgrades)";
+                };
+                readonly criticality: {
+                    readonly type: "string";
+                    readonly enum: readonly ["low", "medium", "high", "critical"];
+                    readonly description: "Update criticality level for prioritization";
+                };
+                readonly mandatory: {
+                    readonly type: "boolean";
+                    readonly description: "Whether this update must be installed (cannot be skipped)";
+                };
+                readonly rollout_percentage: {
+                    readonly type: "number";
+                    readonly minimum: 0;
+                    readonly maximum: 100;
+                    readonly description: "Percentage of fleet to receive this update (staged rollout)";
+                };
+                readonly rollout_target_groups: {
+                    readonly type: "array";
+                    readonly items: {
+                        readonly type: "string";
+                    };
+                    readonly description: "Specific device groups targeted for this update (A/B testing)";
+                };
+                readonly delta_from_version: {
+                    readonly type: "string";
+                    readonly description: "Source version for delta/patch update";
+                };
+                readonly delta_patch_url: {
+                    readonly type: "string";
+                    readonly format: "uri";
+                    readonly description: "URL to download delta patch instead of full firmware";
+                };
+                readonly delta_patch_size: {
+                    readonly type: "integer";
+                    readonly minimum: 1;
+                    readonly description: "Size of delta patch in bytes";
+                };
+                readonly delta_patch_sha256: {
+                    readonly type: "string";
+                    readonly pattern: "^[a-f0-9]{64}$";
+                    readonly description: "SHA256 hash of the delta patch file";
+                };
+                readonly deprecated: {
+                    readonly type: "boolean";
+                    readonly description: "Mark this version as deprecated (not recommended for new installs)";
+                };
+                readonly expiry_date: {
+                    readonly type: "string";
+                    readonly format: "date-time";
+                    readonly description: "ISO8601 timestamp when this firmware version expires and should no longer be installed";
+                };
             };
             readonly required: readonly ["build_type", "file", "size", "sha256", "firmware_version", "built", "ota_url"];
             readonly additionalProperties: true;
@@ -922,6 +1069,28 @@ export declare const ota_ota_manifest_schema: {
                     readonly type: "string";
                     readonly format: "date-time";
                     readonly description: "ISO8601 timestamp";
+                };
+                readonly signature: {
+                    readonly type: "string";
+                    readonly description: "Digital signature of the firmware (base64 encoded)";
+                };
+                readonly signature_algorithm: {
+                    readonly type: "string";
+                    readonly enum: readonly ["RSA-SHA256", "ECDSA-SHA256", "Ed25519"];
+                    readonly description: "Algorithm used for digital signature";
+                };
+                readonly min_version: {
+                    readonly type: "string";
+                    readonly description: "Minimum firmware version required to upgrade";
+                };
+                readonly criticality: {
+                    readonly type: "string";
+                    readonly enum: readonly ["low", "medium", "high", "critical"];
+                    readonly description: "Update criticality level";
+                };
+                readonly mandatory: {
+                    readonly type: "boolean";
+                    readonly description: "Whether this update must be installed";
                 };
             };
             readonly required: readonly ["file", "size", "sha256", "version", "timestamp"];

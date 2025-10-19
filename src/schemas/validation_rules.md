@@ -48,8 +48,17 @@ This file captures dynamic / contextual validation that is OUTSIDE pure structur
 - All count metrics must be >= 0.
 
 ## Firmware Update Status
-- `status` must be one of: pending, downloading, flashing, verifying, rebooting, completed, failed.
+- `status` must be one of: pending, downloading, flashing, verifying, rebooting, completed, failed, rolled_back, rollback_pending, rollback_failed.
 - `progress_pct` (if present) must be 0–100.
+- **NEW (OTA Enhancement)**: 
+  - `retry_count` must be >= 0 (tracks update retry attempts).
+  - `download_speed_kbps`, `bytes_downloaded`, `bytes_total`, `eta_seconds` must be >= 0.
+  - `battery_level_pct` must be 0-100 (critical for battery-powered devices).
+  - `error_code` provides machine-readable error classification (e.g., VERIFY_CHECKSUM_MISMATCH).
+  - `update_type` must be one of: full, delta, patch.
+  - `signature_verified` and `checksum_verified` booleans indicate security verification status.
+  - `rollback_available` indicates whether automatic rollback is supported.
+  - `previous_version` stores the version to rollback to if update fails.
 
 ## Extensibility
 - Unknown top-level keys tolerated (future evolution) except if they collide with any deprecated alias or reserved future keys announced in CHANGELOG.

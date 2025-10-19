@@ -1,0 +1,32 @@
+{
+  "environment": "universal-sensor",
+  "branch": "main",
+  "manifests": {
+    "prod": {
+      "build_type": "prod",
+      "file": "firmware-prod-v2.1.0.bin",
+      "size": 478900,
+      "sha256": "b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3",
+      "firmware_version": "2.1.0",
+      "built": "2025-10-19T15:30:00Z",
+      "ota_url": "https://firmware.alteriom.dev/universal-sensor/prod/firmware-prod-v2.1.0.bin",
+      "signature": "MEYCIQC8M9O1P3Q5R7S9T1U3V5W7X9Y1Z3A5B7C9D1E3F5G7H9I1JgIhAK3L5M7N9O1P3Q5R7S9T1U3V5W7X9Y1Z3A5B7C9D1E3F=",
+      "signature_algorithm": "ECDSA-SHA256",
+      "signing_key_id": "prod-signing-key-2025",
+      "release_notes_url": "https://docs.alteriom.dev/firmware/v2.1.0/release-notes",
+      "min_version": "2.0.0",
+      "max_version": "2.0.99",
+      "criticality": "medium",
+      "mandatory": false,
+      "delta_from_version": "2.0.0",
+      "delta_patch_url": "https://firmware.alteriom.dev/universal-sensor/prod/patches/2.0.0-to-2.1.0.patch",
+      "delta_patch_size": 45678,
+      "delta_patch_sha256": "c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4",
+      "chunk_size": 8192,
+      "chunks": [
+        "4444444444444444444444444444444444444444444444444444444444444444",
+        "5555555555555555555555555555555555555555555555555555555555555555"
+      ]
+    }
+  }
+}
