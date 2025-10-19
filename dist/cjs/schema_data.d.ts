@@ -32,6 +32,64 @@ export declare const envelope_schema: {
             readonly type: "string";
             readonly maxLength: 80;
         };
+        readonly location: {
+            readonly type: "object";
+            readonly description: "Standardized location information for geospatial tracking";
+            readonly properties: {
+                readonly latitude: {
+                    readonly type: "number";
+                    readonly minimum: -90;
+                    readonly maximum: 90;
+                };
+                readonly longitude: {
+                    readonly type: "number";
+                    readonly minimum: -180;
+                    readonly maximum: 180;
+                };
+                readonly altitude: {
+                    readonly type: "number";
+                    readonly description: "Altitude in meters";
+                };
+                readonly accuracy_m: {
+                    readonly type: "number";
+                    readonly minimum: 0;
+                    readonly description: "Position accuracy in meters";
+                };
+                readonly zone: {
+                    readonly type: "string";
+                    readonly maxLength: 64;
+                    readonly description: "Logical zone identifier (e.g., warehouse_A, floor_2)";
+                };
+                readonly description: {
+                    readonly type: "string";
+                    readonly maxLength: 256;
+                    readonly description: "Human-readable location description";
+                };
+            };
+            readonly additionalProperties: true;
+        };
+        readonly environment: {
+            readonly type: "object";
+            readonly description: "Environmental and deployment context metadata";
+            readonly properties: {
+                readonly deployment_type: {
+                    readonly type: "string";
+                    readonly enum: readonly ["indoor", "outdoor", "mobile", "mixed"];
+                    readonly description: "Type of deployment environment";
+                };
+                readonly power_source: {
+                    readonly type: "string";
+                    readonly enum: readonly ["battery", "mains", "solar", "mixed", "other"];
+                    readonly description: "Primary power source";
+                };
+                readonly expected_battery_life_days: {
+                    readonly type: "integer";
+                    readonly minimum: 0;
+                    readonly description: "Expected battery life in days (if battery-powered)";
+                };
+            };
+            readonly additionalProperties: true;
+        };
     };
     readonly additionalProperties: true;
 };
@@ -77,6 +135,40 @@ export declare const sensor_data_schema: {
                     };
                     readonly additional_data: {
                         readonly type: "object";
+                    };
+                    readonly timestamp: {
+                        readonly type: "string";
+                        readonly format: "date-time";
+                        readonly description: "Per-sensor reading timestamp (useful for async multi-sensor polling)";
+                    };
+                    readonly accuracy: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly description: "Sensor accuracy (±value in sensor units)";
+                    };
+                    readonly last_calibration: {
+                        readonly type: "string";
+                        readonly format: "date";
+                        readonly description: "Last calibration date (ISO 8601 date)";
+                    };
+                    readonly error_margin_pct: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly maximum: 100;
+                        readonly description: "Error margin as percentage";
+                    };
+                    readonly operational_range: {
+                        readonly type: "object";
+                        readonly description: "Valid operational range for this sensor";
+                        readonly properties: {
+                            readonly min: {
+                                readonly type: "number";
+                            };
+                            readonly max: {
+                                readonly type: "number";
+                            };
+                        };
+                        readonly additionalProperties: false;
                     };
                 };
                 readonly additionalProperties: false;
@@ -236,6 +328,57 @@ export declare const gateway_metrics_schema: {
                 readonly data_throughput_kbps: {
                     readonly type: "number";
                     readonly minimum: 0;
+                };
+                readonly storage_usage_pct: {
+                    readonly type: "number";
+                    readonly minimum: 0;
+                    readonly maximum: 100;
+                    readonly description: "Disk/flash storage usage percentage";
+                };
+                readonly storage_total_mb: {
+                    readonly type: "number";
+                    readonly minimum: 0;
+                    readonly description: "Total storage capacity in megabytes";
+                };
+                readonly storage_free_mb: {
+                    readonly type: "number";
+                    readonly minimum: 0;
+                    readonly description: "Free storage space in megabytes";
+                };
+                readonly network_rx_kbps: {
+                    readonly type: "number";
+                    readonly minimum: 0;
+                    readonly description: "Network receive bandwidth in kilobits per second";
+                };
+                readonly network_tx_kbps: {
+                    readonly type: "number";
+                    readonly minimum: 0;
+                    readonly description: "Network transmit bandwidth in kilobits per second";
+                };
+                readonly active_connections: {
+                    readonly type: "integer";
+                    readonly minimum: 0;
+                    readonly description: "Number of active network connections";
+                };
+                readonly error_count_24h: {
+                    readonly type: "integer";
+                    readonly minimum: 0;
+                    readonly description: "Error count in last 24 hours";
+                };
+                readonly warning_count_24h: {
+                    readonly type: "integer";
+                    readonly minimum: 0;
+                    readonly description: "Warning count in last 24 hours";
+                };
+                readonly restart_count: {
+                    readonly type: "integer";
+                    readonly minimum: 0;
+                    readonly description: "Total restart counter since deployment";
+                };
+                readonly last_restart_reason: {
+                    readonly type: "string";
+                    readonly maxLength: 128;
+                    readonly description: "Reason for last restart (e.g., watchdog, power_loss, update, manual)";
                 };
             };
             readonly additionalProperties: true;

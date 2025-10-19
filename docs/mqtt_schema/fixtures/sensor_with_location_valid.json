@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "device_id": "SN789",
+  "device_type": "sensor",
+  "timestamp": "2025-10-19T21:00:00.000Z",
+  "firmware_version": "SN 2.0.9",
+  "location": {
+    "latitude": 51.5074,
+    "longitude": -0.1278,
+    "altitude": 11.0,
+    "accuracy_m": 5.0,
+    "zone": "office_floor_3",
+    "description": "Conference Room A"
+  },
+  "sensors": {
+    "temperature": {
+      "value": 21.5,
+      "unit": "C"
+    },
+    "humidity": {
+      "value": 50,
+      "unit": "%"
+    }
+  },
+  "battery_level": 85
+}
