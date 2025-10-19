@@ -1,5 +1,72 @@
 # MQTT Schema Artifacts Changelog
 
+## 2025-10-19 (v0.6.0)
+
+### Added (v0.6.0)
+
+- **Enhanced Location Support**: Added optional `location` object to base envelope schema with standardized geospatial fields
+  - `latitude` (number, -90 to 90): GPS latitude coordinate
+  - `longitude` (number, -180 to 180): GPS longitude coordinate
+  - `altitude` (number): Altitude in meters
+  - `accuracy_m` (number, >= 0): Position accuracy in meters
+  - `zone` (string): Logical zone identifier (e.g., warehouse_A, floor_2)
+  - `description` (string): Human-readable location description
+
+- **Enhanced Environment Metadata**: Added optional `environment` object to base envelope schema
+  - `deployment_type` (enum): indoor/outdoor/mobile/mixed
+  - `power_source` (enum): battery/mains/solar/mixed/other
+  - `expected_battery_life_days` (integer): Expected battery life in days for battery-powered devices
+
+- **Enhanced Sensor Data Fields**: Extended sensor entry properties with metadata for data quality and calibration tracking
+  - `timestamp` (string, ISO 8601): Per-sensor reading timestamp (useful for async multi-sensor polling)
+  - `accuracy` (number, >= 0): Sensor accuracy (±value in sensor units)
+  - `last_calibration` (string, ISO 8601 date): Last calibration date
+  - `error_margin_pct` (number, 0-100): Error margin as percentage
+  - `operational_range` (object): Valid operational range with `min` and `max` properties
+
+- **Enhanced Gateway Metrics**: Extended gateway metrics with storage, network, and system health indicators
+  - `storage_usage_pct` (number, 0-100): Disk/flash storage usage percentage
+  - `storage_total_mb` (number, >= 0): Total storage capacity in megabytes
+  - `storage_free_mb` (number, >= 0): Free storage space in megabytes
+  - `network_rx_kbps` (number, >= 0): Network receive bandwidth in kilobits per second
+  - `network_tx_kbps` (number, >= 0): Network transmit bandwidth in kilobits per second
+  - `active_connections` (integer, >= 0): Number of active network connections
+  - `error_count_24h` (integer, >= 0): Error count in last 24 hours
+  - `warning_count_24h` (integer, >= 0): Warning count in last 24 hours
+  - `restart_count` (integer, >= 0): Total restart counter since deployment
+  - `last_restart_reason` (string): Reason for last restart (e.g., watchdog, power_loss, firmware_update, manual)
+
+- **Test Fixtures**: Added comprehensive test fixtures for enhanced schemas
+  - `sensor_data_enhanced_valid.json`: Full sensor data with all new metadata fields
+  - `gateway_metrics_enhanced_valid.json`: Gateway metrics with all new system health fields
+  - `sensor_with_location_valid.json`: Sensor data with location information
+
+- **TypeScript Type Updates**: Updated type definitions to include all new fields
+  - Added `LocationInfo` interface
+  - Added `EnvironmentInfo` interface
+  - Updated `BaseEnvelope` to include optional `location` and `environment`
+  - Updated `SensorEntry` with new metadata fields
+  - Updated `GatewayMetricsMessage` with enhanced metrics
+
+### Changed (v0.6.0)
+
+- Updated validation rules documentation to reflect new optional fields and their constraints
+- Enhanced schema descriptions with detailed field documentation
+
+### Notes (v0.6.0)
+
+- Minor version bump justified by substantial new optional fields for enhanced functionality
+- **ALL new fields are OPTIONAL** - maintains full backward compatibility with existing payloads
+- No breaking changes to existing MQTT payload schemas; `schema_version: 1` unchanged
+- All existing valid messages remain valid under updated schemas
+- New fields provide substantial value for:
+  - Map-based visualization in web dashboards (location data)
+  - Proactive system health monitoring (enhanced gateway metrics)
+  - Data quality assessment and sensor maintenance tracking (sensor metadata)
+  - Better asset tracking and deployment planning (location + environment context)
+- Firmware can adopt new fields incrementally without coordination requirements
+- Web applications can gracefully handle messages with or without new fields
+
 ## 2025-10-12 (v0.5.0)
 
 ### Added (v0.5.0)

@@ -10,7 +10,30 @@
     "device_type": {"type": "string", "enum": ["sensor", "gateway"]},
     "timestamp": {"type": "string", "format": "date-time"},
     "firmware_version": {"type": "string", "minLength": 1, "maxLength": 40},
-    "hardware_version": {"type": "string", "maxLength": 80}
+    "hardware_version": {"type": "string", "maxLength": 80},
+    "location": {
+      "type": "object",
+      "description": "Standardized location information for geospatial tracking",
+      "properties": {
+        "latitude": {"type": "number", "minimum": -90, "maximum": 90},
+        "longitude": {"type": "number", "minimum": -180, "maximum": 180},
+        "altitude": {"type": "number", "description": "Altitude in meters"},
+        "accuracy_m": {"type": "number", "minimum": 0, "description": "Position accuracy in meters"},
+        "zone": {"type": "string", "maxLength": 64, "description": "Logical zone identifier (e.g., warehouse_A, floor_2)"},
+        "description": {"type": "string", "maxLength": 256, "description": "Human-readable location description"}
+      },
+      "additionalProperties": true
+    },
+    "environment": {
+      "type": "object",
+      "description": "Environmental and deployment context metadata",
+      "properties": {
+        "deployment_type": {"type": "string", "enum": ["indoor", "outdoor", "mobile", "mixed"], "description": "Type of deployment environment"},
+        "power_source": {"type": "string", "enum": ["battery", "mains", "solar", "mixed", "other"], "description": "Primary power source"},
+        "expected_battery_life_days": {"type": "integer", "minimum": 0, "description": "Expected battery life in days (if battery-powered)"}
+      },
+      "additionalProperties": true
+    }
   },
   "additionalProperties": true
 }

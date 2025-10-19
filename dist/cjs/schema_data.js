@@ -45,6 +45,75 @@ exports.envelope_schema = {
         "hardware_version": {
             "type": "string",
             "maxLength": 80
+        },
+        "location": {
+            "type": "object",
+            "description": "Standardized location information for geospatial tracking",
+            "properties": {
+                "latitude": {
+                    "type": "number",
+                    "minimum": -90,
+                    "maximum": 90
+                },
+                "longitude": {
+                    "type": "number",
+                    "minimum": -180,
+                    "maximum": 180
+                },
+                "altitude": {
+                    "type": "number",
+                    "description": "Altitude in meters"
+                },
+                "accuracy_m": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Position accuracy in meters"
+                },
+                "zone": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "description": "Logical zone identifier (e.g., warehouse_A, floor_2)"
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 256,
+                    "description": "Human-readable location description"
+                }
+            },
+            "additionalProperties": true
+        },
+        "environment": {
+            "type": "object",
+            "description": "Environmental and deployment context metadata",
+            "properties": {
+                "deployment_type": {
+                    "type": "string",
+                    "enum": [
+                        "indoor",
+                        "outdoor",
+                        "mobile",
+                        "mixed"
+                    ],
+                    "description": "Type of deployment environment"
+                },
+                "power_source": {
+                    "type": "string",
+                    "enum": [
+                        "battery",
+                        "mains",
+                        "solar",
+                        "mixed",
+                        "other"
+                    ],
+                    "description": "Primary power source"
+                },
+                "expected_battery_life_days": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Expected battery life in days (if battery-powered)"
+                }
+            },
+            "additionalProperties": true
         }
     },
     "additionalProperties": true
@@ -106,6 +175,44 @@ exports.sensor_data_schema = {
                     },
                     "additional_data": {
                         "type": "object"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Per-sensor reading timestamp (useful for async multi-sensor polling)"
+                    },
+                    "accuracy": {
+                        "type": "number",
+                        "minimum": 0,
+                        "description": "Sensor accuracy (±value in sensor units)"
+                    },
+                    "last_calibration": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "Last calibration date (ISO 8601 date)"
+                    },
+                    "error_margin_pct": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 100,
+                        "description": "Error margin as percentage"
+                    },
+                    "operational_range": {
+                        "type": "object",
+                        "description": "Valid operational range for this sensor",
+                        "required": [
+                            "min",
+                            "max"
+                        ],
+                        "properties": {
+                            "min": {
+                                "type": "number"
+                            },
+                            "max": {
+                                "type": "number"
+                            }
+                        },
+                        "additionalProperties": false
                     }
                 },
                 "additionalProperties": false
@@ -290,6 +397,57 @@ exports.gateway_metrics_schema = {
                 "data_throughput_kbps": {
                     "type": "number",
                     "minimum": 0
+                },
+                "storage_usage_pct": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100,
+                    "description": "Disk/flash storage usage percentage"
+                },
+                "storage_total_mb": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Total storage capacity in megabytes"
+                },
+                "storage_free_mb": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Free storage space in megabytes"
+                },
+                "network_rx_kbps": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Network receive bandwidth in kilobits per second"
+                },
+                "network_tx_kbps": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Network transmit bandwidth in kilobits per second"
+                },
+                "active_connections": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Number of active network connections"
+                },
+                "error_count_24h": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Error count in last 24 hours"
+                },
+                "warning_count_24h": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Warning count in last 24 hours"
+                },
+                "restart_count": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Total restart counter since deployment"
+                },
+                "last_restart_reason": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "description": "Reason for last restart (e.g., watchdog, power_loss, update, manual)"
                 }
             },
             "additionalProperties": true

@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "device_id": "GW002",
+  "device_type": "gateway",
+  "timestamp": "2025-10-19T21:00:00.000Z",
+  "firmware_version": "GW 1.4.0",
+  "location": {
+    "latitude": 40.7128,
+    "longitude": -74.0060,
+    "zone": "datacenter_1",
+    "description": "Rack 5, Unit 2"
+  },
+  "environment": {
+    "deployment_type": "indoor",
+    "power_source": "mains"
+  },
+  "metrics": {
+    "uptime_s": 86400,
+    "cpu_usage_pct": 15.3,
+    "memory_usage_pct": 42.7,
+    "temperature_c": 45.2,
+    "connected_devices": 12,
+    "mesh_nodes": 8,
+    "packet_loss_pct": 0.5,
+    "data_throughput_kbps": 256.8,
+    "storage_usage_pct": 45.2,
+    "storage_total_mb": 512,
+    "storage_free_mb": 280.5,
+    "network_rx_kbps": 125.4,
+    "network_tx_kbps": 89.3,
+    "active_connections": 5,
+    "error_count_24h": 3,
+    "warning_count_24h": 12,
+    "restart_count": 2,
+    "last_restart_reason": "firmware_update"
+  }
+}

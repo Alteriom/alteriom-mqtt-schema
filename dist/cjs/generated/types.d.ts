@@ -1,9 +1,24 @@
 /**
  * Auto-generated TypeScript types for Alteriom MQTT Schema v1
  * Source: docs/mqtt_schema/*.schema.json
- * Generation Date: 2025-09-20
+ * Generation Date: 2025-10-19
  * NOTE: This file is maintained in firmware repo for UI alignment. Changes require coordinated review.
  */
+export interface LocationInfo {
+    latitude?: number;
+    longitude?: number;
+    altitude?: number;
+    accuracy_m?: number;
+    zone?: string;
+    description?: string;
+    [k: string]: unknown;
+}
+export interface EnvironmentInfo {
+    deployment_type?: 'indoor' | 'outdoor' | 'mobile' | 'mixed';
+    power_source?: 'battery' | 'mains' | 'solar' | 'mixed' | 'other';
+    expected_battery_life_days?: number;
+    [k: string]: unknown;
+}
 export interface BaseEnvelope {
     schema_version: 1;
     device_id: string;
@@ -11,6 +26,8 @@ export interface BaseEnvelope {
     timestamp: string;
     firmware_version?: string;
     hardware_version?: string;
+    location?: LocationInfo;
+    environment?: EnvironmentInfo;
     [k: string]: unknown;
 }
 export interface SensorEntry {
@@ -22,6 +39,14 @@ export interface SensorEntry {
     name?: string;
     location?: string;
     additional_data?: Record<string, unknown>;
+    timestamp?: string;
+    accuracy?: number;
+    last_calibration?: string;
+    error_margin_pct?: number;
+    operational_range?: {
+        min: number;
+        max: number;
+    };
     [k: string]: unknown;
 }
 export interface SensorDataMessage extends BaseEnvelope {
@@ -67,6 +92,16 @@ export interface GatewayMetricsMessage extends BaseEnvelope {
         mesh_nodes?: number;
         packet_loss_pct?: number;
         data_throughput_kbps?: number;
+        storage_usage_pct?: number;
+        storage_total_mb?: number;
+        storage_free_mb?: number;
+        network_rx_kbps?: number;
+        network_tx_kbps?: number;
+        active_connections?: number;
+        error_count_24h?: number;
+        warning_count_24h?: number;
+        restart_count?: number;
+        last_restart_reason?: string;
         [k: string]: unknown;
     };
 }

@@ -27,10 +27,25 @@ This file captures dynamic / contextual validation that is OUTSIDE pure structur
 - `value` REQUIRED.
 - `unit`, `raw_value`, `calibrated_value`, `quality_score`, `name`, `location`, `additional_data` OPTIONAL.
 - If `quality_score` present must be 0.0–1.0 inclusive.
+- **NEW (v0.6.0)**: `timestamp`, `accuracy`, `last_calibration`, `error_margin_pct`, `operational_range` OPTIONAL.
+- If `error_margin_pct` present must be 0–100.
+- If `operational_range` present, must have both `min` and `max` properties.
+- Per-sensor `timestamp` allows tracking individual sensor reading times (useful for async multi-sensor polling).
+
+## Location & Environment (v0.6.0)
+- `location` object OPTIONAL at envelope level (applies to entire device).
+- `latitude` must be -90 to 90, `longitude` must be -180 to 180.
+- `accuracy_m` must be >= 0 (position accuracy in meters).
+- `zone` is a logical identifier (e.g., warehouse_A, floor_2).
+- `environment.deployment_type` must be one of: indoor, outdoor, mobile, mixed.
+- `environment.power_source` must be one of: battery, mains, solar, mixed, other.
 
 ## Metrics Constraints
 - Gateway metrics MUST appear under `metrics` (never at top-level).
 - Required minimal metric: `uptime_s`.
+- **NEW (v0.6.0)**: Enhanced metrics available: `storage_usage_pct`, `storage_total_mb`, `storage_free_mb`, `network_rx_kbps`, `network_tx_kbps`, `active_connections`, `error_count_24h`, `warning_count_24h`, `restart_count`, `last_restart_reason`.
+- All percentage metrics must be 0–100.
+- All count metrics must be >= 0.
 
 ## Firmware Update Status
 - `status` must be one of: pending, downloading, flashing, verifying, rebooting, completed, failed.

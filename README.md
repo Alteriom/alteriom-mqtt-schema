@@ -33,6 +33,9 @@ Firmware emits structured MQTT payloads that must remain tightly aligned with we
 - Helpful error paths (JSON Pointer style)
 - Lightweight (Ajv peer dependency, schemas embedded)
 - Ships original schema JSON files (optional consumption)
+- **NEW in v0.6.0**: Enhanced location/geolocation support for asset tracking
+- **NEW in v0.6.0**: Extended sensor metadata (accuracy, calibration, operational range)
+- **NEW in v0.6.0**: Comprehensive gateway health metrics (storage, network, errors)
 
 ## Installation
 
@@ -146,6 +149,148 @@ mqttClient.subscribe(`alteriom/nodes/${command.device_id}/responses`, (message) 
 - Priority field for queue management
 - Success boolean and error codes in responses
 - Latency tracking for performance monitoring
+
+## Enhanced Location & Environment Tracking (v0.6.0+)
+
+Track device location and deployment context for asset management and map-based visualization:
+
+```ts
+import { validators, isSensorDataMessage } from '@alteriom/mqtt-schema';
+
+const sensorData = {
+  schema_version: 1,
+  device_id: 'SN456',
+  device_type: 'sensor',
+  timestamp: new Date().toISOString(),
+  firmware_version: 'SN 2.1.0',
+  // Standardized location for map visualization
+  location: {
+    latitude: 43.6532,
+    longitude: -79.3832,
+    altitude: 76.5,
+    accuracy_m: 10.0,
+    zone: 'warehouse_A',
+    description: 'Shelf 3, Row B'
+  },
+  // Deployment context
+  environment: {
+    deployment_type: 'indoor',
+    power_source: 'battery',
+    expected_battery_life_days: 365
+  },
+  sensors: {
+    temperature: {
+      value: 22.3,
+      unit: 'C',
+      // Enhanced sensor metadata
+      timestamp: '2025-10-19T20:59:58.000Z',
+      accuracy: 0.5,
+      last_calibration: '2025-01-15',
+      error_margin_pct: 2.0,
+      operational_range: { min: -40, max: 85 },
+      quality_score: 0.95
+    }
+  },
+  battery_level: 78,
+  signal_strength: -65
+};
+
+const result = validators.sensorData(sensorData);
+if (result.valid && isSensorDataMessage(sensorData)) {
+  // Display on map using location data
+  displayOnMap(sensorData.location.latitude, sensorData.location.longitude);
+  
+  // Show sensor health based on metadata
+  if (sensorData.sensors.temperature.accuracy) {
+    console.log(`Temperature accuracy: ±${sensorData.sensors.temperature.accuracy}${sensorData.sensors.temperature.unit}`);
+  }
+  
+  // Check calibration status
+  const lastCal = new Date(sensorData.sensors.temperature.last_calibration);
+  const daysSinceCalibration = (Date.now() - lastCal.getTime()) / (1000 * 60 * 60 * 24);
+  if (daysSinceCalibration > 365) {
+    console.warn('Sensor calibration overdue');
+  }
+}
+```
+
+**Location & Environment Features:**
+- GPS coordinates (latitude, longitude, altitude) with accuracy tracking
+- Zone-based organization (warehouses, floors, rooms)
+- Human-readable location descriptions
+- Deployment type tracking (indoor/outdoor/mobile)
+- Power source information for battery management
+- Per-sensor timestamps for async polling scenarios
+- Sensor accuracy and calibration tracking
+- Operational range validation support
+
+## Enhanced Gateway Metrics (v0.6.0+)
+
+Comprehensive system health monitoring for gateways:
+
+```ts
+import { validators, isGatewayMetricsMessage } from '@alteriom/mqtt-schema';
+
+const metrics = {
+  schema_version: 1,
+  device_id: 'GW002',
+  device_type: 'gateway',
+  timestamp: new Date().toISOString(),
+  firmware_version: 'GW 1.4.0',
+  metrics: {
+    uptime_s: 86400,
+    cpu_usage_pct: 15.3,
+    memory_usage_pct: 42.7,
+    temperature_c: 45.2,
+    // Enhanced storage metrics
+    storage_usage_pct: 45.2,
+    storage_total_mb: 512,
+    storage_free_mb: 280.5,
+    // Network bandwidth tracking
+    network_rx_kbps: 125.4,
+    network_tx_kbps: 89.3,
+    active_connections: 5,
+    // System health indicators
+    error_count_24h: 3,
+    warning_count_24h: 12,
+    restart_count: 2,
+    last_restart_reason: 'firmware_update',
+    // Mesh network metrics
+    connected_devices: 12,
+    mesh_nodes: 8,
+    packet_loss_pct: 0.5
+  }
+};
+
+const result = validators.gatewayMetrics(metrics);
+if (result.valid && isGatewayMetricsMessage(metrics)) {
+  // Storage monitoring
+  if (metrics.metrics.storage_usage_pct > 80) {
+    console.warn('Storage usage critical:', metrics.metrics.storage_usage_pct);
+  }
+  
+  // Network health
+  const totalBandwidth = metrics.metrics.network_rx_kbps + metrics.metrics.network_tx_kbps;
+  console.log(`Total bandwidth: ${totalBandwidth.toFixed(1)} kbps`);
+  
+  // Error trend analysis
+  if (metrics.metrics.error_count_24h > 10) {
+    console.error('High error rate detected:', metrics.metrics.error_count_24h);
+  }
+  
+  // Restart tracking
+  console.log(`Last restart: ${metrics.metrics.last_restart_reason}`);
+  console.log(`Total restarts: ${metrics.metrics.restart_count}`);
+}
+```
+
+**Enhanced Gateway Metrics Features:**
+- Storage usage tracking (percentage, total, free space)
+- Network bandwidth monitoring (RX/TX rates)
+- Active connection counting
+- Error and warning counters (24-hour rolling window)
+- Restart tracking with reason codes
+- All metrics are optional for gradual firmware adoption
 
 ## OTA Firmware Manifest Schema (v0.3.1+)
 

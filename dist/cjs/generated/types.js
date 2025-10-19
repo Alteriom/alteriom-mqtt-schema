@@ -2,7 +2,7 @@
 /**
  * Auto-generated TypeScript types for Alteriom MQTT Schema v1
  * Source: docs/mqtt_schema/*.schema.json
- * Generation Date: 2025-09-20
+ * Generation Date: 2025-10-19
  * NOTE: This file is maintained in firmware repo for UI alignment. Changes require coordinated review.
  */
 Object.defineProperty(exports, "__esModule", { value: true });

@@ -17,7 +17,17 @@
         "connected_devices": {"type": "integer", "minimum": 0},
         "mesh_nodes": {"type": "integer", "minimum": 0},
         "packet_loss_pct": {"type": "number", "minimum": 0, "maximum": 100},
-        "data_throughput_kbps": {"type": "number", "minimum": 0}
+        "data_throughput_kbps": {"type": "number", "minimum": 0},
+        "storage_usage_pct": {"type": "number", "minimum": 0, "maximum": 100, "description": "Disk/flash storage usage percentage"},
+        "storage_total_mb": {"type": "number", "minimum": 0, "description": "Total storage capacity in megabytes"},
+        "storage_free_mb": {"type": "number", "minimum": 0, "description": "Free storage space in megabytes"},
+        "network_rx_kbps": {"type": "number", "minimum": 0, "description": "Network receive bandwidth in kilobits per second"},
+        "network_tx_kbps": {"type": "number", "minimum": 0, "description": "Network transmit bandwidth in kilobits per second"},
+        "active_connections": {"type": "integer", "minimum": 0, "description": "Number of active network connections"},
+        "error_count_24h": {"type": "integer", "minimum": 0, "description": "Error count in last 24 hours"},
+        "warning_count_24h": {"type": "integer", "minimum": 0, "description": "Warning count in last 24 hours"},
+        "restart_count": {"type": "integer", "minimum": 0, "description": "Total restart counter since deployment"},
+        "last_restart_reason": {"type": "string", "maxLength": 128, "description": "Reason for last restart (e.g., watchdog, power_loss, update, manual)"}
       },
       "additionalProperties": true
     }

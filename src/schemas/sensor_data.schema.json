@@ -20,7 +20,21 @@
           "quality_score": {"type": "number", "minimum": 0, "maximum": 1},
           "name": {"type": "string"},
           "location": {"type": "string"},
-          "additional_data": {"type": "object"}
+          "additional_data": {"type": "object"},
+          "timestamp": {"type": "string", "format": "date-time", "description": "Per-sensor reading timestamp (useful for async multi-sensor polling)"},
+          "accuracy": {"type": "number", "minimum": 0, "description": "Sensor accuracy (±value in sensor units)"},
+          "last_calibration": {"type": "string", "format": "date", "description": "Last calibration date (ISO 8601 date)"},
+          "error_margin_pct": {"type": "number", "minimum": 0, "maximum": 100, "description": "Error margin as percentage"},
+          "operational_range": {
+            "type": "object",
+            "description": "Valid operational range for this sensor",
+            "required": ["min", "max"],
+            "properties": {
+              "min": {"type": "number"},
+              "max": {"type": "number"}
+            },
+            "additionalProperties": false
+          }
         },
         "additionalProperties": false
       }

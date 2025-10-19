@@ -1,13 +1,30 @@
 /**
  * Auto-generated TypeScript types for Alteriom MQTT Schema v1
  * Source: docs/mqtt_schema/*.schema.json
- * Generation Date: 2025-09-20
+ * Generation Date: 2025-10-19
  * NOTE: This file is maintained in firmware repo for UI alignment. Changes require coordinated review.
  */
 
 // ------------------------------------------------------------
 // Base / Shared Types
 // ------------------------------------------------------------
+
+export interface LocationInfo {
+  latitude?: number; // -90 to 90
+  longitude?: number; // -180 to 180
+  altitude?: number; // meters
+  accuracy_m?: number; // position accuracy in meters
+  zone?: string; // logical zone identifier (e.g., warehouse_A)
+  description?: string; // human-readable location
+  [k: string]: unknown;
+}
+
+export interface EnvironmentInfo {
+  deployment_type?: 'indoor' | 'outdoor' | 'mobile' | 'mixed';
+  power_source?: 'battery' | 'mains' | 'solar' | 'mixed' | 'other';
+  expected_battery_life_days?: number; // expected battery life in days
+  [k: string]: unknown;
+}
 
 export interface BaseEnvelope {
   schema_version: 1;
@@ -16,6 +33,8 @@ export interface BaseEnvelope {
   timestamp: string; // RFC3339 / ISO 8601
   firmware_version?: string; // Required everywhere except heartbeat (UI should treat missing only valid on heartbeat)
   hardware_version?: string;
+  location?: LocationInfo; // Optional standardized location
+  environment?: EnvironmentInfo; // Optional environmental metadata
   [k: string]: unknown; // Forward-compatible extension
 }
 
@@ -28,6 +47,14 @@ export interface SensorEntry {
   name?: string;
   location?: string;
   additional_data?: Record<string, unknown>;
+  timestamp?: string; // Per-sensor reading timestamp
+  accuracy?: number; // Sensor accuracy (±value in units)
+  last_calibration?: string; // Last calibration date (ISO 8601)
+  error_margin_pct?: number; // Error margin percentage (0-100)
+  operational_range?: {
+    min: number;
+    max: number;
+  };
   [k: string]: unknown; // Extensions
 }
 
@@ -83,6 +110,16 @@ export interface GatewayMetricsMessage extends BaseEnvelope {
     mesh_nodes?: number;
     packet_loss_pct?: number;
     data_throughput_kbps?: number;
+    storage_usage_pct?: number; // Disk/flash usage percentage
+    storage_total_mb?: number; // Total storage capacity in MB
+    storage_free_mb?: number; // Free storage space in MB
+    network_rx_kbps?: number; // Network receive bandwidth
+    network_tx_kbps?: number; // Network transmit bandwidth
+    active_connections?: number; // Active network connections
+    error_count_24h?: number; // Errors in last 24 hours
+    warning_count_24h?: number; // Warnings in last 24 hours
+    restart_count?: number; // Total restart counter
+    last_restart_reason?: string; // Last restart reason
     [k: string]: unknown;
   };
 }
