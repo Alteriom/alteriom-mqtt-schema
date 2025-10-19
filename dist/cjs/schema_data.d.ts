@@ -597,6 +597,8 @@ export declare const mqtt_v1_bundle_json: {
         readonly gateway_metrics: "gateway_metrics.schema.json";
         readonly firmware_status: "firmware_status.schema.json";
         readonly control_response: "control_response.schema.json";
+        readonly command: "command.schema.json";
+        readonly command_response: "command_response.schema.json";
         readonly mesh_node_list: "mesh_node_list.schema.json";
         readonly mesh_topology: "mesh_topology.schema.json";
         readonly mesh_alert: "mesh_alert.schema.json";
