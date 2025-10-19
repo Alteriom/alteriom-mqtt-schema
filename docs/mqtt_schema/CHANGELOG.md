@@ -1,5 +1,128 @@
 # MQTT Schema Artifacts Changelog
 
+## 2025-10-19 (v0.7.0 - OTA Enhancement Release)
+
+### Added (v0.7.0 - OTA Features)
+
+This release implements a comprehensive best-in-class OTA management solution based on industry standards for IoT firmware updates in 2024.
+
+#### Enhanced OTA Manifest Schema (`ota-manifest.schema.json`)
+
+**Security & Authenticity:**
+- `signature` (string): Digital signature of firmware for authenticity verification (base64 encoded)
+- `signature_algorithm` (enum): RSA-SHA256 | ECDSA-SHA256 | Ed25519
+- `signing_key_id` (string): Key identifier for key rotation support
+
+**Version Constraints & Dependencies:**
+- `min_version` (string): Minimum firmware version required to upgrade
+- `max_version` (string): Maximum version that can upgrade (prevents downgrades)
+
+**Release Management:**
+- `release_notes_url` (string, URI): Link to changelog/documentation
+- `criticality` (enum): low | medium | high | critical - for prioritization
+- `mandatory` (boolean): Whether update must be installed (cannot be skipped)
+- `deprecated` (boolean): Mark version as deprecated (not recommended for new installs)
+- `expiry_date` (string, date-time): When firmware expires and should no longer be installed
+
+**Staged Rollout & A/B Testing:**
+- `rollout_percentage` (number, 0-100): Percentage of fleet to receive update
+- `rollout_target_groups` (array of strings): Specific device groups for A/B testing
+
+**Delta/Patch Updates:**
+- `delta_from_version` (string): Source version for delta update
+- `delta_patch_url` (string, URI): URL to download delta patch
+- `delta_patch_size` (integer): Size of delta patch in bytes
+- `delta_patch_sha256` (string): SHA256 hash of delta patch
+
+All OTA manifest enhancements are **OPTIONAL** and fully backward compatible.
+
+#### Enhanced Firmware Status Schema (`firmware_status.schema.json`)
+
+**Extended Status Values:**
+- Added `rolled_back`: Automatic rollback completed
+- Added `rollback_pending`: Rollback in progress
+- Added `rollback_failed`: Rollback unsuccessful (critical state)
+
+**Progress Tracking:**
+- `download_speed_kbps` (number): Current download speed in kilobits per second
+- `bytes_downloaded` (integer): Bytes received so far
+- `bytes_total` (integer): Total firmware size
+- `eta_seconds` (integer): Estimated time remaining
+- `retry_count` (integer): Number of retry attempts
+
+**Security Verification:**
+- `signature_verified` (boolean): Whether firmware signature was verified
+- `checksum_verified` (boolean): Whether firmware checksum was verified
+- `update_type` (enum): full | delta | patch
+
+**Rollback Support:**
+- `rollback_available` (boolean): Whether rollback is available
+- `previous_version` (string): Version to rollback to if update fails
+- `error_code` (string): Machine-readable error classification
+
+**Operational Context:**
+- `update_started_at` (string, date-time): When update began
+- `update_completed_at` (string, date-time): When update completed or failed
+- `free_space_kb` (integer): Storage space before update
+- `battery_level_pct` (number, 0-100): Battery level during update
+
+All firmware status enhancements are **OPTIONAL** and fully backward compatible.
+
+#### Test Fixtures & Examples
+
+- Added `test/artifacts/ota/rich-signed-with-rollout.json`: Full-featured manifest with signatures and staged rollout
+- Added `test/artifacts/ota/rich-delta-update.json`: Delta/patch update example
+- Added `test/artifacts/ota/minimal-signed.json`: Minimal manifest with security features
+- Added `docs/mqtt_schema/fixtures/firmware_status_downloading_enhanced.json`: Enhanced download status
+- Added `docs/mqtt_schema/fixtures/firmware_status_completed_enhanced.json`: Completed update with verification
+- Added `docs/mqtt_schema/fixtures/firmware_status_rollback.json`: Rollback scenario example
+
+#### Documentation
+
+- Comprehensive OTA best practices guide in `docs/OTA_MANIFEST.md`
+- Security recommendations (digital signatures, key rotation)
+- Rollback and fail-safe strategies
+- Delta/patch update implementation guidance
+- Staged rollout deployment strategies
+- Update prioritization guidelines
+- Release management best practices
+
+### Changed (v0.7.0)
+
+- Updated `docs/OTA_MANIFEST.md` with detailed documentation of all new fields
+- Updated `docs/mqtt_schema/validation_rules.md` to document firmware status enhancements
+- Enhanced OTA manifest validation to support new optional security and deployment fields
+
+### Industry Standards Alignment (v0.7.0)
+
+This release aligns with IoT OTA best practices from industry leaders:
+- **Security**: Digital signatures and cryptographic verification (NIST guidelines)
+- **Reliability**: Atomic updates, rollback mechanisms, redundant storage
+- **Efficiency**: Delta updates for bandwidth optimization (60-90% reduction)
+- **Scalability**: Staged rollout, A/B testing, fleet management
+- **Observability**: Comprehensive status tracking, error diagnostics
+
+### Migration Notes (v0.7.0)
+
+- **Backward Compatible**: All existing manifests and firmware status messages remain valid
+- **Gradual Adoption**: New fields are optional; implement incrementally
+- **No Breaking Changes**: `schema_version: 1` unchanged
+- **Firmware Updates**: Devices can adopt new fields at their own pace
+- **Web Applications**: Gracefully handle messages with or without new fields
+
+### Notes (v0.7.0)
+
+- Minor version bump justified by substantial new optional OTA management features
+- Focus on production-grade OTA deployment for enterprise IoT environments
+- Enables secure, reliable, and efficient firmware updates at scale
+- Maintains full backward compatibility with all existing MQTT payloads
+- Firmware can implement features incrementally based on hardware capabilities
+- Particularly valuable for:
+  - Security-critical deployments requiring signed firmware
+  - Large-scale fleets needing staged rollout capabilities
+  - Bandwidth-constrained environments benefiting from delta updates
+  - Mission-critical systems requiring fail-safe rollback mechanisms
+
 ## 2025-10-19 (v0.6.0)
 
 ### Added (v0.6.0)

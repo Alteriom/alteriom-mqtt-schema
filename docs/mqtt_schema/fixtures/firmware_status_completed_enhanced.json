@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "device_id": "SN790",
+  "device_type": "sensor",
+  "timestamp": "2025-10-19T14:35:00.000Z",
+  "firmware_version": "SN 2.0.9",
+  "status": "completed",
+  "from_version": "SN 2.0.8",
+  "to_version": "SN 2.0.9",
+  "progress_pct": 100,
+  "update_started_at": "2025-10-19T14:29:00.000Z",
+  "update_completed_at": "2025-10-19T14:35:00.000Z",
+  "update_type": "delta",
+  "signature_verified": true,
+  "checksum_verified": true,
+  "rollback_available": true,
+  "previous_version": "SN 2.0.8"
+}

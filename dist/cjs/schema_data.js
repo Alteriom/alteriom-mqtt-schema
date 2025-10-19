@@ -487,7 +487,10 @@ exports.firmware_status_schema = {
                 "verifying",
                 "rebooting",
                 "completed",
-                "failed"
+                "failed",
+                "rolled_back",
+                "rollback_pending",
+                "rollback_failed"
             ]
         },
         "progress_pct": {
@@ -500,6 +503,81 @@ exports.firmware_status_schema = {
                 "string",
                 "null"
             ]
+        },
+        "error_code": {
+            "type": "string",
+            "description": "Machine-readable error code for diagnostics"
+        },
+        "retry_count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of retry attempts for this update"
+        },
+        "download_speed_kbps": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Current download speed in kilobits per second"
+        },
+        "bytes_downloaded": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of bytes downloaded so far"
+        },
+        "bytes_total": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Total bytes to download"
+        },
+        "eta_seconds": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Estimated time remaining in seconds"
+        },
+        "update_started_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO8601 timestamp when update began"
+        },
+        "update_completed_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO8601 timestamp when update completed or failed"
+        },
+        "rollback_available": {
+            "type": "boolean",
+            "description": "Whether rollback to previous version is available"
+        },
+        "previous_version": {
+            "type": "string",
+            "description": "Version to rollback to if update fails"
+        },
+        "update_type": {
+            "type": "string",
+            "enum": [
+                "full",
+                "delta",
+                "patch"
+            ],
+            "description": "Type of update being applied"
+        },
+        "signature_verified": {
+            "type": "boolean",
+            "description": "Whether firmware signature was successfully verified"
+        },
+        "checksum_verified": {
+            "type": "boolean",
+            "description": "Whether firmware checksum was successfully verified"
+        },
+        "free_space_kb": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Available storage space in kilobytes before update"
+        },
+        "battery_level_pct": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Battery level during update (critical for battery-powered devices)"
         }
     },
     "additionalProperties": true
@@ -1046,6 +1124,91 @@ exports.ota_ota_manifest_schema = {
                             "description": "Array of SHA256 strings for chunks"
                         }
                     ]
+                },
+                "signature": {
+                    "type": "string",
+                    "description": "Digital signature of the firmware for authenticity verification (base64 encoded)"
+                },
+                "signature_algorithm": {
+                    "type": "string",
+                    "enum": [
+                        "RSA-SHA256",
+                        "ECDSA-SHA256",
+                        "Ed25519"
+                    ],
+                    "description": "Algorithm used for digital signature"
+                },
+                "signing_key_id": {
+                    "type": "string",
+                    "description": "Identifier of the signing key for key rotation support"
+                },
+                "release_notes_url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "URL to release notes or changelog for this version"
+                },
+                "min_version": {
+                    "type": "string",
+                    "description": "Minimum firmware version required to upgrade to this version"
+                },
+                "max_version": {
+                    "type": "string",
+                    "description": "Maximum firmware version that can upgrade to this version (for preventing downgrades)"
+                },
+                "criticality": {
+                    "type": "string",
+                    "enum": [
+                        "low",
+                        "medium",
+                        "high",
+                        "critical"
+                    ],
+                    "description": "Update criticality level for prioritization"
+                },
+                "mandatory": {
+                    "type": "boolean",
+                    "description": "Whether this update must be installed (cannot be skipped)"
+                },
+                "rollout_percentage": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100,
+                    "description": "Percentage of fleet to receive this update (staged rollout)"
+                },
+                "rollout_target_groups": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Specific device groups targeted for this update (A/B testing)"
+                },
+                "delta_from_version": {
+                    "type": "string",
+                    "description": "Source version for delta/patch update"
+                },
+                "delta_patch_url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "URL to download delta patch instead of full firmware"
+                },
+                "delta_patch_size": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "Size of delta patch in bytes"
+                },
+                "delta_patch_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$",
+                    "description": "SHA256 hash of the delta patch file"
+                },
+                "deprecated": {
+                    "type": "boolean",
+                    "description": "Mark this version as deprecated (not recommended for new installs)"
+                },
+                "expiry_date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "ISO8601 timestamp when this firmware version expires and should no longer be installed"
                 }
             },
             "required": [
@@ -1120,6 +1283,37 @@ exports.ota_ota_manifest_schema = {
                     "type": "string",
                     "format": "date-time",
                     "description": "ISO8601 timestamp"
+                },
+                "signature": {
+                    "type": "string",
+                    "description": "Digital signature of the firmware (base64 encoded)"
+                },
+                "signature_algorithm": {
+                    "type": "string",
+                    "enum": [
+                        "RSA-SHA256",
+                        "ECDSA-SHA256",
+                        "Ed25519"
+                    ],
+                    "description": "Algorithm used for digital signature"
+                },
+                "min_version": {
+                    "type": "string",
+                    "description": "Minimum firmware version required to upgrade"
+                },
+                "criticality": {
+                    "type": "string",
+                    "enum": [
+                        "low",
+                        "medium",
+                        "high",
+                        "critical"
+                    ],
+                    "description": "Update criticality level"
+                },
+                "mandatory": {
+                    "type": "boolean",
+                    "description": "Whether this update must be installed"
                 }
             },
             "required": [

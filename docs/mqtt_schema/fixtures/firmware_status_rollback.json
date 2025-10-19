@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "device_id": "SN791",
+  "device_type": "sensor",
+  "timestamp": "2025-10-19T14:40:00.000Z",
+  "firmware_version": "SN 2.0.8",
+  "status": "rolled_back",
+  "from_version": "SN 2.0.9",
+  "to_version": "SN 2.0.8",
+  "progress_pct": 100,
+  "error": "Verification failed after 3 attempts",
+  "error_code": "VERIFY_CHECKSUM_MISMATCH",
+  "retry_count": 3,
+  "update_started_at": "2025-10-19T14:29:00.000Z",
+  "update_completed_at": "2025-10-19T14:40:00.000Z",
+  "update_type": "full",
+  "signature_verified": false,
+  "checksum_verified": false,
+  "rollback_available": true,
+  "previous_version": "SN 2.0.8"
+}

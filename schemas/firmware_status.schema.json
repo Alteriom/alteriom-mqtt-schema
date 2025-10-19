@@ -9,9 +9,24 @@
     "event": {"type": "string"},
     "from_version": {"type": "string"},
     "to_version": {"type": "string"},
-    "status": {"type": "string", "enum": ["pending", "downloading", "flashing", "verifying", "rebooting", "completed", "failed"]},
+    "status": {"type": "string", "enum": ["pending", "downloading", "flashing", "verifying", "rebooting", "completed", "failed", "rolled_back", "rollback_pending", "rollback_failed"]},
     "progress_pct": {"type": "number", "minimum": 0, "maximum": 100},
-    "error": {"type": ["string", "null"]}
+    "error": {"type": ["string", "null"]},
+    "error_code": {"type": "string", "description": "Machine-readable error code for diagnostics"},
+    "retry_count": {"type": "integer", "minimum": 0, "description": "Number of retry attempts for this update"},
+    "download_speed_kbps": {"type": "number", "minimum": 0, "description": "Current download speed in kilobits per second"},
+    "bytes_downloaded": {"type": "integer", "minimum": 0, "description": "Number of bytes downloaded so far"},
+    "bytes_total": {"type": "integer", "minimum": 0, "description": "Total bytes to download"},
+    "eta_seconds": {"type": "integer", "minimum": 0, "description": "Estimated time remaining in seconds"},
+    "update_started_at": {"type": "string", "format": "date-time", "description": "ISO8601 timestamp when update began"},
+    "update_completed_at": {"type": "string", "format": "date-time", "description": "ISO8601 timestamp when update completed or failed"},
+    "rollback_available": {"type": "boolean", "description": "Whether rollback to previous version is available"},
+    "previous_version": {"type": "string", "description": "Version to rollback to if update fails"},
+    "update_type": {"type": "string", "enum": ["full", "delta", "patch"], "description": "Type of update being applied"},
+    "signature_verified": {"type": "boolean", "description": "Whether firmware signature was successfully verified"},
+    "checksum_verified": {"type": "boolean", "description": "Whether firmware checksum was successfully verified"},
+    "free_space_kb": {"type": "integer", "minimum": 0, "description": "Available storage space in kilobytes before update"},
+    "battery_level_pct": {"type": "number", "minimum": 0, "maximum": 100, "description": "Battery level during update (critical for battery-powered devices)"}
   },
   "additionalProperties": true
 }
