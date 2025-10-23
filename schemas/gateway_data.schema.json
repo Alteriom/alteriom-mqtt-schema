@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "gateway_data.schema.json",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/gateway_data.schema.json",
   "title": "Gateway Data Message",
   "description": "Gateway telemetry data message (v0.7.2+). Similar to sensor_data but for gateway-originated sensor readings (environmental sensors on gateway device).",
   "allOf": [

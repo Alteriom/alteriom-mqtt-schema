@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "gateway_heartbeat.schema.json",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/gateway_heartbeat.schema.json",
   "title": "Gateway Heartbeat Message",
   "description": "Gateway presence and health check message (v0.7.2+). Minimal message to indicate gateway is alive and responsive.",
   "allOf": [

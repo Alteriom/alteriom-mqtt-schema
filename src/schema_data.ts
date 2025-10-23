@@ -332,7 +332,7 @@ export const sensor_status_schema = {
 } as const;
 export const sensor_info_schema = {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "sensor_info.schema.json",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/sensor_info.schema.json",
   "title": "Sensor Info Message",
   "description": "Sensor identification and capabilities message (v0.7.2+). Provides detailed information about sensor hardware, capabilities, and configuration.",
   "allOf": [
@@ -533,7 +533,7 @@ export const sensor_info_schema = {
 } as const;
 export const sensor_metrics_schema = {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "sensor_metrics.schema.json",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/sensor_metrics.schema.json",
   "title": "Sensor Metrics Message",
   "description": "Sensor health and performance metrics message (v0.7.2+). Reports sensor operational health, battery, signal, uptime, and diagnostic metrics.",
   "allOf": [
@@ -864,7 +864,7 @@ export const gateway_metrics_schema = {
 } as const;
 export const gateway_data_schema = {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "gateway_data.schema.json",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/gateway_data.schema.json",
   "title": "Gateway Data Message",
   "description": "Gateway telemetry data message (v0.7.2+). Similar to sensor_data but for gateway-originated sensor readings (environmental sensors on gateway device).",
   "allOf": [
@@ -990,7 +990,7 @@ export const gateway_data_schema = {
 } as const;
 export const gateway_heartbeat_schema = {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "gateway_heartbeat.schema.json",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/gateway_heartbeat.schema.json",
   "title": "Gateway Heartbeat Message",
   "description": "Gateway presence and health check message (v0.7.2+). Minimal message to indicate gateway is alive and responsive.",
   "allOf": [
@@ -1044,7 +1044,7 @@ export const gateway_heartbeat_schema = {
 } as const;
 export const gateway_status_schema = {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "gateway_status.schema.json",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/gateway_status.schema.json",
   "title": "Gateway Status Message",
   "description": "Gateway status change notification (v0.7.2+). Reports gateway operational state changes.",
   "allOf": [
@@ -1912,8 +1912,8 @@ export const mesh_bridge_schema = {
 } as const;
 export const mesh_status_schema = {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "mesh_status.schema.json",
-  "title": "Mesh Network Status Message",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/mesh_status.schema.json",
+  "title": "Mesh Status Message",
   "description": "Mesh network health and status message (v0.7.2+). Reports overall mesh network operational status and health indicators.",
   "allOf": [
     {
@@ -2080,8 +2080,8 @@ export const mesh_status_schema = {
 } as const;
 export const mesh_metrics_schema = {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "mesh_metrics.schema.json",
-  "title": "Mesh Network Metrics Message",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/mesh_metrics.schema.json",
+  "title": "Mesh Metrics Message",
   "description": "Mesh network performance metrics message (v0.7.2+). Detailed performance and traffic metrics for mesh network.",
   "allOf": [
     {

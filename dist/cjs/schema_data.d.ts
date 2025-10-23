@@ -253,7 +253,7 @@ export declare const sensor_status_schema: {
 };
 export declare const sensor_info_schema: {
     readonly $schema: "https://json-schema.org/draft/2020-12/schema";
-    readonly $id: "sensor_info.schema.json";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/sensor_info.schema.json";
     readonly title: "Sensor Info Message";
     readonly description: "Sensor identification and capabilities message (v0.7.2+). Provides detailed information about sensor hardware, capabilities, and configuration.";
     readonly allOf: readonly [{
@@ -427,7 +427,7 @@ export declare const sensor_info_schema: {
 };
 export declare const sensor_metrics_schema: {
     readonly $schema: "https://json-schema.org/draft/2020-12/schema";
-    readonly $id: "sensor_metrics.schema.json";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/sensor_metrics.schema.json";
     readonly title: "Sensor Metrics Message";
     readonly description: "Sensor health and performance metrics message (v0.7.2+). Reports sensor operational health, battery, signal, uptime, and diagnostic metrics.";
     readonly allOf: readonly [{
@@ -725,7 +725,7 @@ export declare const gateway_metrics_schema: {
 };
 export declare const gateway_data_schema: {
     readonly $schema: "https://json-schema.org/draft/2020-12/schema";
-    readonly $id: "gateway_data.schema.json";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/gateway_data.schema.json";
     readonly title: "Gateway Data Message";
     readonly description: "Gateway telemetry data message (v0.7.2+). Similar to sensor_data but for gateway-originated sensor readings (environmental sensors on gateway device).";
     readonly allOf: readonly [{
@@ -842,7 +842,7 @@ export declare const gateway_data_schema: {
 };
 export declare const gateway_heartbeat_schema: {
     readonly $schema: "https://json-schema.org/draft/2020-12/schema";
-    readonly $id: "gateway_heartbeat.schema.json";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/gateway_heartbeat.schema.json";
     readonly title: "Gateway Heartbeat Message";
     readonly description: "Gateway presence and health check message (v0.7.2+). Minimal message to indicate gateway is alive and responsive.";
     readonly allOf: readonly [{
@@ -886,7 +886,7 @@ export declare const gateway_heartbeat_schema: {
 };
 export declare const gateway_status_schema: {
     readonly $schema: "https://json-schema.org/draft/2020-12/schema";
-    readonly $id: "gateway_status.schema.json";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/gateway_status.schema.json";
     readonly title: "Gateway Status Message";
     readonly description: "Gateway status change notification (v0.7.2+). Reports gateway operational state changes.";
     readonly allOf: readonly [{
@@ -1562,8 +1562,8 @@ export declare const mesh_bridge_schema: {
 };
 export declare const mesh_status_schema: {
     readonly $schema: "https://json-schema.org/draft/2020-12/schema";
-    readonly $id: "mesh_status.schema.json";
-    readonly title: "Mesh Network Status Message";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/mesh_status.schema.json";
+    readonly title: "Mesh Status Message";
     readonly description: "Mesh network health and status message (v0.7.2+). Reports overall mesh network operational status and health indicators.";
     readonly allOf: readonly [{
         readonly $ref: "envelope.schema.json";
@@ -1693,8 +1693,8 @@ export declare const mesh_status_schema: {
 };
 export declare const mesh_metrics_schema: {
     readonly $schema: "https://json-schema.org/draft/2020-12/schema";
-    readonly $id: "mesh_metrics.schema.json";
-    readonly title: "Mesh Network Metrics Message";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/mesh_metrics.schema.json";
+    readonly title: "Mesh Metrics Message";
     readonly description: "Mesh network performance metrics message (v0.7.2+). Detailed performance and traffic metrics for mesh network.";
     readonly allOf: readonly [{
         readonly $ref: "envelope.schema.json";

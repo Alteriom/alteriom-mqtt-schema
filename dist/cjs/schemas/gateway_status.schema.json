@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "gateway_status.schema.json",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/gateway_status.schema.json",
   "title": "Gateway Status Message",
   "description": "Gateway status change notification (v0.7.2+). Reports gateway operational state changes.",
   "allOf": [

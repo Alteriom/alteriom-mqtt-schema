@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "mesh_metrics.schema.json",
-  "title": "Mesh Network Metrics Message",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/mesh_metrics.schema.json",
+  "title": "Mesh Metrics Message",
   "description": "Mesh network performance metrics message (v0.7.2+). Detailed performance and traffic metrics for mesh network.",
   "allOf": [
     { "$ref": "envelope.schema.json" },

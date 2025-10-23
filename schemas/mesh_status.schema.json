@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "mesh_status.schema.json",
-  "title": "Mesh Network Status Message",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/mesh_status.schema.json",
+  "title": "Mesh Status Message",
   "description": "Mesh network health and status message (v0.7.2+). Reports overall mesh network operational status and health indicators.",
   "allOf": [
     { "$ref": "envelope.schema.json" },

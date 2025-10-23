@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "sensor_info.schema.json",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/sensor_info.schema.json",
   "title": "Sensor Info Message",
   "description": "Sensor identification and capabilities message (v0.7.2+). Provides detailed information about sensor hardware, capabilities, and configuration.",
   "allOf": [
