@@ -15,7 +15,8 @@ import {
   mesh_node_list_schema,
   mesh_topology_schema,
   mesh_alert_schema,
-  mesh_bridge_schema
+  mesh_bridge_schema,
+  device_config_schema
 } from './schema_data.js';
 // Load JSON schemas via createRequire so it works in both CJS and ESM builds without import assertions.
 // Bind embedded schema objects for Ajv consumption
@@ -33,6 +34,7 @@ const meshNodeList = mesh_node_list_schema as any;
 const meshTopology = mesh_topology_schema as any;
 const meshAlert = mesh_alert_schema as any;
 const meshBridge = mesh_bridge_schema as any;
+const deviceConfig = device_config_schema as any;
 
 // Lazy singleton Ajv instance so consumers can optionally supply their own if needed.
 let _ajv: Ajv | null = null;
@@ -83,6 +85,7 @@ const meshNodeListValidate = ajv.compile(meshNodeList);
 const meshTopologyValidate = ajv.compile(meshTopology);
 const meshAlertValidate = ajv.compile(meshAlert);
 const meshBridgeValidate = ajv.compile(meshBridge);
+const deviceConfigValidate = ajv.compile(deviceConfig);
 
 export const validators = {
   sensorData: (d: unknown) => toResult(sensorDataValidate, d),
@@ -97,7 +100,8 @@ export const validators = {
   meshNodeList: (d: unknown) => toResult(meshNodeListValidate, d),
   meshTopology: (d: unknown) => toResult(meshTopologyValidate, d),
   meshAlert: (d: unknown) => toResult(meshAlertValidate, d),
-  meshBridge: (d: unknown) => toResult(meshBridgeValidate, d)
+  meshBridge: (d: unknown) => toResult(meshBridgeValidate, d),
+  deviceConfig: (d: unknown) => toResult(deviceConfigValidate, d)
 };
 
 export type ValidatorName = keyof typeof validators;
@@ -120,7 +124,8 @@ const MESSAGE_TYPE_MAP: Record<number, ValidatorName> = {
   600: 'meshNodeList',
   601: 'meshTopology',
   602: 'meshAlert',
-  603: 'meshBridge'
+  603: 'meshBridge',
+  700: 'deviceConfig'
 };
 
 // Classifier using lightweight heuristics to pick a schema validator.
@@ -139,6 +144,7 @@ export function classifyAndValidate(data: any): { kind?: ValidatorName; result: 
   if (data.event === 'command') return { kind: 'command', result: validators.command(data) };
   if (data.event === 'command_response') return { kind: 'commandResponse', result: validators.commandResponse(data) };
   if (data.event === 'mesh_bridge') return { kind: 'meshBridge', result: validators.meshBridge(data) };
+  if (data.event && ['config_snapshot', 'config_update', 'config_request'].includes(data.event)) return { kind: 'deviceConfig', result: validators.deviceConfig(data) };
   // Existing classification heuristics
   if (data.metrics) return { kind: 'gatewayMetrics', result: validators.gatewayMetrics(data) };
   if (data.sensors) return { kind: 'sensorData', result: validators.sensorData(data) };

@@ -21,6 +21,7 @@ export const MessageTypeCodes = {
     MESH_TOPOLOGY: 601,
     MESH_ALERT: 602,
     MESH_BRIDGE: 603,
+    DEVICE_CONFIG: 700,
 };
 // Type Guards ------------------------------------------------
 export function isSensorDataMessage(msg) {
@@ -62,6 +63,9 @@ export function isCommandResponseMessage(msg) {
 export function isMeshBridgeMessage(msg) {
     return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && msg.event === 'mesh_bridge' && typeof msg.mesh_protocol === 'string' && typeof msg.mesh_message === 'object';
 }
+export function isDeviceConfigMessage(msg) {
+    return msg && msg.schema_version === 1 && typeof msg.event === 'string' && ['config_snapshot', 'config_update', 'config_request'].includes(msg.event) && typeof msg.configuration === 'object';
+}
 export function classifyMessage(msg) {
     // Fast path: use message_type if present (v0.7.1+)
     if (msg.message_type) {
@@ -79,6 +83,7 @@ export function classifyMessage(msg) {
             case MessageTypeCodes.MESH_TOPOLOGY: return isMeshTopologyMessage(msg) ? msg : null;
             case MessageTypeCodes.MESH_ALERT: return isMeshAlertMessage(msg) ? msg : null;
             case MessageTypeCodes.MESH_BRIDGE: return isMeshBridgeMessage(msg) ? msg : null;
+            case MessageTypeCodes.DEVICE_CONFIG: return isDeviceConfigMessage(msg) ? msg : null;
             default: return null;
         }
     }
@@ -88,6 +93,8 @@ export function classifyMessage(msg) {
     if (isGatewayMetricsMessage(msg))
         return msg;
     if (isMeshBridgeMessage(msg))
+        return msg;
+    if (isDeviceConfigMessage(msg))
         return msg;
     if (isMeshNodeListMessage(msg))
         return msg;

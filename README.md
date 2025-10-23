@@ -590,6 +590,93 @@ All Ajv validator functions are compiled once at module load. For typical web us
 
 `schema_data.ts` is auto‑generated during build. This avoids dynamic `require()` / `import` of JSON and works cleanly in both Node ESM and bundlers without JSON import assertions. The original JSON files are still published under `schemas/` for tooling or documentation pipelines.
 
+## Device Configuration Management (v0.7.1+)
+
+Unified configuration management for both sensors and gateways, supporting remote configuration without firmware reflashing:
+
+```ts
+import { validators, isDeviceConfigMessage, MessageTypeCodes } from '@alteriom/mqtt-schema';
+
+// Configuration update request (from backend to device)
+const configUpdate = {
+  schema_version: 1,
+  message_type: MessageTypeCodes.DEVICE_CONFIG, // 700
+  device_id: 'SN001',
+  device_type: 'sensor',
+  timestamp: new Date().toISOString(),
+  firmware_version: 'WEB 1.0.0',
+  event: 'config_update',
+  configuration: {
+    sampling_interval_ms: 60000,
+    power_mode: 'low_power',
+    ota_config: {
+      auto_update: true,
+      update_channel: 'stable',
+      update_check_interval_h: 24
+    },
+    alert_thresholds: {
+      temperature: {
+        min: -10,
+        max: 50,
+        enabled: true
+      }
+    }
+  },
+  modified_by: 'admin@example.com'
+};
+
+const result = validators.deviceConfig(configUpdate);
+if (result.valid) {
+  // Publish to device: alteriom/nodes/{device_id}/config
+  mqttClient.publish(`alteriom/nodes/${configUpdate.device_id}/config`, JSON.stringify(configUpdate));
+}
+
+// Configuration snapshot (from device to backend)
+mqttClient.subscribe('alteriom/nodes/+/config/snapshot', (message) => {
+  const snapshot = JSON.parse(message);
+  
+  if (isDeviceConfigMessage(snapshot) && snapshot.event === 'config_snapshot') {
+    // Store configuration for audit trail
+    console.log('Device config:', snapshot.device_id);
+    console.log('Power mode:', snapshot.configuration.power_mode);
+    console.log('OTA settings:', snapshot.configuration.ota_config);
+    
+    // Configuration version tracking
+    if (snapshot.config_version) {
+      console.log('Config version:', snapshot.config_version);
+      console.log('Last modified:', snapshot.last_modified);
+    }
+  }
+});
+```
+
+**Unified Configuration Standards:**
+
+Both sensors and gateways support consistent management:
+
+| Feature | Sensors | Gateways | Description |
+|---------|---------|----------|-------------|
+| OTA Configuration | ✅ | ✅ | Auto-update, channels, intervals |
+| Network Settings | ✅ | ✅ | WiFi, mesh, MQTT configuration |
+| Power Management | ✅ | ✅ | Power modes, sleep duration |
+| Reporting Intervals | ✅ | ✅ | Sampling and reporting intervals |
+| Log Levels | ✅ | ✅ | Debug, info, warn, error |
+| Time Sync | ✅ | ✅ | Timezone, NTP server |
+| Alert Thresholds | ✅ | ⚠️ | Sensor-specific thresholds |
+| Calibration | ✅ | ⚠️ | Sensor offset calibration |
+
+**Configuration Events:**
+- `config_snapshot`: Device reports current configuration state
+- `config_update`: Backend requests configuration changes
+- `config_request`: Backend queries current configuration
+
+**Key Benefits:**
+- Remote configuration without firmware updates
+- Configuration backup and restore
+- Audit trail with version tracking
+- Bulk configuration deployment
+- Standardized across device types
+
 ## Message Type Codes (v0.7.1+)
 
 For performance optimization and standardized routing, use the optional `message_type` field:
@@ -609,6 +696,7 @@ For performance optimization and standardized routing, use the optional `message
 | 601 | `MESH_TOPOLOGY` | mesh_topology | mesh | Mesh network topology |
 | 602 | `MESH_ALERT` | mesh_alert | mesh | Mesh network alert |
 | 603 | `MESH_BRIDGE` | mesh_bridge | mesh | Mesh protocol bridge (v0.7.1+) |
+| 700 | `DEVICE_CONFIG` | device_config | config | Device configuration management (v0.7.1+) |
 
 **Benefits:**
 - **Significantly Faster**: O(1) lookup vs O(n) heuristic matching (avoids 12+ conditional checks)
@@ -646,6 +734,7 @@ const message = {
 | mesh_topology.schema.json | Mesh network topology and connections |
 | mesh_alert.schema.json | Mesh network alerts and warnings |
 | **mesh_bridge.schema.json** | **Mesh protocol bridge for painlessMesh integration (v0.7.1+)** |
+| **device_config.schema.json** | **Unified device configuration management for sensors & gateways (v0.7.1+)** |
 
 ## Exports
 
@@ -663,7 +752,7 @@ const message = {
 
 ### Validator Keys
 
-`sensorData`, `sensorHeartbeat`, `sensorStatus`, `gatewayInfo`, `gatewayMetrics`, `firmwareStatus`, `controlResponse`, `command`, `commandResponse`, `meshNodeList`, `meshTopology`, `meshAlert`, `meshBridge` (v0.7.1+)
+`sensorData`, `sensorHeartbeat`, `sensorStatus`, `gatewayInfo`, `gatewayMetrics`, `firmwareStatus`, `controlResponse`, `command`, `commandResponse`, `meshNodeList`, `meshTopology`, `meshAlert`, `meshBridge` (v0.7.1+), `deviceConfig` (v0.7.1+)
 
 ### Classification Strategy
 

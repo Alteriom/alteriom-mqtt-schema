@@ -23,6 +23,7 @@ export const MessageTypeCodes = {
   MESH_TOPOLOGY: 601,
   MESH_ALERT: 602,
   MESH_BRIDGE: 603,
+  DEVICE_CONFIG: 700,
 } as const;
 
 export type MessageTypeCode = typeof MessageTypeCodes[keyof typeof MessageTypeCodes];
@@ -252,6 +253,53 @@ export interface MeshBridgeMessage extends BaseEnvelope {
   mesh_network_id?: string;
 }
 
+export interface DeviceConfigMessage extends BaseEnvelope {
+  firmware_version: string;
+  message_type?: 700;
+  event: 'config_snapshot' | 'config_update' | 'config_request';
+  configuration: {
+    sampling_interval_ms?: number;
+    reporting_interval_ms?: number;
+    sensors_enabled?: string[];
+    transmission_mode?: 'wifi' | 'mesh' | 'mixed' | 'cellular';
+    power_mode?: 'normal' | 'low_power' | 'ultra_low_power' | 'always_on';
+    sleep_duration_ms?: number;
+    calibration_offsets?: Record<string, number>;
+    alert_thresholds?: Record<string, {
+      min?: number;
+      max?: number;
+      enabled?: boolean;
+    }>;
+    network_config?: {
+      wifi_ssid?: string;
+      wifi_channel?: number;
+      mesh_prefix?: string;
+      mesh_password?: string;
+      mesh_port?: number;
+      mqtt_broker?: string;
+      mqtt_port?: number;
+      mqtt_topic_prefix?: string;
+    };
+    ota_config?: {
+      auto_update?: boolean;
+      update_channel?: 'stable' | 'beta' | 'dev';
+      update_check_interval_h?: number;
+      allow_downgrade?: boolean;
+    };
+    log_level?: 'debug' | 'info' | 'warn' | 'error' | 'none';
+    timezone?: string;
+    ntp_server?: string;
+    [k: string]: unknown;
+  };
+  config_version?: string;
+  last_modified?: string;
+  modified_by?: string;
+  validation_errors?: Array<{
+    field?: string;
+    error?: string;
+  }>;
+}
+
 // Union of All Known V1 Messages (excluding heartbeat omission nuance)
 export type AnyMqttV1Message =
   | SensorDataMessage
@@ -266,7 +314,8 @@ export type AnyMqttV1Message =
   | MeshNodeListMessage
   | MeshTopologyMessage
   | MeshAlertMessage
-  | MeshBridgeMessage;
+  | MeshBridgeMessage
+  | DeviceConfigMessage;
 
 // Type Guards ------------------------------------------------
 
@@ -322,6 +371,10 @@ export function isMeshBridgeMessage(msg: any): msg is MeshBridgeMessage {
   return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && msg.event === 'mesh_bridge' && typeof msg.mesh_protocol === 'string' && typeof msg.mesh_message === 'object';
 }
 
+export function isDeviceConfigMessage(msg: any): msg is DeviceConfigMessage {
+  return msg && msg.schema_version === 1 && typeof msg.event === 'string' && ['config_snapshot', 'config_update', 'config_request'].includes(msg.event) && typeof msg.configuration === 'object';
+}
+
 export function classifyMessage(msg: any): AnyMqttV1Message | null {
   // Fast path: use message_type if present (v0.7.1+)
   if (msg.message_type) {
@@ -339,6 +392,7 @@ export function classifyMessage(msg: any): AnyMqttV1Message | null {
       case MessageTypeCodes.MESH_TOPOLOGY: return isMeshTopologyMessage(msg) ? msg : null;
       case MessageTypeCodes.MESH_ALERT: return isMeshAlertMessage(msg) ? msg : null;
       case MessageTypeCodes.MESH_BRIDGE: return isMeshBridgeMessage(msg) ? msg : null;
+      case MessageTypeCodes.DEVICE_CONFIG: return isDeviceConfigMessage(msg) ? msg : null;
       default: return null;
     }
   }
@@ -347,6 +401,7 @@ export function classifyMessage(msg: any): AnyMqttV1Message | null {
   if (isSensorDataMessage(msg)) return msg;
   if (isGatewayMetricsMessage(msg)) return msg;
   if (isMeshBridgeMessage(msg)) return msg;
+  if (isDeviceConfigMessage(msg)) return msg;
   if (isMeshNodeListMessage(msg)) return msg;
   if (isMeshTopologyMessage(msg)) return msg;
   if (isMeshAlertMessage(msg)) return msg;

@@ -33,7 +33,8 @@ export const envelope_schema = {
                 600,
                 601,
                 602,
-                603
+                603,
+                700
             ]
         },
         "device_id": {
@@ -1097,6 +1098,234 @@ export const mesh_bridge_schema = {
                 "mesh_network_id": {
                     "type": "string",
                     "description": "Mesh network identifier"
+                }
+            },
+            "additionalProperties": true
+        }
+    ]
+};
+export const device_config_schema = {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://schemas.alteriom.io/mqtt/v1/device_config.schema.json",
+    "title": "Device Configuration Message",
+    "description": "Configuration snapshot or update for sensor or gateway device",
+    "allOf": [
+        {
+            "$ref": "envelope.schema.json"
+        },
+        {
+            "type": "object",
+            "required": [
+                "event",
+                "configuration"
+            ],
+            "properties": {
+                "event": {
+                    "type": "string",
+                    "enum": [
+                        "config_snapshot",
+                        "config_update",
+                        "config_request"
+                    ],
+                    "description": "Configuration event type: snapshot (current state), update (apply changes), request (query current config)"
+                },
+                "message_type": {
+                    "const": 700,
+                    "description": "Message type code for device configuration (v0.7.1+)"
+                },
+                "configuration": {
+                    "type": "object",
+                    "description": "Device configuration parameters",
+                    "properties": {
+                        "sampling_interval_ms": {
+                            "type": "integer",
+                            "minimum": 1000,
+                            "maximum": 86400000,
+                            "description": "Sensor sampling interval in milliseconds (1s to 24h)"
+                        },
+                        "reporting_interval_ms": {
+                            "type": "integer",
+                            "minimum": 1000,
+                            "maximum": 86400000,
+                            "description": "Data reporting interval in milliseconds"
+                        },
+                        "sensors_enabled": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "List of enabled sensor names"
+                        },
+                        "transmission_mode": {
+                            "type": "string",
+                            "enum": [
+                                "wifi",
+                                "mesh",
+                                "mixed",
+                                "cellular"
+                            ],
+                            "description": "Network transmission mode"
+                        },
+                        "power_mode": {
+                            "type": "string",
+                            "enum": [
+                                "normal",
+                                "low_power",
+                                "ultra_low_power",
+                                "always_on"
+                            ],
+                            "description": "Device power management mode"
+                        },
+                        "sleep_duration_ms": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "Deep sleep duration in milliseconds (0 = disabled)"
+                        },
+                        "calibration_offsets": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "number"
+                            },
+                            "description": "Sensor calibration offset values"
+                        },
+                        "alert_thresholds": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object",
+                                "properties": {
+                                    "min": {
+                                        "type": "number"
+                                    },
+                                    "max": {
+                                        "type": "number"
+                                    },
+                                    "enabled": {
+                                        "type": "boolean"
+                                    }
+                                }
+                            },
+                            "description": "Alert threshold configurations per sensor"
+                        },
+                        "network_config": {
+                            "type": "object",
+                            "properties": {
+                                "wifi_ssid": {
+                                    "type": "string",
+                                    "maxLength": 32
+                                },
+                                "wifi_channel": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 14
+                                },
+                                "mesh_prefix": {
+                                    "type": "string",
+                                    "maxLength": 32
+                                },
+                                "mesh_password": {
+                                    "type": "string",
+                                    "maxLength": 64
+                                },
+                                "mesh_port": {
+                                    "type": "integer",
+                                    "minimum": 1024,
+                                    "maximum": 65535
+                                },
+                                "mqtt_broker": {
+                                    "type": "string",
+                                    "format": "hostname"
+                                },
+                                "mqtt_port": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 65535
+                                },
+                                "mqtt_topic_prefix": {
+                                    "type": "string",
+                                    "maxLength": 128
+                                }
+                            },
+                            "description": "Network and connectivity configuration"
+                        },
+                        "ota_config": {
+                            "type": "object",
+                            "properties": {
+                                "auto_update": {
+                                    "type": "boolean",
+                                    "description": "Enable automatic OTA updates"
+                                },
+                                "update_channel": {
+                                    "type": "string",
+                                    "enum": [
+                                        "stable",
+                                        "beta",
+                                        "dev"
+                                    ],
+                                    "description": "OTA update channel"
+                                },
+                                "update_check_interval_h": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 168,
+                                    "description": "Update check interval in hours"
+                                },
+                                "allow_downgrade": {
+                                    "type": "boolean",
+                                    "description": "Allow firmware downgrade"
+                                }
+                            },
+                            "description": "OTA update configuration"
+                        },
+                        "log_level": {
+                            "type": "string",
+                            "enum": [
+                                "debug",
+                                "info",
+                                "warn",
+                                "error",
+                                "none"
+                            ],
+                            "description": "Device logging level"
+                        },
+                        "timezone": {
+                            "type": "string",
+                            "description": "Timezone identifier (e.g., 'America/New_York', 'UTC')"
+                        },
+                        "ntp_server": {
+                            "type": "string",
+                            "format": "hostname",
+                            "description": "NTP server for time synchronization"
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "config_version": {
+                    "type": "string",
+                    "description": "Configuration schema version for tracking changes"
+                },
+                "last_modified": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Timestamp when configuration was last modified"
+                },
+                "modified_by": {
+                    "type": "string",
+                    "description": "User or system that modified the configuration"
+                },
+                "validation_errors": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "field": {
+                                "type": "string"
+                            },
+                            "error": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "description": "Configuration validation errors (for config_update responses)"
                 }
             },
             "additionalProperties": true

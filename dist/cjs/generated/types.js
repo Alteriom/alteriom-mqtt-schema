@@ -20,6 +20,7 @@ exports.isMeshAlertMessage = isMeshAlertMessage;
 exports.isCommandMessage = isCommandMessage;
 exports.isCommandResponseMessage = isCommandResponseMessage;
 exports.isMeshBridgeMessage = isMeshBridgeMessage;
+exports.isDeviceConfigMessage = isDeviceConfigMessage;
 exports.classifyMessage = classifyMessage;
 exports.basicValidate = basicValidate;
 exports.parseMessage = parseMessage;
@@ -40,6 +41,7 @@ exports.MessageTypeCodes = {
     MESH_TOPOLOGY: 601,
     MESH_ALERT: 602,
     MESH_BRIDGE: 603,
+    DEVICE_CONFIG: 700,
 };
 // Type Guards ------------------------------------------------
 function isSensorDataMessage(msg) {
@@ -81,6 +83,9 @@ function isCommandResponseMessage(msg) {
 function isMeshBridgeMessage(msg) {
     return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && msg.event === 'mesh_bridge' && typeof msg.mesh_protocol === 'string' && typeof msg.mesh_message === 'object';
 }
+function isDeviceConfigMessage(msg) {
+    return msg && msg.schema_version === 1 && typeof msg.event === 'string' && ['config_snapshot', 'config_update', 'config_request'].includes(msg.event) && typeof msg.configuration === 'object';
+}
 function classifyMessage(msg) {
     // Fast path: use message_type if present (v0.7.1+)
     if (msg.message_type) {
@@ -98,6 +103,7 @@ function classifyMessage(msg) {
             case exports.MessageTypeCodes.MESH_TOPOLOGY: return isMeshTopologyMessage(msg) ? msg : null;
             case exports.MessageTypeCodes.MESH_ALERT: return isMeshAlertMessage(msg) ? msg : null;
             case exports.MessageTypeCodes.MESH_BRIDGE: return isMeshBridgeMessage(msg) ? msg : null;
+            case exports.MessageTypeCodes.DEVICE_CONFIG: return isDeviceConfigMessage(msg) ? msg : null;
             default: return null;
         }
     }
@@ -107,6 +113,8 @@ function classifyMessage(msg) {
     if (isGatewayMetricsMessage(msg))
         return msg;
     if (isMeshBridgeMessage(msg))
+        return msg;
+    if (isDeviceConfigMessage(msg))
         return msg;
     if (isMeshNodeListMessage(msg))
         return msg;

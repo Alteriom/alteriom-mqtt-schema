@@ -26,6 +26,7 @@ const meshNodeList = schema_data_js_1.mesh_node_list_schema;
 const meshTopology = schema_data_js_1.mesh_topology_schema;
 const meshAlert = schema_data_js_1.mesh_alert_schema;
 const meshBridge = schema_data_js_1.mesh_bridge_schema;
+const deviceConfig = schema_data_js_1.device_config_schema;
 // Lazy singleton Ajv instance so consumers can optionally supply their own if needed.
 let _ajv = null;
 function getAjv(opts) {
@@ -63,6 +64,7 @@ const meshNodeListValidate = ajv.compile(meshNodeList);
 const meshTopologyValidate = ajv.compile(meshTopology);
 const meshAlertValidate = ajv.compile(meshAlert);
 const meshBridgeValidate = ajv.compile(meshBridge);
+const deviceConfigValidate = ajv.compile(deviceConfig);
 exports.validators = {
     sensorData: (d) => toResult(sensorDataValidate, d),
     sensorHeartbeat: (d) => toResult(sensorHeartbeatValidate, d),
@@ -76,7 +78,8 @@ exports.validators = {
     meshNodeList: (d) => toResult(meshNodeListValidate, d),
     meshTopology: (d) => toResult(meshTopologyValidate, d),
     meshAlert: (d) => toResult(meshAlertValidate, d),
-    meshBridge: (d) => toResult(meshBridgeValidate, d)
+    meshBridge: (d) => toResult(meshBridgeValidate, d),
+    deviceConfig: (d) => toResult(deviceConfigValidate, d)
 };
 function validateMessage(kind, data) {
     return exports.validators[kind](data);
@@ -95,7 +98,8 @@ const MESSAGE_TYPE_MAP = {
     600: 'meshNodeList',
     601: 'meshTopology',
     602: 'meshAlert',
-    603: 'meshBridge'
+    603: 'meshBridge',
+    700: 'deviceConfig'
 };
 // Classifier using lightweight heuristics to pick a schema validator.
 // v0.7.1+: Fast path using message_type code when present
@@ -115,6 +119,8 @@ function classifyAndValidate(data) {
         return { kind: 'commandResponse', result: exports.validators.commandResponse(data) };
     if (data.event === 'mesh_bridge')
         return { kind: 'meshBridge', result: exports.validators.meshBridge(data) };
+    if (data.event && ['config_snapshot', 'config_update', 'config_request'].includes(data.event))
+        return { kind: 'deviceConfig', result: exports.validators.deviceConfig(data) };
     // Existing classification heuristics
     if (data.metrics)
         return { kind: 'gatewayMetrics', result: exports.validators.gatewayMetrics(data) };

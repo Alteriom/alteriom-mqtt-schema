@@ -2,6 +2,114 @@
 
 ## 2025-10-23 (v0.7.1 - Performance & Mesh Protocol Release)
 
+### Added - Device Configuration Management (Extended)
+
+#### Device Configuration Schema (`device_config.schema.json`)
+
+New unified configuration management schema for both sensors and gateways (type code 700).
+
+**Event Types:**
+- `config_snapshot`: Current device configuration state
+- `config_update`: Apply configuration changes
+- `config_request`: Query current configuration
+
+**Configuration Parameters** (all optional, device-dependent):
+
+**Sampling & Reporting:**
+- `sampling_interval_ms`: Sensor sampling interval (1s to 24h)
+- `reporting_interval_ms`: Data reporting interval
+- `sensors_enabled`: Array of enabled sensor names
+
+**Power Management:**
+- `transmission_mode`: wifi | mesh | mixed | cellular
+- `power_mode`: normal | low_power | ultra_low_power | always_on
+- `sleep_duration_ms`: Deep sleep duration (0 = disabled)
+
+**Calibration & Alerts:**
+- `calibration_offsets`: Per-sensor calibration offset values
+- `alert_thresholds`: Per-sensor min/max thresholds with enable flag
+
+**Network Configuration:**
+- `network_config`: WiFi, mesh, MQTT broker settings
+  - WiFi: SSID, channel
+  - Mesh: prefix, password, port
+  - MQTT: broker hostname, port, topic prefix
+
+**OTA Configuration:**
+- `ota_config`: Auto-update settings
+  - `auto_update`: Enable automatic updates
+  - `update_channel`: stable | beta | dev
+  - `update_check_interval_h`: Check interval in hours
+  - `allow_downgrade`: Allow firmware downgrade
+
+**System Settings:**
+- `log_level`: debug | info | warn | error | none
+- `timezone`: Timezone identifier (e.g., 'America/New_York', 'UTC')
+- `ntp_server`: NTP server hostname for time sync
+
+**Metadata:**
+- `config_version`: Configuration schema version string
+- `last_modified`: When configuration was last modified
+- `modified_by`: User or system that made changes
+- `validation_errors`: Array of validation errors (for update responses)
+
+**Use Cases:**
+- Remote device configuration without reflashing firmware
+- Configuration backup and restore
+- Bulk configuration deployment
+- Configuration audit trail
+- Troubleshooting device behavior
+
+**Unified Standards:**
+Both sensors and gateways now support consistent configuration management including:
+- ✅ OTA update configuration (auto-update, channels, intervals)
+- ✅ Health monitoring configuration (log levels, reporting intervals)
+- ✅ Status reporting configuration (transmission modes, power modes)
+- ✅ Network configuration (WiFi, mesh, MQTT settings)
+
+**Example - Sensor Configuration Snapshot:**
+```json
+{
+  "schema_version": 1,
+  "message_type": 700,
+  "device_id": "SN001",
+  "device_type": "sensor",
+  "event": "config_snapshot",
+  "configuration": {
+    "sampling_interval_ms": 30000,
+    "sensors_enabled": ["temperature", "humidity"],
+    "power_mode": "low_power",
+    "ota_config": {
+      "auto_update": true,
+      "update_channel": "stable"
+    }
+  }
+}
+```
+
+**Example - Gateway Configuration Update:**
+```json
+{
+  "schema_version": 1,
+  "message_type": 700,
+  "device_id": "GW-MAIN",
+  "device_type": "gateway",
+  "event": "config_update",
+  "configuration": {
+    "network_config": {
+      "mesh_prefix": "alteriom-mesh",
+      "mqtt_broker": "mqtt.alteriom.io"
+    },
+    "ota_config": {
+      "update_check_interval_h": 12
+    }
+  },
+  "modified_by": "admin@example.com"
+}
+```
+
+## 2025-10-23 (v0.7.1 - Performance & Mesh Protocol Release)
+
 ### Added (v0.7.1)
 
 #### Message Type Codes for Fast Classification
