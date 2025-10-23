@@ -9,6 +9,11 @@ export declare const envelope_schema: {
             readonly type: "integer";
             readonly const: 1;
         };
+        readonly message_type: {
+            readonly type: "integer";
+            readonly description: "Optional message type code for fast classification (v0.7.1+)";
+            readonly enum: readonly [200, 201, 202, 300, 301, 400, 401, 402, 500, 600, 601, 602, 603];
+        };
         readonly device_id: {
             readonly type: "string";
             readonly minLength: 1;
@@ -799,6 +804,92 @@ export declare const mesh_alert_schema: {
         };
     };
     readonly additionalProperties: true;
+};
+export declare const mesh_bridge_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/mesh_bridge.schema.json";
+    readonly title: "Mesh Protocol Bridge Message";
+    readonly description: "Bridge message for painlessMesh and other mesh protocols";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }, {
+        readonly type: "object";
+        readonly required: readonly ["event", "mesh_protocol", "mesh_message"];
+        readonly properties: {
+            readonly device_type: {
+                readonly const: "gateway";
+                readonly description: "Must be gateway (only gateways bridge mesh protocols)";
+            };
+            readonly event: {
+                readonly const: "mesh_bridge";
+                readonly description: "Event identifier for mesh protocol bridge messages";
+            };
+            readonly message_type: {
+                readonly const: 603;
+                readonly description: "Message type code for mesh bridge (v0.7.1+)";
+            };
+            readonly mesh_protocol: {
+                readonly type: "string";
+                readonly enum: readonly ["painlessMesh", "esp-now", "ble-mesh", "thread", "zigbee"];
+                readonly description: "Mesh protocol being bridged";
+            };
+            readonly mesh_message: {
+                readonly type: "object";
+                readonly description: "Encapsulated mesh protocol message";
+                readonly properties: {
+                    readonly from_node_id: {
+                        readonly type: readonly ["integer", "string"];
+                        readonly description: "Source node identifier (uint32 for painlessMesh)";
+                    };
+                    readonly to_node_id: {
+                        readonly type: readonly ["integer", "string"];
+                        readonly description: "Destination node identifier (0 or 'broadcast' for broadcast)";
+                    };
+                    readonly mesh_type: {
+                        readonly type: "integer";
+                        readonly description: "Mesh protocol-specific message type code";
+                    };
+                    readonly mesh_type_name: {
+                        readonly type: "string";
+                        readonly description: "Human-readable mesh message type (e.g., 'SINGLE', 'BROADCAST')";
+                    };
+                    readonly raw_payload: {
+                        readonly type: "string";
+                        readonly description: "Raw mesh message payload (base64 or hex encoded)";
+                    };
+                    readonly payload_decoded: {
+                        readonly type: "object";
+                        readonly description: "Decoded payload if it's a valid MQTT v1 message";
+                    };
+                    readonly rssi: {
+                        readonly type: "number";
+                        readonly minimum: -200;
+                        readonly maximum: 0;
+                        readonly description: "Signal strength in dBm";
+                    };
+                    readonly hop_count: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Number of hops from source to gateway";
+                    };
+                    readonly mesh_timestamp: {
+                        readonly type: "integer";
+                        readonly description: "Mesh protocol timestamp (microseconds for painlessMesh)";
+                    };
+                };
+                readonly additionalProperties: true;
+            };
+            readonly gateway_node_id: {
+                readonly type: readonly ["integer", "string"];
+                readonly description: "Gateway's node ID in the mesh network";
+            };
+            readonly mesh_network_id: {
+                readonly type: "string";
+                readonly description: "Mesh network identifier";
+            };
+        };
+        readonly additionalProperties: true;
+    }];
 };
 export declare const mqtt_v1_bundle_json: {
     readonly $comment: "Convenience bundle referencing all v1 schema artifact filenames for tooling discovery.";

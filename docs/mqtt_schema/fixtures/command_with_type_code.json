@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "message_type": 400,
+  "device_id": "SN001",
+  "device_type": "sensor",
+  "timestamp": "2025-10-23T20:30:00.000Z",
+  "firmware_version": "WEB 1.0.0",
+  "event": "command",
+  "command": "read_sensors",
+  "correlation_id": "cmd-20251023-001",
+  "parameters": {
+    "immediate": true,
+    "sensors": ["temperature", "humidity"]
+  },
+  "priority": "high"
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "message_type": 603,
+  "device_id": "GW-MESH-01",
+  "device_type": "gateway",
+  "timestamp": "2025-10-23T20:30:00.000Z",
+  "firmware_version": "GW 3.2.0",
+  "event": "mesh_bridge",
+  "mesh_protocol": "painlessMesh",
+  "mesh_message": {
+    "from_node_id": 123456789,
+    "to_node_id": 987654321,
+    "mesh_type": 8,
+    "mesh_type_name": "SINGLE",
+    "raw_payload": "eyJ0ZW1wIjoyMi41LCJodW1pZGl0eSI6NDUuMn0=",
+    "payload_decoded": {
+      "schema_version": 1,
+      "device_id": "MESH-NODE-123456789",
+      "device_type": "sensor",
+      "timestamp": "2025-10-23T20:30:00.000Z",
+      "firmware_version": "SN 2.0.0",
+      "sensors": {
+        "temperature": {
+          "value": 22.5,
+          "unit": "C"
+        }
+      }
+    },
+    "rssi": -72,
+    "hop_count": 2,
+    "mesh_timestamp": 1729712400000000
+  },
+  "gateway_node_id": 987654321,
+  "mesh_network_id": "alteriom-mesh-01"
+}

@@ -1,9 +1,31 @@
 /**
  * Auto-generated TypeScript types for Alteriom MQTT Schema v1
  * Source: docs/mqtt_schema/*.schema.json
- * Generation Date: 2025-10-19
+ * Generation Date: 2025-10-23 (v0.7.1)
  * NOTE: This file is maintained in firmware repo for UI alignment. Changes require coordinated review.
  */
+
+// ------------------------------------------------------------
+// Message Type Codes (v0.7.1+)
+// ------------------------------------------------------------
+
+export const MessageTypeCodes = {
+  SENSOR_DATA: 200,
+  SENSOR_HEARTBEAT: 201,
+  SENSOR_STATUS: 202,
+  GATEWAY_INFO: 300,
+  GATEWAY_METRICS: 301,
+  COMMAND: 400,
+  COMMAND_RESPONSE: 401,
+  CONTROL_RESPONSE: 402, // deprecated
+  FIRMWARE_STATUS: 500,
+  MESH_NODE_LIST: 600,
+  MESH_TOPOLOGY: 601,
+  MESH_ALERT: 602,
+  MESH_BRIDGE: 603,
+} as const;
+
+export type MessageTypeCode = typeof MessageTypeCodes[keyof typeof MessageTypeCodes];
 
 // ------------------------------------------------------------
 // Base / Shared Types
@@ -28,6 +50,7 @@ export interface EnvironmentInfo {
 
 export interface BaseEnvelope {
   schema_version: 1;
+  message_type?: MessageTypeCode; // Optional message type code for fast classification (v0.7.1+)
   device_id: string; // 1-64 chars, [A-Za-z0-9_-]
   device_type: 'sensor' | 'gateway';
   timestamp: string; // RFC3339 / ISO 8601
@@ -207,6 +230,28 @@ export interface MeshAlertMessage extends BaseEnvelope {
   alert_count?: number;
 }
 
+export interface MeshBridgeMessage extends BaseEnvelope {
+  device_type: 'gateway';
+  firmware_version: string;
+  message_type?: 603;
+  event: 'mesh_bridge';
+  mesh_protocol: 'painlessMesh' | 'esp-now' | 'ble-mesh' | 'thread' | 'zigbee';
+  mesh_message: {
+    from_node_id: number | string;
+    to_node_id: number | string;
+    mesh_type?: number;
+    mesh_type_name?: string;
+    raw_payload?: string;
+    payload_decoded?: Record<string, unknown>;
+    rssi?: number;
+    hop_count?: number;
+    mesh_timestamp?: number;
+    [k: string]: unknown;
+  };
+  gateway_node_id?: number | string;
+  mesh_network_id?: string;
+}
+
 // Union of All Known V1 Messages (excluding heartbeat omission nuance)
 export type AnyMqttV1Message =
   | SensorDataMessage
@@ -220,7 +265,8 @@ export type AnyMqttV1Message =
   | CommandResponseMessage
   | MeshNodeListMessage
   | MeshTopologyMessage
-  | MeshAlertMessage;
+  | MeshAlertMessage
+  | MeshBridgeMessage;
 
 // Type Guards ------------------------------------------------
 
@@ -272,9 +318,35 @@ export function isCommandResponseMessage(msg: any): msg is CommandResponseMessag
   return msg && msg.schema_version === 1 && msg.event === 'command_response' && typeof msg.success === 'boolean';
 }
 
+export function isMeshBridgeMessage(msg: any): msg is MeshBridgeMessage {
+  return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && msg.event === 'mesh_bridge' && typeof msg.mesh_protocol === 'string' && typeof msg.mesh_message === 'object';
+}
+
 export function classifyMessage(msg: any): AnyMqttV1Message | null {
+  // Fast path: use message_type if present (v0.7.1+)
+  if (msg.message_type) {
+    switch (msg.message_type) {
+      case MessageTypeCodes.SENSOR_DATA: return isSensorDataMessage(msg) ? msg : null;
+      case MessageTypeCodes.SENSOR_HEARTBEAT: return isSensorHeartbeatMessage(msg) ? msg : null;
+      case MessageTypeCodes.SENSOR_STATUS: return isSensorStatusMessage(msg) ? msg : null;
+      case MessageTypeCodes.GATEWAY_INFO: return isGatewayInfoMessage(msg) ? msg : null;
+      case MessageTypeCodes.GATEWAY_METRICS: return isGatewayMetricsMessage(msg) ? msg : null;
+      case MessageTypeCodes.COMMAND: return isCommandMessage(msg) ? msg : null;
+      case MessageTypeCodes.COMMAND_RESPONSE: return isCommandResponseMessage(msg) ? msg : null;
+      case MessageTypeCodes.CONTROL_RESPONSE: return isControlResponseMessage(msg) ? msg : null;
+      case MessageTypeCodes.FIRMWARE_STATUS: return isFirmwareStatusMessage(msg) ? msg : null;
+      case MessageTypeCodes.MESH_NODE_LIST: return isMeshNodeListMessage(msg) ? msg : null;
+      case MessageTypeCodes.MESH_TOPOLOGY: return isMeshTopologyMessage(msg) ? msg : null;
+      case MessageTypeCodes.MESH_ALERT: return isMeshAlertMessage(msg) ? msg : null;
+      case MessageTypeCodes.MESH_BRIDGE: return isMeshBridgeMessage(msg) ? msg : null;
+      default: return null;
+    }
+  }
+  
+  // Fallback: use heuristic classification for backward compatibility
   if (isSensorDataMessage(msg)) return msg;
   if (isGatewayMetricsMessage(msg)) return msg;
+  if (isMeshBridgeMessage(msg)) return msg;
   if (isMeshNodeListMessage(msg)) return msg;
   if (isMeshTopologyMessage(msg)) return msg;
   if (isMeshAlertMessage(msg)) return msg;

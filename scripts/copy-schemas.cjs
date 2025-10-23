@@ -29,6 +29,7 @@ const copyList = [
   'mesh_node_list.schema.json',
   'mesh_topology.schema.json',
   'mesh_alert.schema.json',
+  'mesh_bridge.schema.json',
   'mqtt_v1_bundle.json',
   'validation_rules.md',
   'ota/ota-manifest.schema.json'

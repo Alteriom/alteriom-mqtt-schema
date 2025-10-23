@@ -14,7 +14,8 @@ import {
   command_response_schema,
   mesh_node_list_schema,
   mesh_topology_schema,
-  mesh_alert_schema
+  mesh_alert_schema,
+  mesh_bridge_schema
 } from './schema_data.js';
 // Load JSON schemas via createRequire so it works in both CJS and ESM builds without import assertions.
 // Bind embedded schema objects for Ajv consumption
@@ -31,6 +32,7 @@ const commandResponse = command_response_schema as any;
 const meshNodeList = mesh_node_list_schema as any;
 const meshTopology = mesh_topology_schema as any;
 const meshAlert = mesh_alert_schema as any;
+const meshBridge = mesh_bridge_schema as any;
 
 // Lazy singleton Ajv instance so consumers can optionally supply their own if needed.
 let _ajv: Ajv | null = null;
@@ -80,6 +82,7 @@ const commandResponseValidate = ajv.compile(commandResponse);
 const meshNodeListValidate = ajv.compile(meshNodeList);
 const meshTopologyValidate = ajv.compile(meshTopology);
 const meshAlertValidate = ajv.compile(meshAlert);
+const meshBridgeValidate = ajv.compile(meshBridge);
 
 export const validators = {
   sensorData: (d: unknown) => toResult(sensorDataValidate, d),
@@ -93,7 +96,8 @@ export const validators = {
   commandResponse: (d: unknown) => toResult(commandResponseValidate, d),
   meshNodeList: (d: unknown) => toResult(meshNodeListValidate, d),
   meshTopology: (d: unknown) => toResult(meshTopologyValidate, d),
-  meshAlert: (d: unknown) => toResult(meshAlertValidate, d)
+  meshAlert: (d: unknown) => toResult(meshAlertValidate, d),
+  meshBridge: (d: unknown) => toResult(meshBridgeValidate, d)
 };
 
 export type ValidatorName = keyof typeof validators;
@@ -102,19 +106,46 @@ export function validateMessage(kind: ValidatorName, data: unknown): ValidationR
   return validators[kind](data);
 }
 
+// Message Type Code to Validator mapping (v0.7.1+)
+const MESSAGE_TYPE_MAP: Record<number, ValidatorName> = {
+  200: 'sensorData',
+  201: 'sensorHeartbeat',
+  202: 'sensorStatus',
+  300: 'gatewayInfo',
+  301: 'gatewayMetrics',
+  400: 'command',
+  401: 'commandResponse',
+  402: 'controlResponse',
+  500: 'firmwareStatus',
+  600: 'meshNodeList',
+  601: 'meshTopology',
+  602: 'meshAlert',
+  603: 'meshBridge'
+};
+
 // Classifier using lightweight heuristics to pick a schema validator.
+// v0.7.1+: Fast path using message_type code when present
 export function classifyAndValidate(data: any): { kind?: ValidatorName; result: ValidationResult } {
   if (!data || typeof data !== 'object') return { result: { valid: false, errors: ['Not an object'] } };
-  // Check for event discriminators first (new command-based messages)
+  
+  // Fast path: use message_type code if present (v0.7.1+)
+  if (typeof data.message_type === 'number' && data.message_type in MESSAGE_TYPE_MAP) {
+    const kind = MESSAGE_TYPE_MAP[data.message_type];
+    return { kind, result: validators[kind](data) };
+  }
+  
+  // Fallback: heuristic classification for backward compatibility
+  // Check for event discriminators first (command-based messages)
   if (data.event === 'command') return { kind: 'command', result: validators.command(data) };
   if (data.event === 'command_response') return { kind: 'commandResponse', result: validators.commandResponse(data) };
+  if (data.event === 'mesh_bridge') return { kind: 'meshBridge', result: validators.meshBridge(data) };
   // Existing classification heuristics
   if (data.metrics) return { kind: 'gatewayMetrics', result: validators.gatewayMetrics(data) };
   if (data.sensors) return { kind: 'sensorData', result: validators.sensorData(data) };
   if (Array.isArray(data.nodes)) return { kind: 'meshNodeList', result: validators.meshNodeList(data) };
   if (Array.isArray(data.connections)) return { kind: 'meshTopology', result: validators.meshTopology(data) };
   if (Array.isArray(data.alerts)) return { kind: 'meshAlert', result: validators.meshAlert(data) };
-  if (data.progress_pct !== undefined || (data.status && ['pending','downloading','flashing','verifying','rebooting','completed','failed'].includes(data.status))) return { kind: 'firmwareStatus', result: validators.firmwareStatus(data) };
+  if (data.progress_pct !== undefined || (data.status && ['pending','downloading','flashing','verifying','rebooting','completed','failed','rolled_back','rollback_pending','rollback_failed'].includes(data.status))) return { kind: 'firmwareStatus', result: validators.firmwareStatus(data) };
   if (data.status && ['online','offline','updating','error'].includes(data.status) && data.device_type === 'sensor') return { kind: 'sensorStatus', result: validators.sensorStatus(data) };
   if (data.status && ['ok','error'].includes(data.status)) return { kind: 'controlResponse', result: validators.controlResponse(data) };
   if (data.device_type === 'gateway') return { kind: 'gatewayInfo', result: validators.gatewayInfo(data) };

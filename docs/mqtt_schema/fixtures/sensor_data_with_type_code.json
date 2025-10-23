@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "message_type": 200,
+  "device_id": "SN001",
+  "device_type": "sensor",
+  "timestamp": "2025-10-23T20:30:00.000Z",
+  "firmware_version": "SN 2.1.5",
+  "sensors": {
+    "temperature": {
+      "value": 22.5,
+      "unit": "C",
+      "quality_score": 0.98
+    },
+    "humidity": {
+      "value": 45.2,
+      "unit": "%",
+      "quality_score": 0.95
+    }
+  },
+  "battery_level": 85,
+  "signal_strength": -67
+}

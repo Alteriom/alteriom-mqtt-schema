@@ -19,6 +19,7 @@ export declare const validators: {
     meshNodeList: (d: unknown) => ValidationResult;
     meshTopology: (d: unknown) => ValidationResult;
     meshAlert: (d: unknown) => ValidationResult;
+    meshBridge: (d: unknown) => ValidationResult;
 };
 export type ValidatorName = keyof typeof validators;
 export declare function validateMessage(kind: ValidatorName, data: unknown): ValidationResult;

@@ -1,7 +1,7 @@
 import Ajv from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 // Schemas embedded via generated schema_data.ts (copy-schemas.cjs) to avoid filesystem dependency
-import { envelope_schema, sensor_data_schema, sensor_heartbeat_schema, sensor_status_schema, gateway_info_schema, gateway_metrics_schema, firmware_status_schema, control_response_schema, command_schema, command_response_schema, mesh_node_list_schema, mesh_topology_schema, mesh_alert_schema } from './schema_data.js';
+import { envelope_schema, sensor_data_schema, sensor_heartbeat_schema, sensor_status_schema, gateway_info_schema, gateway_metrics_schema, firmware_status_schema, control_response_schema, command_schema, command_response_schema, mesh_node_list_schema, mesh_topology_schema, mesh_alert_schema, mesh_bridge_schema } from './schema_data.js';
 // Load JSON schemas via createRequire so it works in both CJS and ESM builds without import assertions.
 // Bind embedded schema objects for Ajv consumption
 const envelope = envelope_schema;
@@ -17,6 +17,7 @@ const commandResponse = command_response_schema;
 const meshNodeList = mesh_node_list_schema;
 const meshTopology = mesh_topology_schema;
 const meshAlert = mesh_alert_schema;
+const meshBridge = mesh_bridge_schema;
 // Lazy singleton Ajv instance so consumers can optionally supply their own if needed.
 let _ajv = null;
 function getAjv(opts) {
@@ -53,6 +54,7 @@ const commandResponseValidate = ajv.compile(commandResponse);
 const meshNodeListValidate = ajv.compile(meshNodeList);
 const meshTopologyValidate = ajv.compile(meshTopology);
 const meshAlertValidate = ajv.compile(meshAlert);
+const meshBridgeValidate = ajv.compile(meshBridge);
 export const validators = {
     sensorData: (d) => toResult(sensorDataValidate, d),
     sensorHeartbeat: (d) => toResult(sensorHeartbeatValidate, d),
@@ -65,20 +67,46 @@ export const validators = {
     commandResponse: (d) => toResult(commandResponseValidate, d),
     meshNodeList: (d) => toResult(meshNodeListValidate, d),
     meshTopology: (d) => toResult(meshTopologyValidate, d),
-    meshAlert: (d) => toResult(meshAlertValidate, d)
+    meshAlert: (d) => toResult(meshAlertValidate, d),
+    meshBridge: (d) => toResult(meshBridgeValidate, d)
 };
 export function validateMessage(kind, data) {
     return validators[kind](data);
 }
+// Message Type Code to Validator mapping (v0.7.1+)
+const MESSAGE_TYPE_MAP = {
+    200: 'sensorData',
+    201: 'sensorHeartbeat',
+    202: 'sensorStatus',
+    300: 'gatewayInfo',
+    301: 'gatewayMetrics',
+    400: 'command',
+    401: 'commandResponse',
+    402: 'controlResponse',
+    500: 'firmwareStatus',
+    600: 'meshNodeList',
+    601: 'meshTopology',
+    602: 'meshAlert',
+    603: 'meshBridge'
+};
 // Classifier using lightweight heuristics to pick a schema validator.
+// v0.7.1+: Fast path using message_type code when present
 export function classifyAndValidate(data) {
     if (!data || typeof data !== 'object')
         return { result: { valid: false, errors: ['Not an object'] } };
-    // Check for event discriminators first (new command-based messages)
+    // Fast path: use message_type code if present (v0.7.1+)
+    if (typeof data.message_type === 'number' && data.message_type in MESSAGE_TYPE_MAP) {
+        const kind = MESSAGE_TYPE_MAP[data.message_type];
+        return { kind, result: validators[kind](data) };
+    }
+    // Fallback: heuristic classification for backward compatibility
+    // Check for event discriminators first (command-based messages)
     if (data.event === 'command')
         return { kind: 'command', result: validators.command(data) };
     if (data.event === 'command_response')
         return { kind: 'commandResponse', result: validators.commandResponse(data) };
+    if (data.event === 'mesh_bridge')
+        return { kind: 'meshBridge', result: validators.meshBridge(data) };
     // Existing classification heuristics
     if (data.metrics)
         return { kind: 'gatewayMetrics', result: validators.gatewayMetrics(data) };
@@ -90,7 +118,7 @@ export function classifyAndValidate(data) {
         return { kind: 'meshTopology', result: validators.meshTopology(data) };
     if (Array.isArray(data.alerts))
         return { kind: 'meshAlert', result: validators.meshAlert(data) };
-    if (data.progress_pct !== undefined || (data.status && ['pending', 'downloading', 'flashing', 'verifying', 'rebooting', 'completed', 'failed'].includes(data.status)))
+    if (data.progress_pct !== undefined || (data.status && ['pending', 'downloading', 'flashing', 'verifying', 'rebooting', 'completed', 'failed', 'rolled_back', 'rollback_pending', 'rollback_failed'].includes(data.status)))
         return { kind: 'firmwareStatus', result: validators.firmwareStatus(data) };
     if (data.status && ['online', 'offline', 'updating', 'error'].includes(data.status) && data.device_type === 'sensor')
         return { kind: 'sensorStatus', result: validators.sensorStatus(data) };

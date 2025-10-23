@@ -17,6 +17,25 @@ export const envelope_schema = {
       "type": "integer",
       "const": 1
     },
+    "message_type": {
+      "type": "integer",
+      "description": "Optional message type code for fast classification (v0.7.1+)",
+      "enum": [
+        200,
+        201,
+        202,
+        300,
+        301,
+        400,
+        401,
+        402,
+        500,
+        600,
+        601,
+        602,
+        603
+      ]
+    },
     "device_id": {
       "type": "string",
       "minLength": 1,
@@ -975,6 +994,114 @@ export const mesh_alert_schema = {
     }
   },
   "additionalProperties": true
+} as const;
+export const mesh_bridge_schema = {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/mesh_bridge.schema.json",
+  "title": "Mesh Protocol Bridge Message",
+  "description": "Bridge message for painlessMesh and other mesh protocols",
+  "allOf": [
+    {
+      "$ref": "envelope.schema.json"
+    },
+    {
+      "type": "object",
+      "required": [
+        "event",
+        "mesh_protocol",
+        "mesh_message"
+      ],
+      "properties": {
+        "device_type": {
+          "const": "gateway",
+          "description": "Must be gateway (only gateways bridge mesh protocols)"
+        },
+        "event": {
+          "const": "mesh_bridge",
+          "description": "Event identifier for mesh protocol bridge messages"
+        },
+        "message_type": {
+          "const": 603,
+          "description": "Message type code for mesh bridge (v0.7.1+)"
+        },
+        "mesh_protocol": {
+          "type": "string",
+          "enum": [
+            "painlessMesh",
+            "esp-now",
+            "ble-mesh",
+            "thread",
+            "zigbee"
+          ],
+          "description": "Mesh protocol being bridged"
+        },
+        "mesh_message": {
+          "type": "object",
+          "description": "Encapsulated mesh protocol message",
+          "properties": {
+            "from_node_id": {
+              "type": [
+                "integer",
+                "string"
+              ],
+              "description": "Source node identifier (uint32 for painlessMesh)"
+            },
+            "to_node_id": {
+              "type": [
+                "integer",
+                "string"
+              ],
+              "description": "Destination node identifier (0 or 'broadcast' for broadcast)"
+            },
+            "mesh_type": {
+              "type": "integer",
+              "description": "Mesh protocol-specific message type code"
+            },
+            "mesh_type_name": {
+              "type": "string",
+              "description": "Human-readable mesh message type (e.g., 'SINGLE', 'BROADCAST')"
+            },
+            "raw_payload": {
+              "type": "string",
+              "description": "Raw mesh message payload (base64 or hex encoded)"
+            },
+            "payload_decoded": {
+              "type": "object",
+              "description": "Decoded payload if it's a valid MQTT v1 message"
+            },
+            "rssi": {
+              "type": "number",
+              "minimum": -200,
+              "maximum": 0,
+              "description": "Signal strength in dBm"
+            },
+            "hop_count": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of hops from source to gateway"
+            },
+            "mesh_timestamp": {
+              "type": "integer",
+              "description": "Mesh protocol timestamp (microseconds for painlessMesh)"
+            }
+          },
+          "additionalProperties": true
+        },
+        "gateway_node_id": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "Gateway's node ID in the mesh network"
+        },
+        "mesh_network_id": {
+          "type": "string",
+          "description": "Mesh network identifier"
+        }
+      },
+      "additionalProperties": true
+    }
+  ]
 } as const;
 export const mqtt_v1_bundle_json = {
   "$comment": "Convenience bundle referencing all v1 schema artifact filenames for tooling discovery.",
