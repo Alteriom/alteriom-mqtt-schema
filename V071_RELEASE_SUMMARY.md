@@ -19,9 +19,9 @@ The release addresses the following requirements from the original problem state
 ### 1. Message Type Codes (Performance Optimization)
 
 **Added optional `message_type` field to envelope:**
-- 13 standardized type codes (200-603) for message classification
+- 14 standardized type codes (200-603, 700) for message classification
 - O(1) lookup vs O(n) heuristic matching
-- ~90% faster classification when type code present
+- 80-95% faster classification when type code present
 - 100% backward compatible (falls back to heuristics if omitted)
 
 **Type Code Categories:**
@@ -30,6 +30,7 @@ The release addresses the following requirements from the original problem state
 - 400-402: Commands and control
 - 500: OTA firmware updates
 - 600-603: Mesh networking
+- 700: Device configuration
 
 **Benefits:**
 - Faster message routing in high-throughput systems
@@ -59,13 +60,37 @@ The release addresses the following requirements from the original problem state
 - Mesh network debugging and visualization
 - Low-power IoT deployments
 
-### 3. Enhanced TypeScript Types
+### 3. Unified Device Configuration Management
+
+**New `device_config` schema (type code 700):**
+- Standardizes configuration management for both sensors and gateways
+- Supports `config_snapshot`, `config_update`, and `config_request` events
+- Unified standards for OTA, network, power, health, and status configuration
+
+**Configuration Categories:**
+- OTA configuration (auto-update, channels, intervals, downgrade policy)
+- Network settings (WiFi, mesh, MQTT broker configuration)
+- Power management (power modes, sleep duration)
+- Reporting intervals (sampling, reporting)
+- Alert thresholds (per-sensor min/max with enable flags)
+- Calibration offsets (sensor-specific calibration)
+- System settings (log levels, timezone, NTP server)
+
+**Use Cases:**
+- Remote configuration without firmware reflashing
+- Configuration backup and restore
+- Audit trail with version tracking
+- Bulk configuration deployment
+
+### 4. Enhanced TypeScript Types
 
 **New exports:**
-- `MessageTypeCodes` constant object with all type mappings
+- `MessageTypeCodes` constant object with all type mappings (including DEVICE_CONFIG: 700)
 - `MessageTypeCode` type alias for type safety
 - `MeshBridgeMessage` interface
+- `DeviceConfigMessage` interface
 - `isMeshBridgeMessage()` type guard
+- `isDeviceConfigMessage()` type guard
 - Enhanced `classifyMessage()` with fast path
 
 **Improved classification:**
@@ -80,8 +105,8 @@ const result = classifyAndValidate({ sensors: {...} }); // O(n)
 ## Implementation Quality
 
 ### Testing
-- ✅ 22 test fixtures passing (CJS + ESM)
-- ✅ 5 new fixtures for v0.7.1 features
+- ✅ 25 test fixtures passing (CJS + ESM)
+- ✅ 8 new fixtures for v0.7.1 features (type codes, mesh bridge, device config)
 - ✅ 100% backward compatibility verified
 - ✅ Schema sync validation passed
 - ✅ CodeQL security scan: 0 vulnerabilities

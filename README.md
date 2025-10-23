@@ -765,6 +765,7 @@ const message = {
 - `event: "command"` → `command` (v0.5.0+)
 - `event: "command_response"` → `commandResponse` (v0.5.0+)
 - `event: "mesh_bridge"` → `meshBridge` (v0.7.1+)
+- `event: "config_snapshot"`, `"config_update"`, or `"config_request"` → `deviceConfig` (v0.7.1+)
 - `metrics` → `gatewayMetrics`
 - `sensors` → `sensorData`
 - `nodes` array → `meshNodeList`

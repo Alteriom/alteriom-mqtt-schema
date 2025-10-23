@@ -13,7 +13,7 @@ This document outlines a comprehensive review of the Alteriom MQTT Schema implem
 
 ### Message Type Overview (v0.7.0)
 
-The current schema supports 12 distinct message types:
+The current schema supports 14 distinct message types:
 
 | Message Type | Event Field | Primary Use Case | Device Type |
 |--------------|-------------|------------------|-------------|
@@ -29,6 +29,8 @@ The current schema supports 12 distinct message types:
 | mesh_node_list | (none) | Node inventory | gateway |
 | mesh_topology | (none) | Network graph | gateway |
 | mesh_alert | (none) | Network warnings | gateway |
+| mesh_bridge | "mesh_bridge" | Mesh protocol bridge | gateway |
+| device_config | "config_snapshot", "config_update", "config_request" | Device configuration | sensor/gateway |
 
 ### Current Classification Heuristics
 
@@ -37,16 +39,18 @@ The `classifyAndValidate` function uses the following priority:
 ```typescript
 1. event === "command" → command
 2. event === "command_response" → commandResponse
-3. has metrics object → gatewayMetrics
-4. has sensors object → sensorData
-5. has nodes array → meshNodeList
-6. has connections array → meshTopology
-7. has alerts array → meshAlert
-8. has progress_pct or OTA status → firmwareStatus
-9. has status + device_type=sensor → sensorStatus
-10. has status (ok|error) → controlResponse
-11. device_type=gateway → gatewayInfo
-12. fallback → sensorHeartbeat
+3. event === "mesh_bridge" → meshBridge
+4. event in ["config_snapshot", "config_update", "config_request"] → deviceConfig
+5. has metrics object → gatewayMetrics
+6. has sensors object → sensorData
+7. has nodes array → meshNodeList
+8. has connections array → meshTopology
+9. has alerts array → meshAlert
+10. has progress_pct or OTA status → firmwareStatus
+11. has status + device_type=sensor → sensorStatus
+12. has status (ok|error) → controlResponse
+13. device_type=gateway → gatewayInfo
+14. fallback → sensorHeartbeat
 ```
 
 ### Identified Issues
@@ -134,6 +138,7 @@ Introduce standardized numeric message type identifiers aligned with common IoT 
 | 601 | mesh_topology | mesh | Mesh network topology |
 | 602 | mesh_alert | mesh | Mesh network alert |
 | 603 | mesh_bridge | mesh | Mesh protocol bridge (new) |
+| 700 | device_config | config | Device configuration management (new) |
 
 ### Benefits of Type Codes
 
