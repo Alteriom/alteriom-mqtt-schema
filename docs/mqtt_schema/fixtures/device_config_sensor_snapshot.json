@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "message_type": 700,
+  "device_id": "SN001",
+  "device_type": "sensor",
+  "timestamp": "2025-10-23T21:00:00.000Z",
+  "firmware_version": "SN 2.1.5",
+  "event": "config_snapshot",
+  "configuration": {
+    "sampling_interval_ms": 30000,
+    "reporting_interval_ms": 60000,
+    "sensors_enabled": ["temperature", "humidity", "pressure"],
+    "transmission_mode": "wifi",
+    "power_mode": "low_power",
+    "sleep_duration_ms": 25000,
+    "calibration_offsets": {
+      "temperature": 0.5,
+      "humidity": -2.0
+    },
+    "alert_thresholds": {
+      "temperature": {
+        "min": -10,
+        "max": 50,
+        "enabled": true
+      }
+    },
+    "network_config": {
+      "wifi_ssid": "alteriom-iot",
+      "mqtt_broker": "mqtt.alteriom.io",
+      "mqtt_port": 1883,
+      "mqtt_topic_prefix": "alteriom/sensors"
+    },
+    "ota_config": {
+      "auto_update": true,
+      "update_channel": "stable",
+      "update_check_interval_h": 24
+    },
+    "log_level": "info",
+    "timezone": "UTC",
+    "ntp_server": "pool.ntp.org"
+  },
+  "config_version": "1.2.0",
+  "last_modified": "2025-10-20T10:30:00.000Z",
+  "modified_by": "admin"
+}

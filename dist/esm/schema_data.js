@@ -17,6 +17,26 @@ export const envelope_schema = {
             "type": "integer",
             "const": 1
         },
+        "message_type": {
+            "type": "integer",
+            "description": "Optional message type code for fast classification (v0.7.1+)",
+            "enum": [
+                200,
+                201,
+                202,
+                300,
+                301,
+                400,
+                401,
+                402,
+                500,
+                600,
+                601,
+                602,
+                603,
+                700
+            ]
+        },
         "device_id": {
             "type": "string",
             "minLength": 1,
@@ -975,6 +995,342 @@ export const mesh_alert_schema = {
         }
     },
     "additionalProperties": true
+};
+export const mesh_bridge_schema = {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://schemas.alteriom.io/mqtt/v1/mesh_bridge.schema.json",
+    "title": "Mesh Protocol Bridge Message",
+    "description": "Bridge message for painlessMesh and other mesh protocols",
+    "allOf": [
+        {
+            "$ref": "envelope.schema.json"
+        },
+        {
+            "type": "object",
+            "required": [
+                "event",
+                "mesh_protocol",
+                "mesh_message"
+            ],
+            "properties": {
+                "device_type": {
+                    "const": "gateway",
+                    "description": "Must be gateway (only gateways bridge mesh protocols)"
+                },
+                "event": {
+                    "const": "mesh_bridge",
+                    "description": "Event identifier for mesh protocol bridge messages"
+                },
+                "message_type": {
+                    "const": 603,
+                    "description": "Message type code for mesh bridge (v0.7.1+)"
+                },
+                "mesh_protocol": {
+                    "type": "string",
+                    "enum": [
+                        "painlessMesh",
+                        "esp-now",
+                        "ble-mesh",
+                        "thread",
+                        "zigbee"
+                    ],
+                    "description": "Mesh protocol being bridged"
+                },
+                "mesh_message": {
+                    "type": "object",
+                    "description": "Encapsulated mesh protocol message",
+                    "properties": {
+                        "from_node_id": {
+                            "type": [
+                                "integer",
+                                "string"
+                            ],
+                            "description": "Source node identifier (uint32 for painlessMesh)"
+                        },
+                        "to_node_id": {
+                            "type": [
+                                "integer",
+                                "string"
+                            ],
+                            "description": "Destination node identifier (0 or 'broadcast' for broadcast)"
+                        },
+                        "mesh_type": {
+                            "type": "integer",
+                            "description": "Mesh protocol-specific message type code"
+                        },
+                        "mesh_type_name": {
+                            "type": "string",
+                            "description": "Human-readable mesh message type (e.g., 'SINGLE', 'BROADCAST')"
+                        },
+                        "raw_payload": {
+                            "type": "string",
+                            "description": "Raw mesh message payload (base64 or hex encoded)"
+                        },
+                        "payload_decoded": {
+                            "type": "object",
+                            "description": "Decoded payload if it's a valid MQTT v1 message"
+                        },
+                        "rssi": {
+                            "type": "number",
+                            "minimum": -200,
+                            "maximum": 0,
+                            "description": "Signal strength in dBm"
+                        },
+                        "hop_count": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "Number of hops from source to gateway"
+                        },
+                        "mesh_timestamp": {
+                            "type": "integer",
+                            "description": "Mesh protocol timestamp (microseconds for painlessMesh)"
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "gateway_node_id": {
+                    "type": [
+                        "integer",
+                        "string"
+                    ],
+                    "description": "Gateway's node ID in the mesh network"
+                },
+                "mesh_network_id": {
+                    "type": "string",
+                    "description": "Mesh network identifier"
+                }
+            },
+            "additionalProperties": true
+        }
+    ]
+};
+export const device_config_schema = {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://schemas.alteriom.io/mqtt/v1/device_config.schema.json",
+    "title": "Device Configuration Message",
+    "description": "Configuration snapshot or update for sensor or gateway device",
+    "allOf": [
+        {
+            "$ref": "envelope.schema.json"
+        },
+        {
+            "type": "object",
+            "required": [
+                "event",
+                "configuration"
+            ],
+            "properties": {
+                "event": {
+                    "type": "string",
+                    "enum": [
+                        "config_snapshot",
+                        "config_update",
+                        "config_request"
+                    ],
+                    "description": "Configuration event type: snapshot (current state), update (apply changes), request (query current config)"
+                },
+                "message_type": {
+                    "const": 700,
+                    "description": "Message type code for device configuration (v0.7.1+)"
+                },
+                "configuration": {
+                    "type": "object",
+                    "description": "Device configuration parameters",
+                    "properties": {
+                        "sampling_interval_ms": {
+                            "type": "integer",
+                            "minimum": 1000,
+                            "maximum": 86400000,
+                            "description": "Sensor sampling interval in milliseconds (1s to 24h)"
+                        },
+                        "reporting_interval_ms": {
+                            "type": "integer",
+                            "minimum": 1000,
+                            "maximum": 86400000,
+                            "description": "Data reporting interval in milliseconds"
+                        },
+                        "sensors_enabled": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "List of enabled sensor names"
+                        },
+                        "transmission_mode": {
+                            "type": "string",
+                            "enum": [
+                                "wifi",
+                                "mesh",
+                                "mixed",
+                                "cellular"
+                            ],
+                            "description": "Network transmission mode"
+                        },
+                        "power_mode": {
+                            "type": "string",
+                            "enum": [
+                                "normal",
+                                "low_power",
+                                "ultra_low_power",
+                                "always_on"
+                            ],
+                            "description": "Device power management mode"
+                        },
+                        "sleep_duration_ms": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "Deep sleep duration in milliseconds (0 = disabled)"
+                        },
+                        "calibration_offsets": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "number"
+                            },
+                            "description": "Sensor calibration offset values"
+                        },
+                        "alert_thresholds": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object",
+                                "properties": {
+                                    "min": {
+                                        "type": "number"
+                                    },
+                                    "max": {
+                                        "type": "number"
+                                    },
+                                    "enabled": {
+                                        "type": "boolean"
+                                    }
+                                }
+                            },
+                            "description": "Alert threshold configurations per sensor"
+                        },
+                        "network_config": {
+                            "type": "object",
+                            "properties": {
+                                "wifi_ssid": {
+                                    "type": "string",
+                                    "maxLength": 32
+                                },
+                                "wifi_channel": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 14
+                                },
+                                "mesh_prefix": {
+                                    "type": "string",
+                                    "maxLength": 32
+                                },
+                                "mesh_password": {
+                                    "type": "string",
+                                    "maxLength": 64
+                                },
+                                "mesh_port": {
+                                    "type": "integer",
+                                    "minimum": 1024,
+                                    "maximum": 65535
+                                },
+                                "mqtt_broker": {
+                                    "type": "string",
+                                    "format": "hostname"
+                                },
+                                "mqtt_port": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 65535
+                                },
+                                "mqtt_topic_prefix": {
+                                    "type": "string",
+                                    "maxLength": 128
+                                }
+                            },
+                            "description": "Network and connectivity configuration"
+                        },
+                        "ota_config": {
+                            "type": "object",
+                            "properties": {
+                                "auto_update": {
+                                    "type": "boolean",
+                                    "description": "Enable automatic OTA updates"
+                                },
+                                "update_channel": {
+                                    "type": "string",
+                                    "enum": [
+                                        "stable",
+                                        "beta",
+                                        "dev"
+                                    ],
+                                    "description": "OTA update channel"
+                                },
+                                "update_check_interval_h": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 168,
+                                    "description": "Update check interval in hours"
+                                },
+                                "allow_downgrade": {
+                                    "type": "boolean",
+                                    "description": "Allow firmware downgrade"
+                                }
+                            },
+                            "description": "OTA update configuration"
+                        },
+                        "log_level": {
+                            "type": "string",
+                            "enum": [
+                                "debug",
+                                "info",
+                                "warn",
+                                "error",
+                                "none"
+                            ],
+                            "description": "Device logging level"
+                        },
+                        "timezone": {
+                            "type": "string",
+                            "description": "Timezone identifier (e.g., 'America/New_York', 'UTC')"
+                        },
+                        "ntp_server": {
+                            "type": "string",
+                            "format": "hostname",
+                            "description": "NTP server for time synchronization"
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "config_version": {
+                    "type": "string",
+                    "description": "Configuration schema version for tracking changes"
+                },
+                "last_modified": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Timestamp when configuration was last modified"
+                },
+                "modified_by": {
+                    "type": "string",
+                    "description": "User or system that modified the configuration"
+                },
+                "validation_errors": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "field": {
+                                "type": "string"
+                            },
+                            "error": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "description": "Configuration validation errors (for config_update responses)"
+                }
+            },
+            "additionalProperties": true
+        }
+    ]
 };
 export const mqtt_v1_bundle_json = {
     "$comment": "Convenience bundle referencing all v1 schema artifact filenames for tooling discovery.",

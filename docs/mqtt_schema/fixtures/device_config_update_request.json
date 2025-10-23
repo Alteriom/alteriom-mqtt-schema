@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "message_type": 700,
+  "device_id": "SN002",
+  "device_type": "sensor",
+  "timestamp": "2025-10-23T21:00:00.000Z",
+  "firmware_version": "WEB 1.0.0",
+  "event": "config_update",
+  "configuration": {
+    "sampling_interval_ms": 60000,
+    "power_mode": "ultra_low_power",
+    "sleep_duration_ms": 55000,
+    "ota_config": {
+      "auto_update": false
+    }
+  },
+  "modified_by": "user@example.com"
+}

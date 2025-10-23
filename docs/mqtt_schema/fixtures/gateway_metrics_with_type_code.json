@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "message_type": 301,
+  "device_id": "GW-MAIN",
+  "device_type": "gateway",
+  "timestamp": "2025-10-23T20:30:00.000Z",
+  "firmware_version": "GW 3.2.0",
+  "metrics": {
+    "uptime_s": 864000,
+    "cpu_usage_pct": 25.3,
+    "memory_usage_pct": 42.7,
+    "temperature_c": 48.5,
+    "connected_devices": 12,
+    "mesh_nodes": 8,
+    "packet_loss_pct": 0.3
+  }
+}

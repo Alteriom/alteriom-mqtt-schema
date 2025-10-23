@@ -60,6 +60,43 @@ This file captures dynamic / contextual validation that is OUTSIDE pure structur
   - `rollback_available` indicates whether automatic rollback is supported.
   - `previous_version` stores the version to rollback to if update fails.
 
+## Message Type Codes (v0.7.1+)
+- `message_type` field is OPTIONAL in all messages.
+- When present, must be one of the defined codes: 200, 201, 202, 300, 301, 400, 401, 402, 500, 600, 601, 602, 603, 700.
+- Message structure must match the declared type code (validation enforced).
+- When absent, message classification uses heuristic matching (backward compatible).
+- Type code mismatch (e.g., type 200 but structure is gateway) results in validation failure.
+
+## Mesh Bridge Messages (v0.7.1+)
+- New message type for MQTT-to-mesh protocol bridging (`event: "mesh_bridge"`).
+- Must include `mesh_protocol` (painlessMesh, esp-now, ble-mesh, thread, zigbee).
+- Must include `mesh_message` object with at minimum `from_node_id` and `to_node_id`.
+- Node IDs can be integer (uint32 for painlessMesh) or string format.
+- RSSI must be -200 to 0 dBm if present.
+- Hop count must be >= 0 if present.
+- `raw_payload` should be base64 or hex encoded if present.
+- `payload_decoded` should be valid MQTT v1 message if present.
+
+## Device Configuration Messages (v0.7.1+)
+- New message type for device configuration management (`event: "config_snapshot"`, `"config_update"`, or `"config_request"`).
+- Must include `configuration` object with device configuration parameters.
+- Configuration parameters are all OPTIONAL (device-dependent).
+- **Intervals**: `sampling_interval_ms` and `reporting_interval_ms` must be 1000-86400000 (1s to 24h).
+- **Power modes**: Must be one of: normal, low_power, ultra_low_power, always_on.
+- **Transmission modes**: Must be one of: wifi, mesh, mixed, cellular.
+- **Log levels**: Must be one of: debug, info, warn, error, none.
+- **OTA update channels**: Must be one of: stable, beta, dev.
+- **Network config**: 
+  - `wifi_channel` must be 1-14.
+  - `mesh_port` and `mqtt_port` must be 1024-65535.
+  - `mqtt_broker` and `ntp_server` should be valid hostnames.
+- **Alert thresholds**: Each threshold object may have `min`, `max`, and `enabled` properties.
+- **Calibration offsets**: Values are numeric offsets per sensor.
+- **Metadata**: 
+  - `config_version` is a semantic version string.
+  - `last_modified` must be ISO 8601 timestamp.
+  - `validation_errors` array contains objects with `field` and `error` properties.
+
 ## Extensibility
 - Unknown top-level keys tolerated (future evolution) except if they collide with any deprecated alias or reserved future keys announced in CHANGELOG.
 

@@ -1,9 +1,26 @@
 /**
  * Auto-generated TypeScript types for Alteriom MQTT Schema v1
  * Source: docs/mqtt_schema/*.schema.json
- * Generation Date: 2025-10-19
+ * Generation Date: 2025-10-23 (v0.7.1)
  * NOTE: This file is maintained in firmware repo for UI alignment. Changes require coordinated review.
  */
+export declare const MessageTypeCodes: {
+    readonly SENSOR_DATA: 200;
+    readonly SENSOR_HEARTBEAT: 201;
+    readonly SENSOR_STATUS: 202;
+    readonly GATEWAY_INFO: 300;
+    readonly GATEWAY_METRICS: 301;
+    readonly COMMAND: 400;
+    readonly COMMAND_RESPONSE: 401;
+    readonly CONTROL_RESPONSE: 402;
+    readonly FIRMWARE_STATUS: 500;
+    readonly MESH_NODE_LIST: 600;
+    readonly MESH_TOPOLOGY: 601;
+    readonly MESH_ALERT: 602;
+    readonly MESH_BRIDGE: 603;
+    readonly DEVICE_CONFIG: 700;
+};
+export type MessageTypeCode = typeof MessageTypeCodes[keyof typeof MessageTypeCodes];
 export interface LocationInfo {
     latitude?: number;
     longitude?: number;
@@ -21,6 +38,7 @@ export interface EnvironmentInfo {
 }
 export interface BaseEnvelope {
     schema_version: 1;
+    message_type?: MessageTypeCode;
     device_id: string;
     device_type: 'sensor' | 'gateway';
     timestamp: string;
@@ -181,7 +199,74 @@ export interface MeshAlertMessage extends BaseEnvelope {
     }>;
     alert_count?: number;
 }
-export type AnyMqttV1Message = SensorDataMessage | SensorHeartbeatMessage | SensorStatusMessage | GatewayInfoMessage | GatewayMetricsMessage | FirmwareStatusMessage | ControlResponseMessage | CommandMessage | CommandResponseMessage | MeshNodeListMessage | MeshTopologyMessage | MeshAlertMessage;
+export interface MeshBridgeMessage extends BaseEnvelope {
+    device_type: 'gateway';
+    firmware_version: string;
+    message_type?: 603;
+    event: 'mesh_bridge';
+    mesh_protocol: 'painlessMesh' | 'esp-now' | 'ble-mesh' | 'thread' | 'zigbee';
+    mesh_message: {
+        from_node_id: number | string;
+        to_node_id: number | string;
+        mesh_type?: number;
+        mesh_type_name?: string;
+        raw_payload?: string;
+        payload_decoded?: Record<string, unknown>;
+        rssi?: number;
+        hop_count?: number;
+        mesh_timestamp?: number;
+        [k: string]: unknown;
+    };
+    gateway_node_id?: number | string;
+    mesh_network_id?: string;
+}
+export interface DeviceConfigMessage extends BaseEnvelope {
+    firmware_version: string;
+    message_type?: 700;
+    event: 'config_snapshot' | 'config_update' | 'config_request';
+    configuration: {
+        sampling_interval_ms?: number;
+        reporting_interval_ms?: number;
+        sensors_enabled?: string[];
+        transmission_mode?: 'wifi' | 'mesh' | 'mixed' | 'cellular';
+        power_mode?: 'normal' | 'low_power' | 'ultra_low_power' | 'always_on';
+        sleep_duration_ms?: number;
+        calibration_offsets?: Record<string, number>;
+        alert_thresholds?: Record<string, {
+            min?: number;
+            max?: number;
+            enabled?: boolean;
+        }>;
+        network_config?: {
+            wifi_ssid?: string;
+            wifi_channel?: number;
+            mesh_prefix?: string;
+            mesh_password?: string;
+            mesh_port?: number;
+            mqtt_broker?: string;
+            mqtt_port?: number;
+            mqtt_topic_prefix?: string;
+        };
+        ota_config?: {
+            auto_update?: boolean;
+            update_channel?: 'stable' | 'beta' | 'dev';
+            update_check_interval_h?: number;
+            allow_downgrade?: boolean;
+        };
+        log_level?: 'debug' | 'info' | 'warn' | 'error' | 'none';
+        timezone?: string;
+        ntp_server?: string;
+        [k: string]: unknown;
+    };
+    config_version?: string;
+    last_modified?: string;
+    modified_by?: string;
+    validation_errors?: Array<{
+        field?: string;
+        error?: string;
+    }>;
+}
+export type AnyMqttV1Message = SensorDataMessage | SensorHeartbeatMessage | SensorStatusMessage | GatewayInfoMessage | GatewayMetricsMessage | FirmwareStatusMessage | ControlResponseMessage | CommandMessage | CommandResponseMessage | MeshNodeListMessage | MeshTopologyMessage | MeshAlertMessage | MeshBridgeMessage | DeviceConfigMessage;
 export declare function isSensorDataMessage(msg: any): msg is SensorDataMessage;
 export declare function isSensorHeartbeatMessage(msg: any): msg is SensorHeartbeatMessage;
 export declare function isSensorStatusMessage(msg: any): msg is SensorStatusMessage;
@@ -194,6 +279,8 @@ export declare function isMeshTopologyMessage(msg: any): msg is MeshTopologyMess
 export declare function isMeshAlertMessage(msg: any): msg is MeshAlertMessage;
 export declare function isCommandMessage(msg: any): msg is CommandMessage;
 export declare function isCommandResponseMessage(msg: any): msg is CommandResponseMessage;
+export declare function isMeshBridgeMessage(msg: any): msg is MeshBridgeMessage;
+export declare function isDeviceConfigMessage(msg: any): msg is DeviceConfigMessage;
 export declare function classifyMessage(msg: any): AnyMqttV1Message | null;
 export interface BasicValidationIssue {
     field?: string;

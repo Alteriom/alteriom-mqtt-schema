@@ -9,6 +9,11 @@ export declare const envelope_schema: {
             readonly type: "integer";
             readonly const: 1;
         };
+        readonly message_type: {
+            readonly type: "integer";
+            readonly description: "Optional message type code for fast classification (v0.7.1+)";
+            readonly enum: readonly [200, 201, 202, 300, 301, 400, 401, 402, 500, 600, 601, 602, 603, 700];
+        };
         readonly device_id: {
             readonly type: "string";
             readonly minLength: 1;
@@ -799,6 +804,290 @@ export declare const mesh_alert_schema: {
         };
     };
     readonly additionalProperties: true;
+};
+export declare const mesh_bridge_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/mesh_bridge.schema.json";
+    readonly title: "Mesh Protocol Bridge Message";
+    readonly description: "Bridge message for painlessMesh and other mesh protocols";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }, {
+        readonly type: "object";
+        readonly required: readonly ["event", "mesh_protocol", "mesh_message"];
+        readonly properties: {
+            readonly device_type: {
+                readonly const: "gateway";
+                readonly description: "Must be gateway (only gateways bridge mesh protocols)";
+            };
+            readonly event: {
+                readonly const: "mesh_bridge";
+                readonly description: "Event identifier for mesh protocol bridge messages";
+            };
+            readonly message_type: {
+                readonly const: 603;
+                readonly description: "Message type code for mesh bridge (v0.7.1+)";
+            };
+            readonly mesh_protocol: {
+                readonly type: "string";
+                readonly enum: readonly ["painlessMesh", "esp-now", "ble-mesh", "thread", "zigbee"];
+                readonly description: "Mesh protocol being bridged";
+            };
+            readonly mesh_message: {
+                readonly type: "object";
+                readonly description: "Encapsulated mesh protocol message";
+                readonly properties: {
+                    readonly from_node_id: {
+                        readonly type: readonly ["integer", "string"];
+                        readonly description: "Source node identifier (uint32 for painlessMesh)";
+                    };
+                    readonly to_node_id: {
+                        readonly type: readonly ["integer", "string"];
+                        readonly description: "Destination node identifier (0 or 'broadcast' for broadcast)";
+                    };
+                    readonly mesh_type: {
+                        readonly type: "integer";
+                        readonly description: "Mesh protocol-specific message type code";
+                    };
+                    readonly mesh_type_name: {
+                        readonly type: "string";
+                        readonly description: "Human-readable mesh message type (e.g., 'SINGLE', 'BROADCAST')";
+                    };
+                    readonly raw_payload: {
+                        readonly type: "string";
+                        readonly description: "Raw mesh message payload (base64 or hex encoded)";
+                    };
+                    readonly payload_decoded: {
+                        readonly type: "object";
+                        readonly description: "Decoded payload if it's a valid MQTT v1 message";
+                    };
+                    readonly rssi: {
+                        readonly type: "number";
+                        readonly minimum: -200;
+                        readonly maximum: 0;
+                        readonly description: "Signal strength in dBm";
+                    };
+                    readonly hop_count: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Number of hops from source to gateway";
+                    };
+                    readonly mesh_timestamp: {
+                        readonly type: "integer";
+                        readonly description: "Mesh protocol timestamp (microseconds for painlessMesh)";
+                    };
+                };
+                readonly additionalProperties: true;
+            };
+            readonly gateway_node_id: {
+                readonly type: readonly ["integer", "string"];
+                readonly description: "Gateway's node ID in the mesh network";
+            };
+            readonly mesh_network_id: {
+                readonly type: "string";
+                readonly description: "Mesh network identifier";
+            };
+        };
+        readonly additionalProperties: true;
+    }];
+};
+export declare const device_config_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/device_config.schema.json";
+    readonly title: "Device Configuration Message";
+    readonly description: "Configuration snapshot or update for sensor or gateway device";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }, {
+        readonly type: "object";
+        readonly required: readonly ["event", "configuration"];
+        readonly properties: {
+            readonly event: {
+                readonly type: "string";
+                readonly enum: readonly ["config_snapshot", "config_update", "config_request"];
+                readonly description: "Configuration event type: snapshot (current state), update (apply changes), request (query current config)";
+            };
+            readonly message_type: {
+                readonly const: 700;
+                readonly description: "Message type code for device configuration (v0.7.1+)";
+            };
+            readonly configuration: {
+                readonly type: "object";
+                readonly description: "Device configuration parameters";
+                readonly properties: {
+                    readonly sampling_interval_ms: {
+                        readonly type: "integer";
+                        readonly minimum: 1000;
+                        readonly maximum: 86400000;
+                        readonly description: "Sensor sampling interval in milliseconds (1s to 24h)";
+                    };
+                    readonly reporting_interval_ms: {
+                        readonly type: "integer";
+                        readonly minimum: 1000;
+                        readonly maximum: 86400000;
+                        readonly description: "Data reporting interval in milliseconds";
+                    };
+                    readonly sensors_enabled: {
+                        readonly type: "array";
+                        readonly items: {
+                            readonly type: "string";
+                        };
+                        readonly description: "List of enabled sensor names";
+                    };
+                    readonly transmission_mode: {
+                        readonly type: "string";
+                        readonly enum: readonly ["wifi", "mesh", "mixed", "cellular"];
+                        readonly description: "Network transmission mode";
+                    };
+                    readonly power_mode: {
+                        readonly type: "string";
+                        readonly enum: readonly ["normal", "low_power", "ultra_low_power", "always_on"];
+                        readonly description: "Device power management mode";
+                    };
+                    readonly sleep_duration_ms: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Deep sleep duration in milliseconds (0 = disabled)";
+                    };
+                    readonly calibration_offsets: {
+                        readonly type: "object";
+                        readonly additionalProperties: {
+                            readonly type: "number";
+                        };
+                        readonly description: "Sensor calibration offset values";
+                    };
+                    readonly alert_thresholds: {
+                        readonly type: "object";
+                        readonly additionalProperties: {
+                            readonly type: "object";
+                            readonly properties: {
+                                readonly min: {
+                                    readonly type: "number";
+                                };
+                                readonly max: {
+                                    readonly type: "number";
+                                };
+                                readonly enabled: {
+                                    readonly type: "boolean";
+                                };
+                            };
+                        };
+                        readonly description: "Alert threshold configurations per sensor";
+                    };
+                    readonly network_config: {
+                        readonly type: "object";
+                        readonly properties: {
+                            readonly wifi_ssid: {
+                                readonly type: "string";
+                                readonly maxLength: 32;
+                            };
+                            readonly wifi_channel: {
+                                readonly type: "integer";
+                                readonly minimum: 1;
+                                readonly maximum: 14;
+                            };
+                            readonly mesh_prefix: {
+                                readonly type: "string";
+                                readonly maxLength: 32;
+                            };
+                            readonly mesh_password: {
+                                readonly type: "string";
+                                readonly maxLength: 64;
+                            };
+                            readonly mesh_port: {
+                                readonly type: "integer";
+                                readonly minimum: 1024;
+                                readonly maximum: 65535;
+                            };
+                            readonly mqtt_broker: {
+                                readonly type: "string";
+                                readonly format: "hostname";
+                            };
+                            readonly mqtt_port: {
+                                readonly type: "integer";
+                                readonly minimum: 1;
+                                readonly maximum: 65535;
+                            };
+                            readonly mqtt_topic_prefix: {
+                                readonly type: "string";
+                                readonly maxLength: 128;
+                            };
+                        };
+                        readonly description: "Network and connectivity configuration";
+                    };
+                    readonly ota_config: {
+                        readonly type: "object";
+                        readonly properties: {
+                            readonly auto_update: {
+                                readonly type: "boolean";
+                                readonly description: "Enable automatic OTA updates";
+                            };
+                            readonly update_channel: {
+                                readonly type: "string";
+                                readonly enum: readonly ["stable", "beta", "dev"];
+                                readonly description: "OTA update channel";
+                            };
+                            readonly update_check_interval_h: {
+                                readonly type: "integer";
+                                readonly minimum: 1;
+                                readonly maximum: 168;
+                                readonly description: "Update check interval in hours";
+                            };
+                            readonly allow_downgrade: {
+                                readonly type: "boolean";
+                                readonly description: "Allow firmware downgrade";
+                            };
+                        };
+                        readonly description: "OTA update configuration";
+                    };
+                    readonly log_level: {
+                        readonly type: "string";
+                        readonly enum: readonly ["debug", "info", "warn", "error", "none"];
+                        readonly description: "Device logging level";
+                    };
+                    readonly timezone: {
+                        readonly type: "string";
+                        readonly description: "Timezone identifier (e.g., 'America/New_York', 'UTC')";
+                    };
+                    readonly ntp_server: {
+                        readonly type: "string";
+                        readonly format: "hostname";
+                        readonly description: "NTP server for time synchronization";
+                    };
+                };
+                readonly additionalProperties: true;
+            };
+            readonly config_version: {
+                readonly type: "string";
+                readonly description: "Configuration schema version for tracking changes";
+            };
+            readonly last_modified: {
+                readonly type: "string";
+                readonly format: "date-time";
+                readonly description: "Timestamp when configuration was last modified";
+            };
+            readonly modified_by: {
+                readonly type: "string";
+                readonly description: "User or system that modified the configuration";
+            };
+            readonly validation_errors: {
+                readonly type: "array";
+                readonly items: {
+                    readonly type: "object";
+                    readonly properties: {
+                        readonly field: {
+                            readonly type: "string";
+                        };
+                        readonly error: {
+                            readonly type: "string";
+                        };
+                    };
+                };
+                readonly description: "Configuration validation errors (for config_update responses)";
+            };
+        };
+        readonly additionalProperties: true;
+    }];
 };
 export declare const mqtt_v1_bundle_json: {
     readonly $comment: "Convenience bundle referencing all v1 schema artifact filenames for tooling discovery.";

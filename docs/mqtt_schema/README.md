@@ -4,23 +4,25 @@ Purpose: Provide stable, machine-consumable schema references and concise human 
 
 ## Files
 
-| File | Purpose |
-|------|---------|
-| `envelope.schema.json` | Base envelope fields, reused via `$ref`. |
-| `sensor_data.schema.json` | Sensor data message (`alteriom/nodes/{device_id}/data`). |
-| `sensor_heartbeat.schema.json` | Heartbeat message (firmware_version omission allowed). |
-| `sensor_status.schema.json` | Sensor status message (`.../status`). |
-| `gateway_info.schema.json` | Gateway identity/info snapshot. |
-| `gateway_metrics.schema.json` | Gateway periodic metrics. |
-| `firmware_status.schema.json` | Firmware update status / progress events. |
-| `control_response.schema.json` | Command/control response payload (deprecated in v0.5.0, use command_response). |
-| `command.schema.json` | Device control commands (v0.5.0+). |
-| `command_response.schema.json` | Command execution responses with correlation tracking (v0.5.0+). |
-| `mesh_node_list.schema.json` | Mesh network node list with status. |
-| `mesh_topology.schema.json` | Mesh network topology and connections. |
-| `mesh_alert.schema.json` | Mesh network alerts and warnings. |
-| `validation_rules.md` | Non-JSON structural rules (timing, ranges, drop reasons). |
-| `CHANGELOG.md` | Versioned changes to these schema artifacts. |
+| File | Purpose | Type Code |
+|------|---------|-----------|
+| `envelope.schema.json` | Base envelope fields, reused via `$ref`. Includes optional `message_type` (v0.7.1+). | - |
+| `sensor_data.schema.json` | Sensor data message (`alteriom/nodes/{device_id}/data`). | 200 |
+| `sensor_heartbeat.schema.json` | Heartbeat message (firmware_version omission allowed). | 201 |
+| `sensor_status.schema.json` | Sensor status message (`.../status`). | 202 |
+| `gateway_info.schema.json` | Gateway identity/info snapshot. | 300 |
+| `gateway_metrics.schema.json` | Gateway periodic metrics. | 301 |
+| `firmware_status.schema.json` | Firmware update status / progress events. | 500 |
+| `control_response.schema.json` | Command/control response payload (deprecated in v0.5.0, use command_response). | 402 |
+| `command.schema.json` | Device control commands (v0.5.0+). | 400 |
+| `command_response.schema.json` | Command execution responses with correlation tracking (v0.5.0+). | 401 |
+| `mesh_node_list.schema.json` | Mesh network node list with status. | 600 |
+| `mesh_topology.schema.json` | Mesh network topology and connections. | 601 |
+| `mesh_alert.schema.json` | Mesh network alerts and warnings. | 602 |
+| **`mesh_bridge.schema.json`** | **Mesh protocol bridge for painlessMesh, ESP-NOW, etc. (v0.7.1+).** | **603** |
+| **`device_config.schema.json`** | **Unified device configuration management for sensors & gateways (v0.7.1+).** | **700** |
+| `validation_rules.md` | Non-JSON structural rules (timing, ranges, drop reasons). | - |
+| `CHANGELOG.md` | Versioned changes to these schema artifacts. | - |
 
 ## Versioning Strategy
 
