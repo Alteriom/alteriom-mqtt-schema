@@ -25,7 +25,7 @@ Added optional `message_type` field to base envelope for performance optimizatio
   - 603: mesh_bridge - Mesh protocol bridge (new)
 
 **Benefits:**
-- ~90% faster message classification when type code is present
+- Significantly faster message classification when type code is present (O(1) vs O(n))
 - Aligns with CoAP and MQTT-SN numeric type systems
 - Enables efficient switch-case routing instead of heuristic if-else chains
 - Fully backward compatible - classification falls back to heuristics if omitted

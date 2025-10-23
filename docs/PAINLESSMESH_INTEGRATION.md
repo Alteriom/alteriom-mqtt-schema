@@ -78,7 +78,7 @@ uint32_t gatewayNodeId = 0;
 
 ```cpp
 void receivedCallback(uint32_t from, String &msg) {
-  Serial.printf("Received from %u: %s\n", from, msg.c_str());
+  Serial.printf("Received from %lu: %s\n", (unsigned long)from, msg.c_str());
   
   // Bridge to MQTT
   bridgeToMqtt(from, mesh.getNodeId(), msg);
@@ -162,14 +162,21 @@ void bridgeToMqtt(uint32_t from, uint32_t to, String &payload) {
 }
 
 int calculateHops(uint32_t nodeId) {
-  // Simple implementation - use mesh routing table
-  auto route = mesh.findRoute(nodeId);
-  return route.size();
+  // Note: This is a simplified example. In production:
+  // - Use mesh topology data to calculate actual hops
+  // - painlessMesh doesn't expose findRoute() directly
+  // - Alternative: track routing in your own topology map
+  return 1; // Default to 1 hop as example
 }
 
 String getISOTimestamp() {
   // Get NTP time and format as ISO 8601
   time_t now = time(nullptr);
+  if (now < 1000000000) {
+    // Time not yet synced via NTP, return placeholder
+    return "1970-01-01T00:00:00.000Z";
+  }
+  
   struct tm timeinfo;
   gmtime_r(&now, &timeinfo);
   
@@ -345,10 +352,10 @@ int readBatteryLevel() {
 }
 
 String getISOTimestamp() {
-  // Use mesh sync time
-  uint32_t meshTime = mesh.getNodeTime();
-  // Convert to ISO format (simplified)
-  return "2025-10-23T20:30:00.000Z"; // In production, use NTP
+  // In production, sync time via NTP and use mesh.getNodeTime() for microseconds
+  // For this example, return a placeholder
+  // TODO: Implement proper NTP time sync and conversion
+  return "2025-10-23T20:30:00.000Z";
 }
 
 Task taskSendMessage(30000, TASK_FOREVER, &sendSensorData);
@@ -400,8 +407,14 @@ client.on('message', (topic, payload) => {
   if (isMeshBridgeMessage(message)) {
     console.log(`Mesh bridge message from node ${message.mesh_message.from_node_id}`);
     console.log(`Protocol: ${message.mesh_protocol}`);
-    console.log(`RSSI: ${message.mesh_message.rssi} dBm`);
-    console.log(`Hop count: ${message.mesh_message.hop_count}`);
+    
+    // Optional fields - check before access
+    if (message.mesh_message.rssi !== undefined) {
+      console.log(`RSSI: ${message.mesh_message.rssi} dBm`);
+    }
+    if (message.mesh_message.hop_count !== undefined) {
+      console.log(`Hop count: ${message.mesh_message.hop_count}`);
+    }
     
     // Process decoded payload if available
     if (message.mesh_message.payload_decoded) {

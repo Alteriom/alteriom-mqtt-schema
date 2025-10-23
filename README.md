@@ -33,7 +33,7 @@ Firmware emits structured MQTT payloads that must remain tightly aligned with we
 - Helpful error paths (JSON Pointer style)
 - Lightweight (Ajv peer dependency, schemas embedded)
 - Ships original schema JSON files (optional consumption)
-- **NEW in v0.7.1**: Message type codes for 90% faster classification and standardized routing
+- **NEW in v0.7.1**: Message type codes for significantly faster classification and standardized routing
 - **NEW in v0.7.1**: PainlessMesh bridge schema for mesh protocol integration
 - **NEW in v0.7.0**: Best-in-class OTA management with security, rollback, and delta updates
 - **NEW in v0.6.0**: Enhanced location/geolocation support for asset tracking
@@ -611,7 +611,7 @@ For performance optimization and standardized routing, use the optional `message
 | 603 | `MESH_BRIDGE` | mesh_bridge | mesh | Mesh protocol bridge (v0.7.1+) |
 
 **Benefits:**
-- **90% Faster**: O(1) lookup vs O(n) heuristic matching
+- **Significantly Faster**: O(1) lookup vs O(n) heuristic matching (avoids 12+ conditional checks)
 - **Protocol Alignment**: Compatible with CoAP and MQTT-SN numeric type systems
 - **Clear Intent**: Explicit message type declaration
 - **Efficient Routing**: Switch-case routing in backend systems

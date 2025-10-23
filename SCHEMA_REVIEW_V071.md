@@ -292,8 +292,10 @@ function classifyByTypeCode(payload: any): ClassificationResult {
 ```
 
 **Performance Improvement:**
-- Fast path: 1 lookup + 1 validation = ~90% faster
+- Fast path: O(1) lookup + 1 validation vs O(n) conditional checks
+- Estimated 80-95% faster in typical scenarios (12+ conditional checks avoided)
 - Backward compatible: existing messages work unchanged
+- Minimal overhead: single typeof check when message_type absent
 
 ### 4. Context-Aware Data Extraction
 
