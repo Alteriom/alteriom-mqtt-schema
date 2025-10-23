@@ -20,8 +20,13 @@ const copyList = [
   'sensor_data.schema.json',
   'sensor_heartbeat.schema.json',
   'sensor_status.schema.json',
+  'sensor_info.schema.json',        // v0.7.2
+  'sensor_metrics.schema.json',     // v0.7.2
   'gateway_info.schema.json',
   'gateway_metrics.schema.json',
+  'gateway_data.schema.json',       // v0.7.2
+  'gateway_heartbeat.schema.json',  // v0.7.2
+  'gateway_status.schema.json',     // v0.7.2
   'firmware_status.schema.json',
   'control_response.schema.json',
   'command.schema.json',
@@ -30,6 +35,8 @@ const copyList = [
   'mesh_topology.schema.json',
   'mesh_alert.schema.json',
   'mesh_bridge.schema.json',
+  'mesh_status.schema.json',        // v0.7.2
+  'mesh_metrics.schema.json',       // v0.7.2
   'device_config.schema.json',
   'mqtt_v1_bundle.json',
   'validation_rules.md',

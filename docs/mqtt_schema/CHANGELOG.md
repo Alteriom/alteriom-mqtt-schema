@@ -1,5 +1,143 @@
 # MQTT Schema Artifacts Changelog
 
+## 2025-10-23 (v0.7.2 - Comprehensive Message Type Expansion)
+
+### Major Release: New Message Types & Enhanced OTA
+
+This release introduces **9 new message types** to provide comprehensive coverage of sensor info/metrics, gateway data/heartbeat/status, and mesh network monitoring.
+
+#### New Message Types
+
+**Sensor Extensions (Type Codes 203-204):**
+- **sensor_info (203)**: Sensor identification, capabilities, calibration info
+  - Hardware/manufacturer/model information
+  - Available sensors and communication protocols
+  - Calibration status and operational ranges
+  - IP rating and warranty information
+
+- **sensor_metrics (204)**: Sensor health and performance metrics
+  - Battery health, voltage, estimated life
+  - Signal strength, quality, RSSI, SNR
+  - CPU/memory usage, temperature
+  - Error/warning counts, reboot history
+  - Transmission success rates
+
+**Gateway Extensions (Type Codes 302-304):**
+- **gateway_data (302)**: Gateway telemetry readings
+  - Sensor-like data from gateway's onboard sensors
+  - Environmental monitoring at gateway location
+  - Uses same sensor entry format as sensor_data
+
+- **gateway_heartbeat (303)**: Gateway presence check
+  - Minimal health indicator message
+  - Uptime, connected devices, mesh node count
+  - Overall health status summary
+
+- **gateway_status (304)**: Gateway operational status changes
+  - Status: online, offline, starting, stopping, updating, maintenance, error, degraded
+  - Previous status tracking
+  - Recovery action indicators
+  - Detailed status reasons and error codes
+
+**Mesh Network Monitoring (Type Codes 604-605):**
+- **mesh_status (604)**: Mesh network health status
+  - Overall mesh status: healthy, degraded, partitioned, forming, failed
+  - Node counts (online/offline)
+  - Network stability metrics
+  - Partition detection
+  - Topology change tracking
+  - Issue reporting (partition, latency, packet loss, etc.)
+
+- **mesh_metrics (605)**: Mesh network performance metrics
+  - Comprehensive packet statistics
+  - Latency measurements (avg/min/max)
+  - Throughput and bandwidth utilization
+  - Routing table metrics
+  - RSSI statistics across links
+  - Node join/leave tracking
+  - Top talker identification
+  - Problematic link detection
+
+#### Enhanced OTA/Firmware Status (Type Code 500)
+
+**New Status Values:**
+- `idle`, `scheduled`, `download_paused`, `cancelled`
+
+**Scheduling Support:**
+- `scheduled_at`: Scheduled update start time
+- `deadline`: Update completion deadline
+- `update_priority`: low | normal | high | critical
+
+**Enhanced Download Tracking:**
+- `pause_reason`: Reason for download pause
+- `max_retries`: Maximum retry attempts
+- `phase`: Detailed update phase tracking
+
+**Security & Validation:**
+- `checksum_algorithm`: md5 | sha1 | sha256 | sha512
+- `expected_checksum`, `actual_checksum`: Checksum values
+- `validation_errors`: Array of validation failures
+
+**Space & Battery Management:**
+- `required_space_kb`: Space needed for update
+- `min_battery_required_pct`: Minimum battery threshold
+
+**Control Flags:**
+- `force_update`: Mandatory update flag
+- `allow_downgrade`: Downgrade permission
+- `cancellable`: Whether update can be cancelled at current stage
+- `backup_config`: Configuration backup status
+
+**Correlation & Manifest:**
+- `correlation_id`: Links command to status updates
+- `update_manifest_url`: OTA manifest reference
+
+### Updated Message Type Codes Table
+
+| Code | Message Type | Category | Description |
+|------|--------------|----------|-------------|
+| 200 | sensor_data | telemetry | Sensor telemetry readings |
+| 201 | sensor_heartbeat | telemetry | Sensor presence/health |
+| 202 | sensor_status | telemetry | Sensor status change |
+| **203** | **sensor_info** | **telemetry** | **Sensor identification & capabilities** |
+| **204** | **sensor_metrics** | **telemetry** | **Sensor health metrics** |
+| 300 | gateway_info | gateway | Gateway identification |
+| 301 | gateway_metrics | gateway | Gateway health metrics |
+| **302** | **gateway_data** | **gateway** | **Gateway telemetry data** |
+| **303** | **gateway_heartbeat** | **gateway** | **Gateway presence check** |
+| **304** | **gateway_status** | **gateway** | **Gateway status changes** |
+| 400 | command | control | Device control command |
+| 401 | command_response | control | Command execution result |
+| 402 | control_response | control | Legacy control response (deprecated) |
+| 500 | firmware_status | ota | Firmware update status |
+| 600 | mesh_node_list | mesh | Mesh node inventory |
+| 601 | mesh_topology | mesh | Mesh network topology |
+| 602 | mesh_alert | mesh | Mesh network alert |
+| 603 | mesh_bridge | mesh | Mesh protocol bridge |
+| **604** | **mesh_status** | **mesh** | **Mesh network health status** |
+| **605** | **mesh_metrics** | **mesh** | **Mesh network performance** |
+| 700 | device_config | config | Device configuration management |
+
+### Test Fixtures
+
+Added complete test fixtures for all new message types:
+- `sensor_info_valid.json`
+- `sensor_metrics_valid.json`
+- `gateway_data_valid.json`
+- `gateway_heartbeat_valid.json`
+- `gateway_status_valid.json`
+- `mesh_status_valid.json`
+- `mesh_metrics_valid.json`
+
+### Migration Notes
+
+- All new message types use the `message_type` field for fast classification
+- Backward compatibility maintained via heuristic classification fallback
+- Enhanced OTA schema is backward compatible (new fields are optional)
+- Validators automatically handle both code-based and heuristic classification
+
+---
+
 ## 2025-10-23 (v0.7.1 - Performance & Mesh Protocol Release)
 
 ### Added - Device Configuration Management (Extended)

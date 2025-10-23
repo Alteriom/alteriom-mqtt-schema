@@ -8,8 +8,8 @@
     "schema_version": {"type": "integer", "const": 1},
     "message_type": {
       "type": "integer",
-      "description": "Optional message type code for fast classification (v0.7.1+)",
-      "enum": [200, 201, 202, 300, 301, 400, 401, 402, 500, 600, 601, 602, 603, 700]
+      "description": "Optional message type code for fast classification (v0.7.2)",
+      "enum": [200, 201, 202, 203, 204, 300, 301, 302, 303, 304, 400, 401, 402, 500, 600, 601, 602, 603, 604, 605, 700]
     },
     "device_id": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[A-Za-z0-9_-]+$"},
     "device_type": {"type": "string", "enum": ["sensor", "gateway"]},

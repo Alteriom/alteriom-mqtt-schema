@@ -60,9 +60,10 @@ This file captures dynamic / contextual validation that is OUTSIDE pure structur
   - `rollback_available` indicates whether automatic rollback is supported.
   - `previous_version` stores the version to rollback to if update fails.
 
-## Message Type Codes (v0.7.1+)
+## Message Type Codes (v0.7.2+)
 - `message_type` field is OPTIONAL in all messages.
-- When present, must be one of the defined codes: 200, 201, 202, 300, 301, 400, 401, 402, 500, 600, 601, 602, 603, 700.
+- When present, must be one of the defined codes: 200, 201, 202, 203, 204, 300, 301, 302, 303, 304, 400, 401, 402, 500, 600, 601, 602, 603, 604, 605, 700.
+- **NEW (v0.7.2)**: Added codes 203 (sensor_info), 204 (sensor_metrics), 302 (gateway_data), 303 (gateway_heartbeat), 304 (gateway_status), 604 (mesh_status), 605 (mesh_metrics).
 - Message structure must match the declared type code (validation enforced).
 - When absent, message classification uses heuristic matching (backward compatible).
 - Type code mismatch (e.g., type 200 but structure is gateway) results in validation failure.

@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sensor_info.schema.json",
+  "title": "Sensor Info Message",
+  "description": "Sensor identification and capabilities message (v0.7.2+). Provides detailed information about sensor hardware, capabilities, and configuration.",
+  "allOf": [
+    { "$ref": "envelope.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "device_type": {
+          "const": "sensor",
+          "description": "Must be 'sensor' for sensor info messages"
+        },
+        "firmware_version": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Required firmware version for sensor info"
+        },
+        "hardware_version": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Hardware version identifier"
+        },
+        "mac_address": {
+          "type": "string",
+          "pattern": "^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$",
+          "description": "MAC address in format 00:11:22:33:44:55"
+        },
+        "chip_id": {
+          "type": "string",
+          "description": "Unique chip/device identifier"
+        },
+        "manufacturer": {
+          "type": "string",
+          "description": "Sensor manufacturer name"
+        },
+        "model": {
+          "type": "string",
+          "description": "Sensor model identifier"
+        },
+        "capabilities": {
+          "type": "object",
+          "description": "Sensor capabilities and features",
+          "properties": {
+            "available_sensors": {
+              "type": "array",
+              "description": "List of available sensor types",
+              "items": {
+                "type": "string",
+                "examples": ["temperature", "humidity", "pressure", "light", "motion", "co2", "voc", "pm25"]
+              }
+            },
+            "supports_mesh": {
+              "type": "boolean",
+              "description": "Whether sensor can participate in mesh network"
+            },
+            "supports_ota": {
+              "type": "boolean",
+              "description": "Whether sensor supports firmware updates"
+            },
+            "power_source": {
+              "type": "string",
+              "enum": ["battery", "mains", "solar", "mixed", "other"],
+              "description": "Primary power source type"
+            },
+            "battery_type": {
+              "type": "string",
+              "description": "Battery type if battery-powered (e.g., 'CR2032', 'LiPo 3.7V')"
+            },
+            "sampling_rates": {
+              "type": "object",
+              "description": "Min/max sampling intervals supported",
+              "properties": {
+                "min_interval_ms": { "type": "number", "minimum": 0 },
+                "max_interval_ms": { "type": "number", "minimum": 0 }
+              },
+              "additionalProperties": true
+            },
+            "communication_protocols": {
+              "type": "array",
+              "description": "Supported communication protocols",
+              "items": {
+                "type": "string",
+                "examples": ["wifi", "ble", "zigbee", "lora", "mesh"]
+              }
+            },
+            "additional_features": {
+              "type": "object",
+              "description": "Additional sensor-specific features",
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        },
+        "calibration_info": {
+          "type": "object",
+          "description": "Sensor calibration information",
+          "properties": {
+            "last_calibration": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Last calibration timestamp (ISO 8601)"
+            },
+            "calibration_due": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Next calibration due date (ISO 8601)"
+            },
+            "factory_calibrated": {
+              "type": "boolean",
+              "description": "Whether sensor is factory calibrated"
+            },
+            "calibration_certificate": {
+              "type": "string",
+              "description": "Calibration certificate reference/URL"
+            }
+          },
+          "additionalProperties": true
+        },
+        "operational_info": {
+          "type": "object",
+          "description": "Operational parameters and limits",
+          "properties": {
+            "operating_temp_range": {
+              "type": "object",
+              "properties": {
+                "min_celsius": { "type": "number" },
+                "max_celsius": { "type": "number" }
+              }
+            },
+            "operating_humidity_range": {
+              "type": "object",
+              "properties": {
+                "min_percent": { "type": "number", "minimum": 0, "maximum": 100 },
+                "max_percent": { "type": "number", "minimum": 0, "maximum": 100 }
+              }
+            },
+            "ip_rating": {
+              "type": "string",
+              "pattern": "^IP[0-9]{2}$",
+              "description": "IP rating (e.g., 'IP65')"
+            },
+            "warranty_expires": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Warranty expiration date (ISO 8601)"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "required": ["device_type", "firmware_version"],
+      "additionalProperties": true
+    }
+  ]
+}

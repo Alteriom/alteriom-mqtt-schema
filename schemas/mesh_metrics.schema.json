@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mesh_metrics.schema.json",
+  "title": "Mesh Network Metrics Message",
+  "description": "Mesh network performance metrics message (v0.7.2+). Detailed performance and traffic metrics for mesh network.",
+  "allOf": [
+    { "$ref": "envelope.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "device_type": {
+          "const": "gateway",
+          "description": "Must be 'gateway' for mesh metrics messages"
+        },
+        "firmware_version": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Required firmware version for mesh metrics"
+        },
+        "mesh_network_id": {
+          "type": "string",
+          "description": "Unique mesh network identifier"
+        },
+        "metrics": {
+          "type": "object",
+          "description": "Mesh network performance metrics",
+          "properties": {
+            "uptime_s": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Mesh network uptime in seconds"
+            },
+            "total_nodes": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total nodes in network"
+            },
+            "active_nodes": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Currently active nodes"
+            },
+            "packets_sent": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total packets sent"
+            },
+            "packets_received": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total packets received"
+            },
+            "packets_dropped": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total packets dropped"
+            },
+            "packet_loss_pct": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Packet loss percentage"
+            },
+            "average_latency_ms": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Average network latency in milliseconds"
+            },
+            "max_latency_ms": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Maximum observed latency in milliseconds"
+            },
+            "min_latency_ms": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Minimum observed latency in milliseconds"
+            },
+            "throughput_kbps": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Network throughput in kbps"
+            },
+            "bandwidth_utilization_pct": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Bandwidth utilization percentage"
+            },
+            "routing_table_size": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Size of routing table"
+            },
+            "route_updates_24h": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Routing table updates in last 24 hours"
+            },
+            "broadcast_messages": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total broadcast messages sent"
+            },
+            "unicast_messages": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total unicast messages sent"
+            },
+            "multicast_messages": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total multicast messages sent"
+            },
+            "retransmission_rate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Message retransmission rate percentage"
+            },
+            "duplicate_packets": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of duplicate packets detected"
+            },
+            "out_of_order_packets": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of out-of-order packets"
+            },
+            "error_count": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total error count"
+            },
+            "collision_count": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of packet collisions"
+            },
+            "average_rssi": {
+              "type": "number",
+              "minimum": -200,
+              "maximum": 0,
+              "description": "Average RSSI across all links in dBm"
+            },
+            "weakest_link_rssi": {
+              "type": "number",
+              "minimum": -200,
+              "maximum": 0,
+              "description": "Weakest link RSSI in dBm"
+            },
+            "strongest_link_rssi": {
+              "type": "number",
+              "minimum": -200,
+              "maximum": 0,
+              "description": "Strongest link RSSI in dBm"
+            },
+            "node_join_count_24h": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Nodes joined in last 24 hours"
+            },
+            "node_leave_count_24h": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Nodes left in last 24 hours"
+            },
+            "mesh_healing_events": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of self-healing events"
+            }
+          },
+          "required": ["uptime_s"],
+          "additionalProperties": true
+        },
+        "top_talkers": {
+          "type": "array",
+          "description": "Nodes with highest traffic volume",
+          "items": {
+            "type": "object",
+            "properties": {
+              "node_id": { "type": "string" },
+              "packets_sent": { "type": "integer", "minimum": 0 },
+              "packets_received": { "type": "integer", "minimum": 0 },
+              "bytes_sent": { "type": "integer", "minimum": 0 },
+              "bytes_received": { "type": "integer", "minimum": 0 }
+            },
+            "additionalProperties": true
+          }
+        },
+        "problematic_links": {
+          "type": "array",
+          "description": "Links with performance issues",
+          "items": {
+            "type": "object",
+            "properties": {
+              "from_node": { "type": "string" },
+              "to_node": { "type": "string" },
+              "packet_loss_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+              "latency_ms": { "type": "number", "minimum": 0 },
+              "rssi": { "type": "number", "minimum": -200, "maximum": 0 },
+              "issue": { "type": "string" }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "required": ["device_type", "firmware_version", "metrics"],
+      "additionalProperties": true
+    }
+  ]
+}

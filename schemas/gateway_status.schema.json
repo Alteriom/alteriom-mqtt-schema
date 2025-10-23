@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gateway_status.schema.json",
+  "title": "Gateway Status Message",
+  "description": "Gateway status change notification (v0.7.2+). Reports gateway operational state changes.",
+  "allOf": [
+    { "$ref": "envelope.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "device_type": {
+          "const": "gateway",
+          "description": "Must be 'gateway' for gateway status messages"
+        },
+        "firmware_version": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Required firmware version for gateway status"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["online", "offline", "starting", "stopping", "updating", "maintenance", "error", "degraded"],
+          "description": "Current gateway operational status"
+        },
+        "previous_status": {
+          "type": "string",
+          "enum": ["online", "offline", "starting", "stopping", "updating", "maintenance", "error", "degraded"],
+          "description": "Previous status before this change"
+        },
+        "status_reason": {
+          "type": "string",
+          "maxLength": 256,
+          "description": "Human-readable reason for status change"
+        },
+        "error_code": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "Machine-readable error code if status is 'error'"
+        },
+        "uptime_s": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Gateway uptime in seconds"
+        },
+        "connected_devices": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of connected devices"
+        },
+        "signal_strength": {
+          "type": "number",
+          "minimum": -200,
+          "maximum": 0,
+          "description": "Network signal strength in dBm"
+        },
+        "recovery_action": {
+          "type": "string",
+          "enum": ["none", "restart_pending", "restarting", "user_intervention_required", "automatic_recovery"],
+          "description": "Planned or ongoing recovery action"
+        },
+        "estimated_recovery_time_s": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Estimated time to recovery in seconds"
+        }
+      },
+      "required": ["device_type", "firmware_version", "status"],
+      "additionalProperties": true
+    }
+  ]
+}

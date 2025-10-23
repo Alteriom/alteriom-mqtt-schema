@@ -11,8 +11,8 @@ export declare const envelope_schema: {
         };
         readonly message_type: {
             readonly type: "integer";
-            readonly description: "Optional message type code for fast classification (v0.7.1+)";
-            readonly enum: readonly [200, 201, 202, 300, 301, 400, 401, 402, 500, 600, 601, 602, 603, 700];
+            readonly description: "Optional message type code for fast classification (v0.7.2)";
+            readonly enum: readonly [200, 201, 202, 203, 204, 300, 301, 302, 303, 304, 400, 401, 402, 500, 600, 601, 602, 603, 604, 605, 700];
         };
         readonly device_id: {
             readonly type: "string";
@@ -251,6 +251,337 @@ export declare const sensor_status_schema: {
     };
     readonly additionalProperties: true;
 };
+export declare const sensor_info_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "sensor_info.schema.json";
+    readonly title: "Sensor Info Message";
+    readonly description: "Sensor identification and capabilities message (v0.7.2+). Provides detailed information about sensor hardware, capabilities, and configuration.";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }, {
+        readonly type: "object";
+        readonly properties: {
+            readonly device_type: {
+                readonly const: "sensor";
+                readonly description: "Must be 'sensor' for sensor info messages";
+            };
+            readonly firmware_version: {
+                readonly type: "string";
+                readonly minLength: 1;
+                readonly description: "Required firmware version for sensor info";
+            };
+            readonly hardware_version: {
+                readonly type: "string";
+                readonly minLength: 1;
+                readonly description: "Hardware version identifier";
+            };
+            readonly mac_address: {
+                readonly type: "string";
+                readonly pattern: "^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$";
+                readonly description: "MAC address in format 00:11:22:33:44:55";
+            };
+            readonly chip_id: {
+                readonly type: "string";
+                readonly description: "Unique chip/device identifier";
+            };
+            readonly manufacturer: {
+                readonly type: "string";
+                readonly description: "Sensor manufacturer name";
+            };
+            readonly model: {
+                readonly type: "string";
+                readonly description: "Sensor model identifier";
+            };
+            readonly capabilities: {
+                readonly type: "object";
+                readonly description: "Sensor capabilities and features";
+                readonly properties: {
+                    readonly available_sensors: {
+                        readonly type: "array";
+                        readonly description: "List of available sensor types";
+                        readonly items: {
+                            readonly type: "string";
+                            readonly examples: readonly ["temperature", "humidity", "pressure", "light", "motion", "co2", "voc", "pm25"];
+                        };
+                    };
+                    readonly supports_mesh: {
+                        readonly type: "boolean";
+                        readonly description: "Whether sensor can participate in mesh network";
+                    };
+                    readonly supports_ota: {
+                        readonly type: "boolean";
+                        readonly description: "Whether sensor supports firmware updates";
+                    };
+                    readonly power_source: {
+                        readonly type: "string";
+                        readonly enum: readonly ["battery", "mains", "solar", "mixed", "other"];
+                        readonly description: "Primary power source type";
+                    };
+                    readonly battery_type: {
+                        readonly type: "string";
+                        readonly description: "Battery type if battery-powered (e.g., 'CR2032', 'LiPo 3.7V')";
+                    };
+                    readonly sampling_rates: {
+                        readonly type: "object";
+                        readonly description: "Min/max sampling intervals supported";
+                        readonly properties: {
+                            readonly min_interval_ms: {
+                                readonly type: "number";
+                                readonly minimum: 0;
+                            };
+                            readonly max_interval_ms: {
+                                readonly type: "number";
+                                readonly minimum: 0;
+                            };
+                        };
+                        readonly additionalProperties: true;
+                    };
+                    readonly communication_protocols: {
+                        readonly type: "array";
+                        readonly description: "Supported communication protocols";
+                        readonly items: {
+                            readonly type: "string";
+                            readonly examples: readonly ["wifi", "ble", "zigbee", "lora", "mesh"];
+                        };
+                    };
+                    readonly additional_features: {
+                        readonly type: "object";
+                        readonly description: "Additional sensor-specific features";
+                        readonly additionalProperties: true;
+                    };
+                };
+                readonly additionalProperties: true;
+            };
+            readonly calibration_info: {
+                readonly type: "object";
+                readonly description: "Sensor calibration information";
+                readonly properties: {
+                    readonly last_calibration: {
+                        readonly type: "string";
+                        readonly format: "date-time";
+                        readonly description: "Last calibration timestamp (ISO 8601)";
+                    };
+                    readonly calibration_due: {
+                        readonly type: "string";
+                        readonly format: "date-time";
+                        readonly description: "Next calibration due date (ISO 8601)";
+                    };
+                    readonly factory_calibrated: {
+                        readonly type: "boolean";
+                        readonly description: "Whether sensor is factory calibrated";
+                    };
+                    readonly calibration_certificate: {
+                        readonly type: "string";
+                        readonly description: "Calibration certificate reference/URL";
+                    };
+                };
+                readonly additionalProperties: true;
+            };
+            readonly operational_info: {
+                readonly type: "object";
+                readonly description: "Operational parameters and limits";
+                readonly properties: {
+                    readonly operating_temp_range: {
+                        readonly type: "object";
+                        readonly properties: {
+                            readonly min_celsius: {
+                                readonly type: "number";
+                            };
+                            readonly max_celsius: {
+                                readonly type: "number";
+                            };
+                        };
+                    };
+                    readonly operating_humidity_range: {
+                        readonly type: "object";
+                        readonly properties: {
+                            readonly min_percent: {
+                                readonly type: "number";
+                                readonly minimum: 0;
+                                readonly maximum: 100;
+                            };
+                            readonly max_percent: {
+                                readonly type: "number";
+                                readonly minimum: 0;
+                                readonly maximum: 100;
+                            };
+                        };
+                    };
+                    readonly ip_rating: {
+                        readonly type: "string";
+                        readonly pattern: "^IP[0-9]{2}$";
+                        readonly description: "IP rating (e.g., 'IP65')";
+                    };
+                    readonly warranty_expires: {
+                        readonly type: "string";
+                        readonly format: "date-time";
+                        readonly description: "Warranty expiration date (ISO 8601)";
+                    };
+                };
+                readonly additionalProperties: true;
+            };
+        };
+        readonly required: readonly ["device_type", "firmware_version"];
+        readonly additionalProperties: true;
+    }];
+};
+export declare const sensor_metrics_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "sensor_metrics.schema.json";
+    readonly title: "Sensor Metrics Message";
+    readonly description: "Sensor health and performance metrics message (v0.7.2+). Reports sensor operational health, battery, signal, uptime, and diagnostic metrics.";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }, {
+        readonly type: "object";
+        readonly properties: {
+            readonly device_type: {
+                readonly const: "sensor";
+                readonly description: "Must be 'sensor' for sensor metrics messages";
+            };
+            readonly firmware_version: {
+                readonly type: "string";
+                readonly minLength: 1;
+                readonly description: "Required firmware version for sensor metrics";
+            };
+            readonly metrics: {
+                readonly type: "object";
+                readonly description: "Sensor health and performance metrics";
+                readonly properties: {
+                    readonly uptime_s: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly description: "Sensor uptime in seconds since last boot";
+                    };
+                    readonly battery_level: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly maximum: 100;
+                        readonly description: "Battery level percentage (0-100)";
+                    };
+                    readonly battery_voltage: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly description: "Battery voltage in volts";
+                    };
+                    readonly battery_current_ma: {
+                        readonly type: "number";
+                        readonly description: "Battery current draw in milliamps";
+                    };
+                    readonly battery_health: {
+                        readonly type: "string";
+                        readonly enum: readonly ["good", "fair", "poor", "critical", "charging", "unknown"];
+                        readonly description: "Battery health status";
+                    };
+                    readonly estimated_battery_life_h: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly description: "Estimated remaining battery life in hours";
+                    };
+                    readonly signal_strength: {
+                        readonly type: "number";
+                        readonly minimum: -200;
+                        readonly maximum: 0;
+                        readonly description: "Signal strength in dBm (-200 to 0)";
+                    };
+                    readonly signal_quality: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly maximum: 100;
+                        readonly description: "Signal quality percentage (0-100)";
+                    };
+                    readonly rssi: {
+                        readonly type: "number";
+                        readonly minimum: -200;
+                        readonly maximum: 0;
+                        readonly description: "RSSI (Received Signal Strength Indicator) in dBm";
+                    };
+                    readonly snr: {
+                        readonly type: "number";
+                        readonly description: "Signal-to-Noise Ratio in dB";
+                    };
+                    readonly link_quality: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly maximum: 255;
+                        readonly description: "Link Quality Indicator (LQI) for mesh/zigbee networks";
+                    };
+                    readonly cpu_usage_pct: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly maximum: 100;
+                        readonly description: "CPU usage percentage";
+                    };
+                    readonly memory_usage_pct: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly maximum: 100;
+                        readonly description: "Memory usage percentage";
+                    };
+                    readonly free_memory_bytes: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Free memory in bytes";
+                    };
+                    readonly temperature_c: {
+                        readonly type: "number";
+                        readonly description: "Internal/board temperature in Celsius";
+                    };
+                    readonly sampling_rate_hz: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly description: "Current sampling rate in Hz";
+                    };
+                    readonly samples_collected: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Total samples collected since boot";
+                    };
+                    readonly error_count: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Total error count since boot";
+                    };
+                    readonly warning_count: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Total warning count since boot";
+                    };
+                    readonly transmission_success_rate: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly maximum: 100;
+                        readonly description: "Message transmission success rate percentage";
+                    };
+                    readonly last_error: {
+                        readonly type: "string";
+                        readonly maxLength: 256;
+                        readonly description: "Last error message";
+                    };
+                    readonly last_error_timestamp: {
+                        readonly type: "string";
+                        readonly format: "date-time";
+                        readonly description: "Timestamp of last error (ISO 8601)";
+                    };
+                    readonly reboot_count: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Number of reboots since deployment";
+                    };
+                    readonly last_reboot_reason: {
+                        readonly type: "string";
+                        readonly enum: readonly ["power_on", "watchdog", "software_reset", "firmware_update", "crash", "user_initiated", "low_battery", "unknown"];
+                        readonly description: "Reason for last reboot";
+                    };
+                };
+                readonly required: readonly ["uptime_s"];
+                readonly additionalProperties: true;
+            };
+        };
+        readonly required: readonly ["device_type", "firmware_version", "metrics"];
+        readonly additionalProperties: true;
+    }];
+};
 export declare const gateway_info_schema: {
     readonly $schema: "https://json-schema.org/draft/2020-12/schema";
     readonly $id: "https://schemas.alteriom.io/mqtt/v1/gateway_info.schema.json";
@@ -392,10 +723,242 @@ export declare const gateway_metrics_schema: {
     };
     readonly additionalProperties: true;
 };
+export declare const gateway_data_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "gateway_data.schema.json";
+    readonly title: "Gateway Data Message";
+    readonly description: "Gateway telemetry data message (v0.7.2+). Similar to sensor_data but for gateway-originated sensor readings (environmental sensors on gateway device).";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }, {
+        readonly type: "object";
+        readonly properties: {
+            readonly device_type: {
+                readonly const: "gateway";
+                readonly description: "Must be 'gateway' for gateway data messages";
+            };
+            readonly firmware_version: {
+                readonly type: "string";
+                readonly minLength: 1;
+                readonly description: "Required firmware version for gateway data";
+            };
+            readonly sensors: {
+                readonly type: "object";
+                readonly description: "Sensor readings from gateway's onboard sensors";
+                readonly patternProperties: {
+                    readonly "^[a-z0-9_]+$": {
+                        readonly type: "object";
+                        readonly properties: {
+                            readonly value: {
+                                readonly type: "number";
+                                readonly description: "Sensor reading value (required)";
+                            };
+                            readonly unit: {
+                                readonly type: "string";
+                                readonly description: "Unit of measurement (e.g., 'celsius', 'percent', 'ppm')";
+                            };
+                            readonly raw_value: {
+                                readonly type: "number";
+                                readonly description: "Raw ADC or uncalibrated value";
+                            };
+                            readonly calibrated_value: {
+                                readonly type: "number";
+                                readonly description: "Calibrated sensor value";
+                            };
+                            readonly quality_score: {
+                                readonly type: "number";
+                                readonly minimum: 0;
+                                readonly maximum: 1;
+                                readonly description: "Data quality score (0-1, 1 = best)";
+                            };
+                            readonly name: {
+                                readonly type: "string";
+                                readonly description: "Human-readable sensor name";
+                            };
+                            readonly location: {
+                                readonly type: "string";
+                                readonly description: "Physical location of sensor on gateway";
+                            };
+                            readonly timestamp: {
+                                readonly type: "string";
+                                readonly format: "date-time";
+                                readonly description: "Per-sensor reading timestamp (ISO 8601)";
+                            };
+                            readonly accuracy: {
+                                readonly type: "number";
+                                readonly description: "Sensor accuracy (±value in units)";
+                            };
+                            readonly last_calibration: {
+                                readonly type: "string";
+                                readonly format: "date-time";
+                                readonly description: "Last calibration date (ISO 8601)";
+                            };
+                            readonly error_margin_pct: {
+                                readonly type: "number";
+                                readonly minimum: 0;
+                                readonly maximum: 100;
+                                readonly description: "Error margin percentage (0-100)";
+                            };
+                            readonly operational_range: {
+                                readonly type: "object";
+                                readonly properties: {
+                                    readonly min: {
+                                        readonly type: "number";
+                                    };
+                                    readonly max: {
+                                        readonly type: "number";
+                                    };
+                                };
+                                readonly description: "Operational range limits";
+                            };
+                            readonly additional_data: {
+                                readonly type: "object";
+                                readonly description: "Additional sensor-specific metadata";
+                                readonly additionalProperties: true;
+                            };
+                        };
+                        readonly required: readonly ["value"];
+                        readonly additionalProperties: true;
+                    };
+                };
+                readonly minProperties: 1;
+                readonly additionalProperties: false;
+            };
+            readonly signal_strength: {
+                readonly type: "number";
+                readonly minimum: -200;
+                readonly maximum: 0;
+                readonly description: "WiFi/network signal strength in dBm";
+            };
+            readonly additional: {
+                readonly type: "object";
+                readonly description: "Additional gateway-specific data";
+                readonly additionalProperties: true;
+            };
+        };
+        readonly required: readonly ["device_type", "firmware_version", "sensors"];
+        readonly additionalProperties: true;
+    }];
+};
+export declare const gateway_heartbeat_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "gateway_heartbeat.schema.json";
+    readonly title: "Gateway Heartbeat Message";
+    readonly description: "Gateway presence and health check message (v0.7.2+). Minimal message to indicate gateway is alive and responsive.";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }, {
+        readonly type: "object";
+        readonly properties: {
+            readonly device_type: {
+                readonly const: "gateway";
+                readonly description: "Must be 'gateway' for gateway heartbeat messages";
+            };
+            readonly firmware_version: {
+                readonly type: "string";
+                readonly minLength: 1;
+                readonly description: "Firmware version (optional, can be omitted if unchanged since last message)";
+            };
+            readonly uptime_s: {
+                readonly type: "number";
+                readonly minimum: 0;
+                readonly description: "Gateway uptime in seconds since last boot";
+            };
+            readonly connected_devices: {
+                readonly type: "integer";
+                readonly minimum: 0;
+                readonly description: "Number of connected devices";
+            };
+            readonly mesh_nodes: {
+                readonly type: "integer";
+                readonly minimum: 0;
+                readonly description: "Number of mesh nodes in network";
+            };
+            readonly status_summary: {
+                readonly type: "string";
+                readonly enum: readonly ["healthy", "degraded", "critical", "maintenance"];
+                readonly description: "Overall gateway health status";
+            };
+        };
+        readonly required: readonly ["device_type"];
+        readonly additionalProperties: true;
+    }];
+};
+export declare const gateway_status_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "gateway_status.schema.json";
+    readonly title: "Gateway Status Message";
+    readonly description: "Gateway status change notification (v0.7.2+). Reports gateway operational state changes.";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }, {
+        readonly type: "object";
+        readonly properties: {
+            readonly device_type: {
+                readonly const: "gateway";
+                readonly description: "Must be 'gateway' for gateway status messages";
+            };
+            readonly firmware_version: {
+                readonly type: "string";
+                readonly minLength: 1;
+                readonly description: "Required firmware version for gateway status";
+            };
+            readonly status: {
+                readonly type: "string";
+                readonly enum: readonly ["online", "offline", "starting", "stopping", "updating", "maintenance", "error", "degraded"];
+                readonly description: "Current gateway operational status";
+            };
+            readonly previous_status: {
+                readonly type: "string";
+                readonly enum: readonly ["online", "offline", "starting", "stopping", "updating", "maintenance", "error", "degraded"];
+                readonly description: "Previous status before this change";
+            };
+            readonly status_reason: {
+                readonly type: "string";
+                readonly maxLength: 256;
+                readonly description: "Human-readable reason for status change";
+            };
+            readonly error_code: {
+                readonly type: "string";
+                readonly maxLength: 64;
+                readonly description: "Machine-readable error code if status is 'error'";
+            };
+            readonly uptime_s: {
+                readonly type: "number";
+                readonly minimum: 0;
+                readonly description: "Gateway uptime in seconds";
+            };
+            readonly connected_devices: {
+                readonly type: "integer";
+                readonly minimum: 0;
+                readonly description: "Number of connected devices";
+            };
+            readonly signal_strength: {
+                readonly type: "number";
+                readonly minimum: -200;
+                readonly maximum: 0;
+                readonly description: "Network signal strength in dBm";
+            };
+            readonly recovery_action: {
+                readonly type: "string";
+                readonly enum: readonly ["none", "restart_pending", "restarting", "user_intervention_required", "automatic_recovery"];
+                readonly description: "Planned or ongoing recovery action";
+            };
+            readonly estimated_recovery_time_s: {
+                readonly type: "number";
+                readonly minimum: 0;
+                readonly description: "Estimated time to recovery in seconds";
+            };
+        };
+        readonly required: readonly ["device_type", "firmware_version", "status"];
+        readonly additionalProperties: true;
+    }];
+};
 export declare const firmware_status_schema: {
     readonly $schema: "https://json-schema.org/draft/2020-12/schema";
     readonly $id: "https://schemas.alteriom.io/mqtt/v1/firmware_status.schema.json";
-    readonly title: "Firmware Update Status v1";
+    readonly title: "Firmware Update Status v1 (Enhanced v0.7.2)";
+    readonly description: "Enhanced OTA firmware update status with command support, scheduling, and improved validation";
     readonly allOf: readonly [{
         readonly $ref: "envelope.schema.json";
     }];
@@ -404,33 +967,45 @@ export declare const firmware_status_schema: {
     readonly properties: {
         readonly event: {
             readonly type: "string";
+            readonly description: "Event type (e.g., 'ota_command', 'ota_status', 'ota_schedule')";
         };
         readonly from_version: {
             readonly type: "string";
+            readonly description: "Current firmware version before update";
         };
         readonly to_version: {
             readonly type: "string";
+            readonly description: "Target firmware version after update";
         };
         readonly status: {
             readonly type: "string";
-            readonly enum: readonly ["pending", "downloading", "flashing", "verifying", "rebooting", "completed", "failed", "rolled_back", "rollback_pending", "rollback_failed"];
+            readonly enum: readonly ["idle", "pending", "scheduled", "downloading", "download_paused", "flashing", "verifying", "rebooting", "completed", "failed", "cancelled", "rolled_back", "rollback_pending", "rollback_failed"];
+            readonly description: "Current OTA update status";
         };
         readonly progress_pct: {
             readonly type: "number";
             readonly minimum: 0;
             readonly maximum: 100;
+            readonly description: "Update progress percentage (0-100)";
         };
         readonly error: {
             readonly type: readonly ["string", "null"];
+            readonly description: "Human-readable error message";
         };
         readonly error_code: {
             readonly type: "string";
+            readonly maxLength: 64;
             readonly description: "Machine-readable error code for diagnostics";
         };
         readonly retry_count: {
             readonly type: "integer";
             readonly minimum: 0;
             readonly description: "Number of retry attempts for this update";
+        };
+        readonly max_retries: {
+            readonly type: "integer";
+            readonly minimum: 0;
+            readonly description: "Maximum allowed retry attempts";
         };
         readonly download_speed_kbps: {
             readonly type: "number";
@@ -462,6 +1037,16 @@ export declare const firmware_status_schema: {
             readonly format: "date-time";
             readonly description: "ISO8601 timestamp when update completed or failed";
         };
+        readonly scheduled_at: {
+            readonly type: "string";
+            readonly format: "date-time";
+            readonly description: "ISO8601 timestamp when update is scheduled to start";
+        };
+        readonly deadline: {
+            readonly type: "string";
+            readonly format: "date-time";
+            readonly description: "ISO8601 timestamp deadline for update completion";
+        };
         readonly rollback_available: {
             readonly type: "boolean";
             readonly description: "Whether rollback to previous version is available";
@@ -472,8 +1057,18 @@ export declare const firmware_status_schema: {
         };
         readonly update_type: {
             readonly type: "string";
-            readonly enum: readonly ["full", "delta", "patch"];
+            readonly enum: readonly ["full", "delta", "patch", "configuration"];
             readonly description: "Type of update being applied";
+        };
+        readonly update_channel: {
+            readonly type: "string";
+            readonly enum: readonly ["stable", "beta", "dev", "custom"];
+            readonly description: "Update channel/track";
+        };
+        readonly update_priority: {
+            readonly type: "string";
+            readonly enum: readonly ["low", "normal", "high", "critical"];
+            readonly description: "Update priority level";
         };
         readonly signature_verified: {
             readonly type: "boolean";
@@ -483,16 +1078,90 @@ export declare const firmware_status_schema: {
             readonly type: "boolean";
             readonly description: "Whether firmware checksum was successfully verified";
         };
+        readonly checksum_algorithm: {
+            readonly type: "string";
+            readonly enum: readonly ["md5", "sha1", "sha256", "sha512"];
+            readonly description: "Checksum algorithm used";
+        };
+        readonly expected_checksum: {
+            readonly type: "string";
+            readonly description: "Expected checksum value";
+        };
+        readonly actual_checksum: {
+            readonly type: "string";
+            readonly description: "Actual calculated checksum value";
+        };
         readonly free_space_kb: {
             readonly type: "integer";
             readonly minimum: 0;
             readonly description: "Available storage space in kilobytes before update";
+        };
+        readonly required_space_kb: {
+            readonly type: "integer";
+            readonly minimum: 0;
+            readonly description: "Required storage space for update in kilobytes";
         };
         readonly battery_level_pct: {
             readonly type: "number";
             readonly minimum: 0;
             readonly maximum: 100;
             readonly description: "Battery level during update (critical for battery-powered devices)";
+        };
+        readonly min_battery_required_pct: {
+            readonly type: "number";
+            readonly minimum: 0;
+            readonly maximum: 100;
+            readonly description: "Minimum battery level required to proceed with update";
+        };
+        readonly force_update: {
+            readonly type: "boolean";
+            readonly description: "Whether this is a mandatory forced update";
+        };
+        readonly allow_downgrade: {
+            readonly type: "boolean";
+            readonly description: "Whether downgrading to older version is allowed";
+        };
+        readonly auto_reboot: {
+            readonly type: "boolean";
+            readonly description: "Whether device will automatically reboot after update";
+        };
+        readonly backup_config: {
+            readonly type: "boolean";
+            readonly description: "Whether device configuration was backed up before update";
+        };
+        readonly update_source: {
+            readonly type: "string";
+            readonly description: "Source/URL of firmware update";
+        };
+        readonly update_manifest_url: {
+            readonly type: "string";
+            readonly format: "uri";
+            readonly description: "URL to OTA manifest file";
+        };
+        readonly correlation_id: {
+            readonly type: "string";
+            readonly maxLength: 128;
+            readonly description: "Correlation ID linking command to status updates";
+        };
+        readonly phase: {
+            readonly type: "string";
+            readonly enum: readonly ["preparation", "download", "validation", "installation", "verification", "finalization", "cleanup"];
+            readonly description: "Current update phase";
+        };
+        readonly cancellable: {
+            readonly type: "boolean";
+            readonly description: "Whether update can be cancelled at this stage";
+        };
+        readonly pause_reason: {
+            readonly type: "string";
+            readonly description: "Reason for download pause (if download_paused)";
+        };
+        readonly validation_errors: {
+            readonly type: "array";
+            readonly items: {
+                readonly type: "string";
+            };
+            readonly description: "List of validation errors if verification failed";
         };
     };
     readonly additionalProperties: true;
@@ -888,6 +1557,381 @@ export declare const mesh_bridge_schema: {
                 readonly description: "Mesh network identifier";
             };
         };
+        readonly additionalProperties: true;
+    }];
+};
+export declare const mesh_status_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "mesh_status.schema.json";
+    readonly title: "Mesh Network Status Message";
+    readonly description: "Mesh network health and status message (v0.7.2+). Reports overall mesh network operational status and health indicators.";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }, {
+        readonly type: "object";
+        readonly properties: {
+            readonly device_type: {
+                readonly const: "gateway";
+                readonly description: "Must be 'gateway' for mesh status messages";
+            };
+            readonly firmware_version: {
+                readonly type: "string";
+                readonly minLength: 1;
+                readonly description: "Required firmware version for mesh status";
+            };
+            readonly mesh_network_id: {
+                readonly type: "string";
+                readonly description: "Unique mesh network identifier";
+            };
+            readonly mesh_status: {
+                readonly type: "string";
+                readonly enum: readonly ["healthy", "degraded", "partitioned", "forming", "failed", "maintenance"];
+                readonly description: "Overall mesh network health status";
+            };
+            readonly node_count: {
+                readonly type: "integer";
+                readonly minimum: 0;
+                readonly description: "Total number of nodes in mesh network";
+            };
+            readonly online_nodes: {
+                readonly type: "integer";
+                readonly minimum: 0;
+                readonly description: "Number of nodes currently online";
+            };
+            readonly offline_nodes: {
+                readonly type: "integer";
+                readonly minimum: 0;
+                readonly description: "Number of nodes currently offline";
+            };
+            readonly root_node: {
+                readonly type: "string";
+                readonly description: "Current root node identifier";
+            };
+            readonly network_stability: {
+                readonly type: "number";
+                readonly minimum: 0;
+                readonly maximum: 100;
+                readonly description: "Network stability score (0-100, higher is better)";
+            };
+            readonly topology_changes_24h: {
+                readonly type: "integer";
+                readonly minimum: 0;
+                readonly description: "Number of topology changes in last 24 hours";
+            };
+            readonly partition_count: {
+                readonly type: "integer";
+                readonly minimum: 1;
+                readonly description: "Number of network partitions (1 = healthy, >1 = partitioned)";
+            };
+            readonly average_hop_count: {
+                readonly type: "number";
+                readonly minimum: 0;
+                readonly description: "Average hop count across all node pairs";
+            };
+            readonly max_hop_count: {
+                readonly type: "integer";
+                readonly minimum: 0;
+                readonly description: "Maximum hop count in network";
+            };
+            readonly network_diameter: {
+                readonly type: "integer";
+                readonly minimum: 0;
+                readonly description: "Network diameter (longest shortest path)";
+            };
+            readonly issues: {
+                readonly type: "array";
+                readonly description: "List of current mesh network issues";
+                readonly items: {
+                    readonly type: "object";
+                    readonly properties: {
+                        readonly issue_type: {
+                            readonly type: "string";
+                            readonly enum: readonly ["partition", "high_latency", "packet_loss", "node_unreachable", "routing_loop", "congestion", "security", "other"];
+                            readonly description: "Type of network issue";
+                        };
+                        readonly severity: {
+                            readonly type: "string";
+                            readonly enum: readonly ["critical", "warning", "info"];
+                            readonly description: "Issue severity level";
+                        };
+                        readonly description: {
+                            readonly type: "string";
+                            readonly maxLength: 256;
+                            readonly description: "Human-readable issue description";
+                        };
+                        readonly affected_nodes: {
+                            readonly type: "array";
+                            readonly items: {
+                                readonly type: "string";
+                            };
+                            readonly description: "List of affected node IDs";
+                        };
+                        readonly detected_at: {
+                            readonly type: "string";
+                            readonly format: "date-time";
+                            readonly description: "Issue detection timestamp (ISO 8601)";
+                        };
+                    };
+                    readonly required: readonly ["issue_type", "severity", "description"];
+                    readonly additionalProperties: true;
+                };
+            };
+            readonly last_topology_change: {
+                readonly type: "string";
+                readonly format: "date-time";
+                readonly description: "Timestamp of last topology change (ISO 8601)";
+            };
+            readonly mesh_protocol: {
+                readonly type: "string";
+                readonly enum: readonly ["painlessMesh", "esp-now", "ble-mesh", "thread", "zigbee"];
+                readonly description: "Mesh protocol being used";
+            };
+        };
+        readonly required: readonly ["device_type", "firmware_version", "mesh_status"];
+        readonly additionalProperties: true;
+    }];
+};
+export declare const mesh_metrics_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "mesh_metrics.schema.json";
+    readonly title: "Mesh Network Metrics Message";
+    readonly description: "Mesh network performance metrics message (v0.7.2+). Detailed performance and traffic metrics for mesh network.";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }, {
+        readonly type: "object";
+        readonly properties: {
+            readonly device_type: {
+                readonly const: "gateway";
+                readonly description: "Must be 'gateway' for mesh metrics messages";
+            };
+            readonly firmware_version: {
+                readonly type: "string";
+                readonly minLength: 1;
+                readonly description: "Required firmware version for mesh metrics";
+            };
+            readonly mesh_network_id: {
+                readonly type: "string";
+                readonly description: "Unique mesh network identifier";
+            };
+            readonly metrics: {
+                readonly type: "object";
+                readonly description: "Mesh network performance metrics";
+                readonly properties: {
+                    readonly uptime_s: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly description: "Mesh network uptime in seconds";
+                    };
+                    readonly total_nodes: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Total nodes in network";
+                    };
+                    readonly active_nodes: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Currently active nodes";
+                    };
+                    readonly packets_sent: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Total packets sent";
+                    };
+                    readonly packets_received: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Total packets received";
+                    };
+                    readonly packets_dropped: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Total packets dropped";
+                    };
+                    readonly packet_loss_pct: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly maximum: 100;
+                        readonly description: "Packet loss percentage";
+                    };
+                    readonly average_latency_ms: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly description: "Average network latency in milliseconds";
+                    };
+                    readonly max_latency_ms: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly description: "Maximum observed latency in milliseconds";
+                    };
+                    readonly min_latency_ms: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly description: "Minimum observed latency in milliseconds";
+                    };
+                    readonly throughput_kbps: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly description: "Network throughput in kbps";
+                    };
+                    readonly bandwidth_utilization_pct: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly maximum: 100;
+                        readonly description: "Bandwidth utilization percentage";
+                    };
+                    readonly routing_table_size: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Size of routing table";
+                    };
+                    readonly route_updates_24h: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Routing table updates in last 24 hours";
+                    };
+                    readonly broadcast_messages: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Total broadcast messages sent";
+                    };
+                    readonly unicast_messages: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Total unicast messages sent";
+                    };
+                    readonly multicast_messages: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Total multicast messages sent";
+                    };
+                    readonly retransmission_rate: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly maximum: 100;
+                        readonly description: "Message retransmission rate percentage";
+                    };
+                    readonly duplicate_packets: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Number of duplicate packets detected";
+                    };
+                    readonly out_of_order_packets: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Number of out-of-order packets";
+                    };
+                    readonly error_count: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Total error count";
+                    };
+                    readonly collision_count: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Number of packet collisions";
+                    };
+                    readonly average_rssi: {
+                        readonly type: "number";
+                        readonly minimum: -200;
+                        readonly maximum: 0;
+                        readonly description: "Average RSSI across all links in dBm";
+                    };
+                    readonly weakest_link_rssi: {
+                        readonly type: "number";
+                        readonly minimum: -200;
+                        readonly maximum: 0;
+                        readonly description: "Weakest link RSSI in dBm";
+                    };
+                    readonly strongest_link_rssi: {
+                        readonly type: "number";
+                        readonly minimum: -200;
+                        readonly maximum: 0;
+                        readonly description: "Strongest link RSSI in dBm";
+                    };
+                    readonly node_join_count_24h: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Nodes joined in last 24 hours";
+                    };
+                    readonly node_leave_count_24h: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Nodes left in last 24 hours";
+                    };
+                    readonly mesh_healing_events: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Number of self-healing events";
+                    };
+                };
+                readonly required: readonly ["uptime_s"];
+                readonly additionalProperties: true;
+            };
+            readonly top_talkers: {
+                readonly type: "array";
+                readonly description: "Nodes with highest traffic volume";
+                readonly items: {
+                    readonly type: "object";
+                    readonly properties: {
+                        readonly node_id: {
+                            readonly type: "string";
+                        };
+                        readonly packets_sent: {
+                            readonly type: "integer";
+                            readonly minimum: 0;
+                        };
+                        readonly packets_received: {
+                            readonly type: "integer";
+                            readonly minimum: 0;
+                        };
+                        readonly bytes_sent: {
+                            readonly type: "integer";
+                            readonly minimum: 0;
+                        };
+                        readonly bytes_received: {
+                            readonly type: "integer";
+                            readonly minimum: 0;
+                        };
+                    };
+                    readonly additionalProperties: true;
+                };
+            };
+            readonly problematic_links: {
+                readonly type: "array";
+                readonly description: "Links with performance issues";
+                readonly items: {
+                    readonly type: "object";
+                    readonly properties: {
+                        readonly from_node: {
+                            readonly type: "string";
+                        };
+                        readonly to_node: {
+                            readonly type: "string";
+                        };
+                        readonly packet_loss_pct: {
+                            readonly type: "number";
+                            readonly minimum: 0;
+                            readonly maximum: 100;
+                        };
+                        readonly latency_ms: {
+                            readonly type: "number";
+                            readonly minimum: 0;
+                        };
+                        readonly rssi: {
+                            readonly type: "number";
+                            readonly minimum: -200;
+                            readonly maximum: 0;
+                        };
+                        readonly issue: {
+                            readonly type: "string";
+                        };
+                    };
+                    readonly additionalProperties: true;
+                };
+            };
+        };
+        readonly required: readonly ["device_type", "firmware_version", "metrics"];
         readonly additionalProperties: true;
     }];
 };

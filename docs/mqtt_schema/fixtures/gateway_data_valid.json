@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "message_type": 302,
+  "device_id": "GW-MAIN",
+  "device_type": "gateway",
+  "timestamp": "2025-10-23T20:10:00Z",
+  "firmware_version": "GW 2.0.0",
+  "sensors": {
+    "ambient_temp": {
+      "value": 22.5,
+      "unit": "celsius",
+      "quality_score": 0.95
+    },
+    "ambient_humidity": {
+      "value": 55.2,
+      "unit": "percent",
+      "quality_score": 0.92
+    },
+    "cpu_temp": {
+      "value": 45.8,
+      "unit": "celsius",
+      "name": "CPU Temperature",
+      "location": "Main Board"
+    }
+  },
+  "signal_strength": -45
+}

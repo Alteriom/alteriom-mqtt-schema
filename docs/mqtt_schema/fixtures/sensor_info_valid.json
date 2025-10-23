@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "message_type": 203,
+  "device_id": "SENSOR-001",
+  "device_type": "sensor",
+  "timestamp": "2025-10-23T20:00:00Z",
+  "firmware_version": "1.2.3",
+  "hardware_version": "HW-v2.1",
+  "mac_address": "AA:BB:CC:DD:EE:FF",
+  "chip_id": "ESP32-12345678",
+  "manufacturer": "Alteriom",
+  "model": "ENV-SENSOR-PRO",
+  "capabilities": {
+    "available_sensors": ["temperature", "humidity", "pressure", "light"],
+    "supports_mesh": true,
+    "supports_ota": true,
+    "power_source": "battery",
+    "battery_type": "CR2032",
+    "sampling_rates": {
+      "min_interval_ms": 1000,
+      "max_interval_ms": 3600000
+    },
+    "communication_protocols": ["wifi", "ble", "mesh"]
+  },
+  "calibration_info": {
+    "last_calibration": "2025-01-15T10:00:00Z",
+    "calibration_due": "2026-01-15T10:00:00Z",
+    "factory_calibrated": true
+  },
+  "operational_info": {
+    "operating_temp_range": {
+      "min_celsius": -20,
+      "max_celsius": 60
+    },
+    "operating_humidity_range": {
+      "min_percent": 10,
+      "max_percent": 90
+    },
+    "ip_rating": "IP65"
+  }
+}

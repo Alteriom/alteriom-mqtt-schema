@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gateway_heartbeat.schema.json",
+  "title": "Gateway Heartbeat Message",
+  "description": "Gateway presence and health check message (v0.7.2+). Minimal message to indicate gateway is alive and responsive.",
+  "allOf": [
+    { "$ref": "envelope.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "device_type": {
+          "const": "gateway",
+          "description": "Must be 'gateway' for gateway heartbeat messages"
+        },
+        "firmware_version": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Firmware version (optional, can be omitted if unchanged since last message)"
+        },
+        "uptime_s": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Gateway uptime in seconds since last boot"
+        },
+        "connected_devices": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of connected devices"
+        },
+        "mesh_nodes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of mesh nodes in network"
+        },
+        "status_summary": {
+          "type": "string",
+          "enum": ["healthy", "degraded", "critical", "maintenance"],
+          "description": "Overall gateway health status"
+        }
+      },
+      "required": ["device_type"],
+      "additionalProperties": true
+    }
+  ]
+}

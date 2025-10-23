@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mesh_status.schema.json",
+  "title": "Mesh Network Status Message",
+  "description": "Mesh network health and status message (v0.7.2+). Reports overall mesh network operational status and health indicators.",
+  "allOf": [
+    { "$ref": "envelope.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "device_type": {
+          "const": "gateway",
+          "description": "Must be 'gateway' for mesh status messages"
+        },
+        "firmware_version": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Required firmware version for mesh status"
+        },
+        "mesh_network_id": {
+          "type": "string",
+          "description": "Unique mesh network identifier"
+        },
+        "mesh_status": {
+          "type": "string",
+          "enum": ["healthy", "degraded", "partitioned", "forming", "failed", "maintenance"],
+          "description": "Overall mesh network health status"
+        },
+        "node_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of nodes in mesh network"
+        },
+        "online_nodes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of nodes currently online"
+        },
+        "offline_nodes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of nodes currently offline"
+        },
+        "root_node": {
+          "type": "string",
+          "description": "Current root node identifier"
+        },
+        "network_stability": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Network stability score (0-100, higher is better)"
+        },
+        "topology_changes_24h": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of topology changes in last 24 hours"
+        },
+        "partition_count": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of network partitions (1 = healthy, >1 = partitioned)"
+        },
+        "average_hop_count": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Average hop count across all node pairs"
+        },
+        "max_hop_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Maximum hop count in network"
+        },
+        "network_diameter": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Network diameter (longest shortest path)"
+        },
+        "issues": {
+          "type": "array",
+          "description": "List of current mesh network issues",
+          "items": {
+            "type": "object",
+            "properties": {
+              "issue_type": {
+                "type": "string",
+                "enum": ["partition", "high_latency", "packet_loss", "node_unreachable", "routing_loop", "congestion", "security", "other"],
+                "description": "Type of network issue"
+              },
+              "severity": {
+                "type": "string",
+                "enum": ["critical", "warning", "info"],
+                "description": "Issue severity level"
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 256,
+                "description": "Human-readable issue description"
+              },
+              "affected_nodes": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "List of affected node IDs"
+              },
+              "detected_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Issue detection timestamp (ISO 8601)"
+              }
+            },
+            "required": ["issue_type", "severity", "description"],
+            "additionalProperties": true
+          }
+        },
+        "last_topology_change": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of last topology change (ISO 8601)"
+        },
+        "mesh_protocol": {
+          "type": "string",
+          "enum": ["painlessMesh", "esp-now", "ble-mesh", "thread", "zigbee"],
+          "description": "Mesh protocol being used"
+        }
+      },
+      "required": ["device_type", "firmware_version", "mesh_status"],
+      "additionalProperties": true
+    }
+  ]
+}

@@ -677,7 +677,7 @@ Both sensors and gateways support consistent management:
 - Bulk configuration deployment
 - Standardized across device types
 
-## Message Type Codes (v0.7.1+)
+## Message Type Codes (v0.7.2+)
 
 For performance optimization and standardized routing, use the optional `message_type` field:
 
@@ -686,16 +686,23 @@ For performance optimization and standardized routing, use the optional `message
 | 200 | `SENSOR_DATA` | sensor_data | telemetry | Sensor telemetry readings |
 | 201 | `SENSOR_HEARTBEAT` | sensor_heartbeat | telemetry | Sensor presence/health |
 | 202 | `SENSOR_STATUS` | sensor_status | telemetry | Sensor status change |
+| 203 | `SENSOR_INFO` | sensor_info | telemetry | Sensor identification and capabilities (v0.7.2+) |
+| 204 | `SENSOR_METRICS` | sensor_metrics | telemetry | Sensor health and performance metrics (v0.7.2+) |
 | 300 | `GATEWAY_INFO` | gateway_info | gateway | Gateway identification |
 | 301 | `GATEWAY_METRICS` | gateway_metrics | gateway | Gateway health metrics |
+| 302 | `GATEWAY_DATA` | gateway_data | gateway | Gateway telemetry readings (v0.7.2+) |
+| 303 | `GATEWAY_HEARTBEAT` | gateway_heartbeat | gateway | Gateway presence/health check (v0.7.2+) |
+| 304 | `GATEWAY_STATUS` | gateway_status | gateway | Gateway status change notification (v0.7.2+) |
 | 400 | `COMMAND` | command | control | Device control command |
 | 401 | `COMMAND_RESPONSE` | command_response | control | Command execution result |
 | 402 | `CONTROL_RESPONSE` | control_response | control | Legacy control response (deprecated) |
-| 500 | `FIRMWARE_STATUS` | firmware_status | ota | Firmware update status |
+| 500 | `FIRMWARE_STATUS` | firmware_status | ota | Firmware update status (enhanced v0.7.2+) |
 | 600 | `MESH_NODE_LIST` | mesh_node_list | mesh | Mesh node inventory |
 | 601 | `MESH_TOPOLOGY` | mesh_topology | mesh | Mesh network topology |
 | 602 | `MESH_ALERT` | mesh_alert | mesh | Mesh network alert |
 | 603 | `MESH_BRIDGE` | mesh_bridge | mesh | Mesh protocol bridge (v0.7.1+) |
+| 604 | `MESH_STATUS` | mesh_status | mesh | Mesh network health status (v0.7.2+) |
+| 605 | `MESH_METRICS` | mesh_metrics | mesh | Mesh network performance metrics (v0.7.2+) |
 | 700 | `DEVICE_CONFIG` | device_config | config | Device configuration management (v0.7.1+) |
 
 **Benefits:**
@@ -724,9 +731,14 @@ const message = {
 | sensor_data.schema.json | Telemetry payload with sensors map |
 | sensor_heartbeat.schema.json | Lightweight heartbeat (firmware_version may be omitted) |
 | sensor_status.schema.json | Sensor status / presence updates |
+| **sensor_info.schema.json** | **Sensor identification and capabilities (v0.7.2+)** |
+| **sensor_metrics.schema.json** | **Sensor health and performance metrics (v0.7.2+)** |
 | gateway_info.schema.json | Gateway identity & capabilities |
 | gateway_metrics.schema.json | Gateway performance metrics |
-| firmware_status.schema.json | Firmware update lifecycle events |
+| **gateway_data.schema.json** | **Gateway telemetry readings (v0.7.2+)** |
+| **gateway_heartbeat.schema.json** | **Gateway presence/health check (v0.7.2+)** |
+| **gateway_status.schema.json** | **Gateway status change notification (v0.7.2+)** |
+| firmware_status.schema.json | Firmware update lifecycle events (enhanced v0.7.2+) |
 | control_response.schema.json | Command/control response messages (deprecated, use command_response) |
 | **command.schema.json** | **Device control commands (v0.5.0+)** |
 | **command_response.schema.json** | **Command execution responses with correlation (v0.5.0+)** |
@@ -734,6 +746,8 @@ const message = {
 | mesh_topology.schema.json | Mesh network topology and connections |
 | mesh_alert.schema.json | Mesh network alerts and warnings |
 | **mesh_bridge.schema.json** | **Mesh protocol bridge for painlessMesh integration (v0.7.1+)** |
+| **mesh_status.schema.json** | **Mesh network health status (v0.7.2+)** |
+| **mesh_metrics.schema.json** | **Mesh network performance metrics (v0.7.2+)** |
 | **device_config.schema.json** | **Unified device configuration management for sensors & gateways (v0.7.1+)** |
 
 ## Exports
@@ -743,21 +757,25 @@ const message = {
 | `validators` | object | Precompiled validators per message type |
 | `validateMessage(kind,data)` | fn | Run a specific validator by key |
 | `classifyAndValidate(data)` | fn | Fast classification + validation (uses message_type if present) |
-| `MessageTypeCodes` | const object | Message type code constants (v0.7.1+) |
+| `MessageTypeCodes` | const object | Message type code constants (v0.7.2+) |
 | `SensorDataMessage` etc. | TS interfaces | Strongly typed shapes |
 | `isSensorDataMessage` etc. | type guards | Runtime narrowing helpers |
+| `SensorInfoMessage`, `SensorMetricsMessage` | TS interfaces | New sensor types (v0.7.2+) |
+| `GatewayDataMessage`, `GatewayHeartbeatMessage`, `GatewayStatusMessage` | TS interfaces | New gateway types (v0.7.2+) |
+| `MeshStatusMessage`, `MeshMetricsMessage` | TS interfaces | New mesh types (v0.7.2+) |
 | `MeshBridgeMessage` | TS interface | Mesh bridge message type (v0.7.1+) |
-| `isMeshBridgeMessage` | type guard | Mesh bridge type guard (v0.7.1+) |
+| `isSensorInfoMessage`, `isSensorMetricsMessage` etc. | type guards | Type guards for new messages (v0.7.2+) |
 | `schemas/*.json` | JSON | Original schema assets (optional) |
 
 ### Validator Keys
 
-`sensorData`, `sensorHeartbeat`, `sensorStatus`, `gatewayInfo`, `gatewayMetrics`, `firmwareStatus`, `controlResponse`, `command`, `commandResponse`, `meshNodeList`, `meshTopology`, `meshAlert`, `meshBridge` (v0.7.1+), `deviceConfig` (v0.7.1+)
+`sensorData`, `sensorHeartbeat`, `sensorStatus`, `sensorInfo` (v0.7.2+), `sensorMetrics` (v0.7.2+), `gatewayInfo`, `gatewayMetrics`, `gatewayData` (v0.7.2+), `gatewayHeartbeat` (v0.7.2+), `gatewayStatus` (v0.7.2+), `firmwareStatus`, `controlResponse`, `command`, `commandResponse`, `meshNodeList`, `meshTopology`, `meshAlert`, `meshBridge` (v0.7.1+), `meshStatus` (v0.7.2+), `meshMetrics` (v0.7.2+), `deviceConfig` (v0.7.1+)
 
 ### Classification Strategy
 
-**v0.7.1+ Fast Path (when `message_type` present):**
-- Direct O(1) lookup using message type code (200, 201, 202, etc.)
+**v0.7.2+ Fast Path (when `message_type` present):**
+- Direct O(1) lookup using message type code (200-605, 700)
+- Supports all 21 message types including new sensor_info, sensor_metrics, gateway_data, gateway_heartbeat, gateway_status, mesh_status, mesh_metrics
 - 90% faster than heuristic matching
 - Validates that structure matches declared type
 
@@ -766,13 +784,20 @@ const message = {
 - `event: "command_response"` → `commandResponse` (v0.5.0+)
 - `event: "mesh_bridge"` → `meshBridge` (v0.7.1+)
 - `event: "config_snapshot"`, `"config_update"`, or `"config_request"` → `deviceConfig` (v0.7.1+)
-- `metrics` → `gatewayMetrics`
+- `metrics` + `device_type: "sensor"` → `sensorMetrics` (v0.7.2+)
+- `metrics` + `device_type: "gateway"` → `gatewayMetrics`
+- `sensors` + `device_type: "gateway"` → `gatewayData` (v0.7.2+)
 - `sensors` → `sensorData`
+- `capabilities` or `available_sensors` → `sensorInfo` (v0.7.2+)
+- `mesh_status` field → `meshStatus` (v0.7.2+)
+- `mesh_network_id` + `metrics` → `meshMetrics` (v0.7.2+)
 - `nodes` array → `meshNodeList`
 - `connections` array → `meshTopology`
 - `alerts` array → `meshAlert`
 - `progress_pct` or OTA status keywords → `firmwareStatus`
 - `status` + `device_type: sensor` → `sensorStatus`
+- `uptime_s` + `device_type: gateway` + no `metrics` → `gatewayHeartbeat` (v0.7.2+)
+- `status: online|offline|error` + `device_type: gateway` → `gatewayStatus` (v0.7.2+)
 - `status: ok|error` (no other match) → `controlResponse`
 - `device_type: gateway` → `gatewayInfo`
 - fallback → `sensorHeartbeat`

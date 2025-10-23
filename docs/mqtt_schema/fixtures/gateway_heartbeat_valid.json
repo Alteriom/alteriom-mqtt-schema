@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "message_type": 303,
+  "device_id": "GW-MAIN",
+  "device_type": "gateway",
+  "timestamp": "2025-10-23T20:15:00Z",
+  "firmware_version": "GW 2.0.0",
+  "uptime_s": 172800,
+  "connected_devices": 15,
+  "mesh_nodes": 12,
+  "status_summary": "healthy"
+}

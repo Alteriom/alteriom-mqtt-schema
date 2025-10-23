@@ -10,8 +10,13 @@ export declare const validators: {
     sensorData: (d: unknown) => ValidationResult;
     sensorHeartbeat: (d: unknown) => ValidationResult;
     sensorStatus: (d: unknown) => ValidationResult;
+    sensorInfo: (d: unknown) => ValidationResult;
+    sensorMetrics: (d: unknown) => ValidationResult;
     gatewayInfo: (d: unknown) => ValidationResult;
     gatewayMetrics: (d: unknown) => ValidationResult;
+    gatewayData: (d: unknown) => ValidationResult;
+    gatewayHeartbeat: (d: unknown) => ValidationResult;
+    gatewayStatus: (d: unknown) => ValidationResult;
     firmwareStatus: (d: unknown) => ValidationResult;
     controlResponse: (d: unknown) => ValidationResult;
     command: (d: unknown) => ValidationResult;
@@ -20,6 +25,8 @@ export declare const validators: {
     meshTopology: (d: unknown) => ValidationResult;
     meshAlert: (d: unknown) => ValidationResult;
     meshBridge: (d: unknown) => ValidationResult;
+    meshStatus: (d: unknown) => ValidationResult;
+    meshMetrics: (d: unknown) => ValidationResult;
     deviceConfig: (d: unknown) => ValidationResult;
 };
 export type ValidatorName = keyof typeof validators;

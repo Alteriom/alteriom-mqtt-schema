@@ -1,18 +1,23 @@
 /**
  * Auto-generated TypeScript types for Alteriom MQTT Schema v1
  * Source: docs/mqtt_schema/*.schema.json
- * Generation Date: 2025-10-23 (v0.7.1)
+ * Generation Date: 2025-10-23 (v0.7.2)
  * NOTE: This file is maintained in firmware repo for UI alignment. Changes require coordinated review.
  */
 // ------------------------------------------------------------
-// Message Type Codes (v0.7.1+)
+// Message Type Codes (v0.7.2)
 // ------------------------------------------------------------
 export const MessageTypeCodes = {
     SENSOR_DATA: 200,
     SENSOR_HEARTBEAT: 201,
     SENSOR_STATUS: 202,
+    SENSOR_INFO: 203, // v0.7.2
+    SENSOR_METRICS: 204, // v0.7.2
     GATEWAY_INFO: 300,
     GATEWAY_METRICS: 301,
+    GATEWAY_DATA: 302, // v0.7.2
+    GATEWAY_HEARTBEAT: 303, // v0.7.2
+    GATEWAY_STATUS: 304, // v0.7.2
     COMMAND: 400,
     COMMAND_RESPONSE: 401,
     CONTROL_RESPONSE: 402, // deprecated
@@ -21,6 +26,8 @@ export const MessageTypeCodes = {
     MESH_TOPOLOGY: 601,
     MESH_ALERT: 602,
     MESH_BRIDGE: 603,
+    MESH_STATUS: 604, // v0.7.2
+    MESH_METRICS: 605, // v0.7.2
     DEVICE_CONFIG: 700,
 };
 // Type Guards ------------------------------------------------
@@ -33,14 +40,29 @@ export function isSensorHeartbeatMessage(msg) {
 export function isSensorStatusMessage(msg) {
     return msg && msg.schema_version === 1 && msg.device_type === 'sensor' && typeof msg.status === 'string' && ['online', 'offline', 'updating', 'error'].includes(msg.status);
 }
+export function isSensorInfoMessage(msg) {
+    return msg && msg.schema_version === 1 && msg.device_type === 'sensor' && !!msg.firmware_version && (msg.message_type === 203 || (msg.capabilities || msg.calibration_info || msg.operational_info));
+}
+export function isSensorMetricsMessage(msg) {
+    return msg && msg.schema_version === 1 && msg.device_type === 'sensor' && typeof msg.metrics === 'object' && typeof msg.metrics.uptime_s === 'number';
+}
 export function isGatewayInfoMessage(msg) {
     return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && (!msg.metrics) && (!msg.status) && (!msg.progress_pct);
 }
 export function isGatewayMetricsMessage(msg) {
-    return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && typeof msg.metrics === 'object';
+    return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && typeof msg.metrics === 'object' && msg.message_type !== 302;
+}
+export function isGatewayDataMessage(msg) {
+    return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && typeof msg.sensors === 'object';
+}
+export function isGatewayHeartbeatMessage(msg) {
+    return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && (msg.message_type === 303 || (msg.status_summary && !msg.status && !msg.metrics && !msg.sensors));
+}
+export function isGatewayStatusMessage(msg) {
+    return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && typeof msg.status === 'string' && ['online', 'offline', 'starting', 'stopping', 'updating', 'maintenance', 'error', 'degraded'].includes(msg.status);
 }
 export function isFirmwareStatusMessage(msg) {
-    return msg && msg.schema_version === 1 && typeof msg.status === 'string' && ['pending', 'downloading', 'flashing', 'verifying', 'rebooting', 'completed', 'failed'].includes(msg.status) && (msg.progress_pct === undefined || (typeof msg.progress_pct === 'number' && msg.progress_pct >= 0 && msg.progress_pct <= 100));
+    return msg && msg.schema_version === 1 && typeof msg.status === 'string' && ['idle', 'pending', 'scheduled', 'downloading', 'download_paused', 'flashing', 'verifying', 'rebooting', 'completed', 'failed', 'cancelled', 'rolled_back', 'rollback_pending', 'rollback_failed'].includes(msg.status) && (msg.progress_pct === undefined || (typeof msg.progress_pct === 'number' && msg.progress_pct >= 0 && msg.progress_pct <= 100));
 }
 export function isControlResponseMessage(msg) {
     return msg && msg.schema_version === 1 && (msg.status === 'ok' || msg.status === 'error') && 'timestamp' in msg;
@@ -66,15 +88,26 @@ export function isMeshBridgeMessage(msg) {
 export function isDeviceConfigMessage(msg) {
     return msg && msg.schema_version === 1 && typeof msg.event === 'string' && ['config_snapshot', 'config_update', 'config_request'].includes(msg.event) && typeof msg.configuration === 'object';
 }
+export function isMeshStatusMessage(msg) {
+    return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && typeof msg.mesh_status === 'string' && ['healthy', 'degraded', 'partitioned', 'forming', 'failed', 'maintenance'].includes(msg.mesh_status);
+}
+export function isMeshMetricsMessage(msg) {
+    return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && msg.mesh_network_id && typeof msg.metrics === 'object' && typeof msg.metrics.uptime_s === 'number';
+}
 export function classifyMessage(msg) {
-    // Fast path: use message_type if present (v0.7.1+)
+    // Fast path: use message_type if present (v0.7.2)
     if (msg.message_type) {
         switch (msg.message_type) {
             case MessageTypeCodes.SENSOR_DATA: return isSensorDataMessage(msg) ? msg : null;
             case MessageTypeCodes.SENSOR_HEARTBEAT: return isSensorHeartbeatMessage(msg) ? msg : null;
             case MessageTypeCodes.SENSOR_STATUS: return isSensorStatusMessage(msg) ? msg : null;
+            case MessageTypeCodes.SENSOR_INFO: return isSensorInfoMessage(msg) ? msg : null;
+            case MessageTypeCodes.SENSOR_METRICS: return isSensorMetricsMessage(msg) ? msg : null;
             case MessageTypeCodes.GATEWAY_INFO: return isGatewayInfoMessage(msg) ? msg : null;
             case MessageTypeCodes.GATEWAY_METRICS: return isGatewayMetricsMessage(msg) ? msg : null;
+            case MessageTypeCodes.GATEWAY_DATA: return isGatewayDataMessage(msg) ? msg : null;
+            case MessageTypeCodes.GATEWAY_HEARTBEAT: return isGatewayHeartbeatMessage(msg) ? msg : null;
+            case MessageTypeCodes.GATEWAY_STATUS: return isGatewayStatusMessage(msg) ? msg : null;
             case MessageTypeCodes.COMMAND: return isCommandMessage(msg) ? msg : null;
             case MessageTypeCodes.COMMAND_RESPONSE: return isCommandResponseMessage(msg) ? msg : null;
             case MessageTypeCodes.CONTROL_RESPONSE: return isControlResponseMessage(msg) ? msg : null;
@@ -83,6 +116,8 @@ export function classifyMessage(msg) {
             case MessageTypeCodes.MESH_TOPOLOGY: return isMeshTopologyMessage(msg) ? msg : null;
             case MessageTypeCodes.MESH_ALERT: return isMeshAlertMessage(msg) ? msg : null;
             case MessageTypeCodes.MESH_BRIDGE: return isMeshBridgeMessage(msg) ? msg : null;
+            case MessageTypeCodes.MESH_STATUS: return isMeshStatusMessage(msg) ? msg : null;
+            case MessageTypeCodes.MESH_METRICS: return isMeshMetricsMessage(msg) ? msg : null;
             case MessageTypeCodes.DEVICE_CONFIG: return isDeviceConfigMessage(msg) ? msg : null;
             default: return null;
         }
@@ -90,9 +125,23 @@ export function classifyMessage(msg) {
     // Fallback: use heuristic classification for backward compatibility
     if (isSensorDataMessage(msg))
         return msg;
+    if (isSensorMetricsMessage(msg))
+        return msg;
+    if (isSensorInfoMessage(msg))
+        return msg;
+    if (isGatewayDataMessage(msg))
+        return msg;
     if (isGatewayMetricsMessage(msg))
         return msg;
+    if (isGatewayStatusMessage(msg))
+        return msg;
+    if (isGatewayHeartbeatMessage(msg))
+        return msg;
     if (isMeshBridgeMessage(msg))
+        return msg;
+    if (isMeshStatusMessage(msg))
+        return msg;
+    if (isMeshMetricsMessage(msg))
         return msg;
     if (isDeviceConfigMessage(msg))
         return msg;

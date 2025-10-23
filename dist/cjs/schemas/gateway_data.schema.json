@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gateway_data.schema.json",
+  "title": "Gateway Data Message",
+  "description": "Gateway telemetry data message (v0.7.2+). Similar to sensor_data but for gateway-originated sensor readings (environmental sensors on gateway device).",
+  "allOf": [
+    { "$ref": "envelope.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "device_type": {
+          "const": "gateway",
+          "description": "Must be 'gateway' for gateway data messages"
+        },
+        "firmware_version": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Required firmware version for gateway data"
+        },
+        "sensors": {
+          "type": "object",
+          "description": "Sensor readings from gateway's onboard sensors",
+          "patternProperties": {
+            "^[a-z0-9_]+$": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "description": "Sensor reading value (required)"
+                },
+                "unit": {
+                  "type": "string",
+                  "description": "Unit of measurement (e.g., 'celsius', 'percent', 'ppm')"
+                },
+                "raw_value": {
+                  "type": "number",
+                  "description": "Raw ADC or uncalibrated value"
+                },
+                "calibrated_value": {
+                  "type": "number",
+                  "description": "Calibrated sensor value"
+                },
+                "quality_score": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1,
+                  "description": "Data quality score (0-1, 1 = best)"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Human-readable sensor name"
+                },
+                "location": {
+                  "type": "string",
+                  "description": "Physical location of sensor on gateway"
+                },
+                "timestamp": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Per-sensor reading timestamp (ISO 8601)"
+                },
+                "accuracy": {
+                  "type": "number",
+                  "description": "Sensor accuracy (±value in units)"
+                },
+                "last_calibration": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Last calibration date (ISO 8601)"
+                },
+                "error_margin_pct": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100,
+                  "description": "Error margin percentage (0-100)"
+                },
+                "operational_range": {
+                  "type": "object",
+                  "properties": {
+                    "min": { "type": "number" },
+                    "max": { "type": "number" }
+                  },
+                  "description": "Operational range limits"
+                },
+                "additional_data": {
+                  "type": "object",
+                  "description": "Additional sensor-specific metadata",
+                  "additionalProperties": true
+                }
+              },
+              "required": ["value"],
+              "additionalProperties": true
+            }
+          },
+          "minProperties": 1,
+          "additionalProperties": false
+        },
+        "signal_strength": {
+          "type": "number",
+          "minimum": -200,
+          "maximum": 0,
+          "description": "WiFi/network signal strength in dBm"
+        },
+        "additional": {
+          "type": "object",
+          "description": "Additional gateway-specific data",
+          "additionalProperties": true
+        }
+      },
+      "required": ["device_type", "firmware_version", "sensors"],
+      "additionalProperties": true
+    }
+  ]
+}

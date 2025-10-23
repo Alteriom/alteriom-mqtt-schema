@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "message_type": 304,
+  "device_id": "GW-MAIN",
+  "device_type": "gateway",
+  "timestamp": "2025-10-23T20:20:00Z",
+  "firmware_version": "GW 2.0.0",
+  "status": "online",
+  "previous_status": "starting",
+  "status_reason": "Boot sequence completed successfully",
+  "uptime_s": 120,
+  "connected_devices": 8,
+  "signal_strength": -42,
+  "recovery_action": "none"
+}

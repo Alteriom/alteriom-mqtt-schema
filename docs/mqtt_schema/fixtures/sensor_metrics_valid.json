@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "message_type": 204,
+  "device_id": "SENSOR-001",
+  "device_type": "sensor",
+  "timestamp": "2025-10-23T20:05:00Z",
+  "firmware_version": "1.2.3",
+  "metrics": {
+    "uptime_s": 86400,
+    "battery_level": 85,
+    "battery_voltage": 3.2,
+    "battery_health": "good",
+    "estimated_battery_life_h": 720,
+    "signal_strength": -65,
+    "signal_quality": 75,
+    "rssi": -65,
+    "snr": 15,
+    "cpu_usage_pct": 25,
+    "memory_usage_pct": 40,
+    "free_memory_bytes": 50000,
+    "temperature_c": 28.5,
+    "sampling_rate_hz": 0.1,
+    "samples_collected": 8640,
+    "error_count": 2,
+    "warning_count": 5,
+    "transmission_success_rate": 98.5,
+    "reboot_count": 1,
+    "last_reboot_reason": "firmware_update"
+  }
+}

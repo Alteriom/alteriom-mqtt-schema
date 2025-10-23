@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "message_type": 605,
+  "device_id": "GW-MAIN",
+  "device_type": "gateway",
+  "timestamp": "2025-10-23T20:30:00Z",
+  "firmware_version": "GW 2.0.0",
+  "mesh_network_id": "MESH-NET-001",
+  "metrics": {
+    "uptime_s": 172800,
+    "total_nodes": 12,
+    "active_nodes": 11,
+    "packets_sent": 125000,
+    "packets_received": 123500,
+    "packets_dropped": 150,
+    "packet_loss_pct": 0.12,
+    "average_latency_ms": 45,
+    "max_latency_ms": 120,
+    "min_latency_ms": 15,
+    "throughput_kbps": 256,
+    "bandwidth_utilization_pct": 35,
+    "routing_table_size": 45,
+    "route_updates_24h": 18,
+    "broadcast_messages": 1200,
+    "unicast_messages": 123800,
+    "retransmission_rate": 2.5,
+    "duplicate_packets": 85,
+    "error_count": 12,
+    "average_rssi": -72,
+    "weakest_link_rssi": -95,
+    "strongest_link_rssi": -45,
+    "node_join_count_24h": 1,
+    "node_leave_count_24h": 2,
+    "mesh_healing_events": 3
+  },
+  "top_talkers": [
+    {
+      "node_id": "NODE-005",
+      "packets_sent": 15000,
+      "packets_received": 14800,
+      "bytes_sent": 1500000,
+      "bytes_received": 1480000
+    }
+  ]
+}

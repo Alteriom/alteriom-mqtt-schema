@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sensor_metrics.schema.json",
+  "title": "Sensor Metrics Message",
+  "description": "Sensor health and performance metrics message (v0.7.2+). Reports sensor operational health, battery, signal, uptime, and diagnostic metrics.",
+  "allOf": [
+    { "$ref": "envelope.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "device_type": {
+          "const": "sensor",
+          "description": "Must be 'sensor' for sensor metrics messages"
+        },
+        "firmware_version": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Required firmware version for sensor metrics"
+        },
+        "metrics": {
+          "type": "object",
+          "description": "Sensor health and performance metrics",
+          "properties": {
+            "uptime_s": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Sensor uptime in seconds since last boot"
+            },
+            "battery_level": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Battery level percentage (0-100)"
+            },
+            "battery_voltage": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Battery voltage in volts"
+            },
+            "battery_current_ma": {
+              "type": "number",
+              "description": "Battery current draw in milliamps"
+            },
+            "battery_health": {
+              "type": "string",
+              "enum": ["good", "fair", "poor", "critical", "charging", "unknown"],
+              "description": "Battery health status"
+            },
+            "estimated_battery_life_h": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Estimated remaining battery life in hours"
+            },
+            "signal_strength": {
+              "type": "number",
+              "minimum": -200,
+              "maximum": 0,
+              "description": "Signal strength in dBm (-200 to 0)"
+            },
+            "signal_quality": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Signal quality percentage (0-100)"
+            },
+            "rssi": {
+              "type": "number",
+              "minimum": -200,
+              "maximum": 0,
+              "description": "RSSI (Received Signal Strength Indicator) in dBm"
+            },
+            "snr": {
+              "type": "number",
+              "description": "Signal-to-Noise Ratio in dB"
+            },
+            "link_quality": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 255,
+              "description": "Link Quality Indicator (LQI) for mesh/zigbee networks"
+            },
+            "cpu_usage_pct": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "CPU usage percentage"
+            },
+            "memory_usage_pct": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Memory usage percentage"
+            },
+            "free_memory_bytes": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Free memory in bytes"
+            },
+            "temperature_c": {
+              "type": "number",
+              "description": "Internal/board temperature in Celsius"
+            },
+            "sampling_rate_hz": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Current sampling rate in Hz"
+            },
+            "samples_collected": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total samples collected since boot"
+            },
+            "error_count": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total error count since boot"
+            },
+            "warning_count": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total warning count since boot"
+            },
+            "transmission_success_rate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Message transmission success rate percentage"
+            },
+            "last_error": {
+              "type": "string",
+              "maxLength": 256,
+              "description": "Last error message"
+            },
+            "last_error_timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Timestamp of last error (ISO 8601)"
+            },
+            "reboot_count": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of reboots since deployment"
+            },
+            "last_reboot_reason": {
+              "type": "string",
+              "enum": ["power_on", "watchdog", "software_reset", "firmware_update", "crash", "user_initiated", "low_battery", "unknown"],
+              "description": "Reason for last reboot"
+            }
+          },
+          "required": ["uptime_s"],
+          "additionalProperties": true
+        }
+      },
+      "required": ["device_type", "firmware_version", "metrics"],
+      "additionalProperties": true
+    }
+  ]
+}

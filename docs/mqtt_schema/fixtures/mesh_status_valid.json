@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "message_type": 604,
+  "device_id": "GW-MAIN",
+  "device_type": "gateway",
+  "timestamp": "2025-10-23T20:25:00Z",
+  "firmware_version": "GW 2.0.0",
+  "mesh_network_id": "MESH-NET-001",
+  "mesh_status": "healthy",
+  "node_count": 12,
+  "online_nodes": 11,
+  "offline_nodes": 1,
+  "root_node": "GW-MAIN",
+  "network_stability": 92,
+  "topology_changes_24h": 3,
+  "partition_count": 1,
+  "average_hop_count": 2.5,
+  "max_hop_count": 4,
+  "network_diameter": 4,
+  "last_topology_change": "2025-10-23T18:30:00Z",
+  "mesh_protocol": "painlessMesh"
+}
