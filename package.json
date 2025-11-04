@@ -106,6 +106,9 @@
     "test:coverage": "vitest run --coverage",
     "test:fixtures": "node test/validate-fixtures.cjs",
     "test:ota": "node scripts/validate-ota-manifest.js",
+    "bench": "npm run bench:classification && npm run bench:validation",
+    "bench:classification": "tsx test/benchmarks/classification.bench.ts",
+    "bench:validation": "tsx test/benchmarks/validation.bench.ts",
     "verify:schemas": "node scripts/check-schema-sync.cjs",
     "verify:release": "node scripts/check-release-integrity.cjs",
     "verify": "npm run verify:schemas && npm run verify:release && npm test",
@@ -149,6 +152,8 @@
     "lint-staged": "^16.2.6",
     "prettier": "^3.6.2",
     "rimraf": "^5.0.5",
+    "tinybench": "^5.1.0",
+    "tsx": "^4.20.6",
     "typescript": "^5.4.0",
     "vitest": "^4.0.7"
   },
