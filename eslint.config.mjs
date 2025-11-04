@@ -6,7 +6,17 @@ import prettierConfig from 'eslint-config-prettier';
 
 export default [
   {
-    ignores: ['dist/', 'node_modules/', 'schemas/', 'wiki_build/', 'test/', '*.cjs', '*.mjs'],
+    ignores: [
+      'dist/',
+      'node_modules/',
+      'schemas/',
+      'wiki_build/',
+      'test/',
+      '*.cjs',
+      '*.mjs',
+      'src/schema_data.ts', // Auto-generated
+      'src/generated/', // Generated types
+    ],
   },
   eslint.configs.recommended,
   {
