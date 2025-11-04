@@ -1,4 +1,4 @@
-import Ajv, {ValidateFunction} from 'ajv/dist/2020.js';
+import Ajv, { ValidateFunction } from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 // Schemas embedded via generated schema_data.ts (copy-schemas.cjs) to avoid filesystem dependency
 import {
@@ -23,7 +23,7 @@ import {
   mesh_bridge_schema,
   mesh_status_schema,
   mesh_metrics_schema,
-  device_config_schema
+  device_config_schema,
 } from './schema_data.js';
 // Load JSON schemas via createRequire so it works in both CJS and ESM builds without import assertions.
 // Bind embedded schema objects for Ajv consumption
@@ -64,7 +64,7 @@ function getAjv(opts?: CompileOptions): Ajv {
     strict: false,
     allErrors: true,
     allowUnionTypes: true,
-    ...opts
+    ...opts,
   });
   addFormats(_ajv);
   // Add base schema so $ref works for those referencing envelope
@@ -80,7 +80,10 @@ export interface ValidationResult {
 function toResult(v: ValidateFunction, data: unknown): ValidationResult {
   const valid = v(data) as boolean;
   if (valid) return { valid: true };
-  return { valid: false, errors: (v.errors || []).map((e: any) => `${e.instancePath || '/'} ${e.message || ''}`.trim()) };
+  return {
+    valid: false,
+    errors: (v.errors || []).map((e: any) => `${e.instancePath || '/'} ${e.message || ''}`.trim()),
+  };
 }
 
 // Pre-compile validators (they are small; compilation cost negligible for typical web usage)
@@ -129,7 +132,7 @@ export const validators = {
   meshBridge: (d: unknown) => toResult(meshBridgeValidate, d),
   meshStatus: (d: unknown) => toResult(meshStatusValidate, d),
   meshMetrics: (d: unknown) => toResult(meshMetricsValidate, d),
-  deviceConfig: (d: unknown) => toResult(deviceConfigValidate, d)
+  deviceConfig: (d: unknown) => toResult(deviceConfigValidate, d),
 };
 
 export type ValidatorName = keyof typeof validators;
@@ -160,54 +163,101 @@ const MESSAGE_TYPE_MAP: Record<number, ValidatorName> = {
   603: 'meshBridge',
   604: 'meshStatus',
   605: 'meshMetrics',
-  700: 'deviceConfig'
+  700: 'deviceConfig',
 };
 
 // Classifier using lightweight heuristics to pick a schema validator.
 // v0.7.2: Fast path using message_type code when present
 export function classifyAndValidate(data: any): { kind?: ValidatorName; result: ValidationResult } {
-  if (!data || typeof data !== 'object') return { result: { valid: false, errors: ['Not an object'] } };
-  
+  if (!data || typeof data !== 'object')
+    return { result: { valid: false, errors: ['Not an object'] } };
+
   // Fast path: use message_type code if present (v0.7.2)
   if (typeof data.message_type === 'number' && data.message_type in MESSAGE_TYPE_MAP) {
     const kind = MESSAGE_TYPE_MAP[data.message_type];
     return { kind, result: validators[kind](data) };
   }
-  
+
   // Fallback: heuristic classification for backward compatibility
   // Check for event discriminators first (command-based messages)
   if (data.event === 'command') return { kind: 'command', result: validators.command(data) };
-  if (data.event === 'command_response') return { kind: 'commandResponse', result: validators.commandResponse(data) };
-  if (data.event === 'mesh_bridge') return { kind: 'meshBridge', result: validators.meshBridge(data) };
-  if (data.event && ['config_snapshot', 'config_update', 'config_request'].includes(data.event)) return { kind: 'deviceConfig', result: validators.deviceConfig(data) };
-  
+  if (data.event === 'command_response')
+    return { kind: 'commandResponse', result: validators.commandResponse(data) };
+  if (data.event === 'mesh_bridge')
+    return { kind: 'meshBridge', result: validators.meshBridge(data) };
+  if (data.event && ['config_snapshot', 'config_update', 'config_request'].includes(data.event))
+    return { kind: 'deviceConfig', result: validators.deviceConfig(data) };
+
   // Check for mesh status and metrics (new in v0.7.2)
-  if (data.mesh_status && typeof data.mesh_status === 'string') return { kind: 'meshStatus', result: validators.meshStatus(data) };
-  if (data.mesh_network_id && data.metrics && typeof data.metrics.uptime_s === 'number') return { kind: 'meshMetrics', result: validators.meshMetrics(data) };
-  
+  if (data.mesh_status && typeof data.mesh_status === 'string')
+    return { kind: 'meshStatus', result: validators.meshStatus(data) };
+  if (data.mesh_network_id && data.metrics && typeof data.metrics.uptime_s === 'number')
+    return { kind: 'meshMetrics', result: validators.meshMetrics(data) };
+
   // Sensor and gateway specific heuristics
   if (data.device_type === 'sensor') {
-    if (data.metrics && typeof data.metrics.uptime_s === 'number') return { kind: 'sensorMetrics', result: validators.sensorMetrics(data) };
-    if (data.capabilities || data.calibration_info || data.operational_info) return { kind: 'sensorInfo', result: validators.sensorInfo(data) };
+    if (data.metrics && typeof data.metrics.uptime_s === 'number')
+      return { kind: 'sensorMetrics', result: validators.sensorMetrics(data) };
+    if (data.capabilities || data.calibration_info || data.operational_info)
+      return { kind: 'sensorInfo', result: validators.sensorInfo(data) };
     if (data.sensors) return { kind: 'sensorData', result: validators.sensorData(data) };
-    if (data.status && ['online','offline','updating','error'].includes(data.status)) return { kind: 'sensorStatus', result: validators.sensorStatus(data) };
+    if (data.status && ['online', 'offline', 'updating', 'error'].includes(data.status))
+      return { kind: 'sensorStatus', result: validators.sensorStatus(data) };
   }
-  
+
   if (data.device_type === 'gateway') {
     if (data.sensors) return { kind: 'gatewayData', result: validators.gatewayData(data) };
     if (data.metrics) return { kind: 'gatewayMetrics', result: validators.gatewayMetrics(data) };
-    if (data.status && ['online','offline','starting','stopping','updating','maintenance','error','degraded'].includes(data.status)) return { kind: 'gatewayStatus', result: validators.gatewayStatus(data) };
-    if (data.status_summary) return { kind: 'gatewayHeartbeat', result: validators.gatewayHeartbeat(data) };
+    if (
+      data.status &&
+      [
+        'online',
+        'offline',
+        'starting',
+        'stopping',
+        'updating',
+        'maintenance',
+        'error',
+        'degraded',
+      ].includes(data.status)
+    )
+      return { kind: 'gatewayStatus', result: validators.gatewayStatus(data) };
+    if (data.status_summary)
+      return { kind: 'gatewayHeartbeat', result: validators.gatewayHeartbeat(data) };
   }
-  
+
   // Generic classification heuristics
-  if (Array.isArray(data.nodes)) return { kind: 'meshNodeList', result: validators.meshNodeList(data) };
-  if (Array.isArray(data.connections)) return { kind: 'meshTopology', result: validators.meshTopology(data) };
+  if (Array.isArray(data.nodes))
+    return { kind: 'meshNodeList', result: validators.meshNodeList(data) };
+  if (Array.isArray(data.connections))
+    return { kind: 'meshTopology', result: validators.meshTopology(data) };
   if (Array.isArray(data.alerts)) return { kind: 'meshAlert', result: validators.meshAlert(data) };
-  if (data.progress_pct !== undefined || (data.status && ['idle','pending','scheduled','downloading','download_paused','flashing','verifying','rebooting','completed','failed','cancelled','rolled_back','rollback_pending','rollback_failed'].includes(data.status))) return { kind: 'firmwareStatus', result: validators.firmwareStatus(data) };
-  if (data.status && ['ok','error'].includes(data.status)) return { kind: 'controlResponse', result: validators.controlResponse(data) };
-  if (data.device_type === 'gateway') return { kind: 'gatewayInfo', result: validators.gatewayInfo(data) };
-  
+  if (
+    data.progress_pct !== undefined ||
+    (data.status &&
+      [
+        'idle',
+        'pending',
+        'scheduled',
+        'downloading',
+        'download_paused',
+        'flashing',
+        'verifying',
+        'rebooting',
+        'completed',
+        'failed',
+        'cancelled',
+        'rolled_back',
+        'rollback_pending',
+        'rollback_failed',
+      ].includes(data.status))
+  )
+    return { kind: 'firmwareStatus', result: validators.firmwareStatus(data) };
+  if (data.status && ['ok', 'error'].includes(data.status))
+    return { kind: 'controlResponse', result: validators.controlResponse(data) };
+  if (data.device_type === 'gateway')
+    return { kind: 'gatewayInfo', result: validators.gatewayInfo(data) };
+
   // Fallback treat as heartbeat attempt
   return { kind: 'sensorHeartbeat', result: validators.sensorHeartbeat(data) };
 }

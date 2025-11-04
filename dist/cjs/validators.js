@@ -43,7 +43,7 @@ function getAjv(opts) {
         strict: false,
         allErrors: true,
         allowUnionTypes: true,
-        ...opts
+        ...opts,
     });
     (0, ajv_formats_1.default)(_ajv);
     // Add base schema so $ref works for those referencing envelope
@@ -54,7 +54,10 @@ function toResult(v, data) {
     const valid = v(data);
     if (valid)
         return { valid: true };
-    return { valid: false, errors: (v.errors || []).map((e) => `${e.instancePath || '/'} ${e.message || ''}`.trim()) };
+    return {
+        valid: false,
+        errors: (v.errors || []).map((e) => `${e.instancePath || '/'} ${e.message || ''}`.trim()),
+    };
 }
 // Pre-compile validators (they are small; compilation cost negligible for typical web usage)
 const ajv = getAjv();
@@ -100,7 +103,7 @@ exports.validators = {
     meshBridge: (d) => toResult(meshBridgeValidate, d),
     meshStatus: (d) => toResult(meshStatusValidate, d),
     meshMetrics: (d) => toResult(meshMetricsValidate, d),
-    deviceConfig: (d) => toResult(deviceConfigValidate, d)
+    deviceConfig: (d) => toResult(deviceConfigValidate, d),
 };
 function validateMessage(kind, data) {
     return exports.validators[kind](data);
@@ -127,7 +130,7 @@ const MESSAGE_TYPE_MAP = {
     603: 'meshBridge',
     604: 'meshStatus',
     605: 'meshMetrics',
-    700: 'deviceConfig'
+    700: 'deviceConfig',
 };
 // Classifier using lightweight heuristics to pick a schema validator.
 // v0.7.2: Fast path using message_type code when present
@@ -170,7 +173,17 @@ function classifyAndValidate(data) {
             return { kind: 'gatewayData', result: exports.validators.gatewayData(data) };
         if (data.metrics)
             return { kind: 'gatewayMetrics', result: exports.validators.gatewayMetrics(data) };
-        if (data.status && ['online', 'offline', 'starting', 'stopping', 'updating', 'maintenance', 'error', 'degraded'].includes(data.status))
+        if (data.status &&
+            [
+                'online',
+                'offline',
+                'starting',
+                'stopping',
+                'updating',
+                'maintenance',
+                'error',
+                'degraded',
+            ].includes(data.status))
             return { kind: 'gatewayStatus', result: exports.validators.gatewayStatus(data) };
         if (data.status_summary)
             return { kind: 'gatewayHeartbeat', result: exports.validators.gatewayHeartbeat(data) };
@@ -182,7 +195,24 @@ function classifyAndValidate(data) {
         return { kind: 'meshTopology', result: exports.validators.meshTopology(data) };
     if (Array.isArray(data.alerts))
         return { kind: 'meshAlert', result: exports.validators.meshAlert(data) };
-    if (data.progress_pct !== undefined || (data.status && ['idle', 'pending', 'scheduled', 'downloading', 'download_paused', 'flashing', 'verifying', 'rebooting', 'completed', 'failed', 'cancelled', 'rolled_back', 'rollback_pending', 'rollback_failed'].includes(data.status)))
+    if (data.progress_pct !== undefined ||
+        (data.status &&
+            [
+                'idle',
+                'pending',
+                'scheduled',
+                'downloading',
+                'download_paused',
+                'flashing',
+                'verifying',
+                'rebooting',
+                'completed',
+                'failed',
+                'cancelled',
+                'rolled_back',
+                'rollback_pending',
+                'rollback_failed',
+            ].includes(data.status)))
         return { kind: 'firmwareStatus', result: exports.validators.firmwareStatus(data) };
     if (data.status && ['ok', 'error'].includes(data.status))
         return { kind: 'controlResponse', result: exports.validators.controlResponse(data) };
