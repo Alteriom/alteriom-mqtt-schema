@@ -40,6 +40,12 @@ Firmware emits structured MQTT payloads that must remain tightly aligned with we
 - **NEW in v0.6.0**: Extended sensor metadata (accuracy, calibration, operational range)
 - **NEW in v0.6.0**: Comprehensive gateway health metrics (storage, network, errors)
 
+## Documentation
+
+📚 **[GitHub Wiki](https://github.com/Alteriom/alteriom-mqtt-schema/wiki)** - Comprehensive API documentation, schema references, validation rules, and guides
+
+> **Note**: If the wiki appears empty, see [WIKI_SETUP.md](./WIKI_SETUP.md) for setup instructions. The wiki is automatically generated and synced from the repository.
+
 ## Installation
 
 ```bash
