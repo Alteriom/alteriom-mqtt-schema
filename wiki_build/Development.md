@@ -6,7 +6,30 @@ npm install @alteriom/mqtt-schema ajv ajv-formats
 
 **Support & Compatibility**: Node 18+ tested; Node 20 primary. Dual CJS/ESM builds.
 
-Validate a JSON payload (object already parsed):
+### Fast Classification with Type Codes (v0.7.1+)
+
+For optimal performance, include the optional `message_type` field:
+
+```ts
+import { classifyAndValidate, MessageTypeCodes } from '@alteriom/mqtt-schema';
+
+const payload = {
+  schema_version: 1,
+  message_type: MessageTypeCodes.SENSOR_DATA, // 200 - enables 90% faster classification
+  device_id: 'SN001',
+  device_type: 'sensor',
+  timestamp: new Date().toISOString(),
+  firmware_version: 'SN 2.1.5',
+  sensors: {
+    temperature: { value: 22.5, unit: 'C' }
+  }
+};
+
+const { kind, result } = classifyAndValidate(payload);
+// Fast path: O(1) lookup vs O(n) heuristics
+```
+
+### Validate a JSON payload (object already parsed):
 
 ```ts
 import { validators } from '@alteriom/mqtt-schema';
