@@ -5,3 +5,5 @@ wiki_build/
 *.json
 *.md
 package-lock.json
+src/schema_data.ts
+src/generated/
