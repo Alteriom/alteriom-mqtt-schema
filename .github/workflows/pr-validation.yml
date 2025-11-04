@@ -1,0 +1,98 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/ISSUE_TEMPLATE/**'
+
+jobs:
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm test
+      - name: Upload coverage
+        if: matrix.node-version == 20
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-${{ matrix.node-version }}
+
+  build:
+    name: Build Package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+      - name: Check build artifacts
+        run: |
+          test -d dist/cjs || exit 1
+          test -d dist/esm || exit 1
+          test -f dist/cjs/index.js || exit 1
+          test -f dist/esm/index.js || exit 1
+          echo "Build artifacts verified"
+
+  verify:
+    name: Verify Schemas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run verify
+
+  size:
+    name: Check Bundle Size
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+      - name: Check package size
+        run: |
+          npm pack
+          SIZE=$(stat -f%z *.tgz || stat -c%s *.tgz)
+          echo "Package size: $SIZE bytes"
+          # Fail if package is larger than 100KB
+          if [ $SIZE -gt 102400 ]; then
+            echo "::error::Package size exceeds 100KB limit"
+            exit 1
+          fi
