@@ -24,6 +24,8 @@ import {
   mesh_status_schema,
   mesh_metrics_schema,
   device_config_schema,
+  batch_envelope_schema,
+  compressed_envelope_schema,
 } from './schema_data.js';
 // Load JSON schemas via createRequire so it works in both CJS and ESM builds without import assertions.
 // Bind embedded schema objects for Ajv consumption
@@ -49,6 +51,8 @@ const meshBridge = mesh_bridge_schema as any;
 const meshStatus = mesh_status_schema as any;
 const meshMetrics = mesh_metrics_schema as any;
 const deviceConfig = device_config_schema as any;
+const batchEnvelope = batch_envelope_schema as any;
+const compressedEnvelope = compressed_envelope_schema as any;
 
 // Lazy singleton Ajv instance so consumers can optionally supply their own if needed.
 let _ajv: Ajv | null = null;
@@ -110,6 +114,8 @@ const meshBridgeValidate = ajv.compile(meshBridge);
 const meshStatusValidate = ajv.compile(meshStatus);
 const meshMetricsValidate = ajv.compile(meshMetrics);
 const deviceConfigValidate = ajv.compile(deviceConfig);
+const batchEnvelopeValidate = ajv.compile(batchEnvelope);
+const compressedEnvelopeValidate = ajv.compile(compressedEnvelope);
 
 export const validators = {
   sensorData: (d: unknown) => toResult(sensorDataValidate, d),
@@ -133,6 +139,8 @@ export const validators = {
   meshStatus: (d: unknown) => toResult(meshStatusValidate, d),
   meshMetrics: (d: unknown) => toResult(meshMetricsValidate, d),
   deviceConfig: (d: unknown) => toResult(deviceConfigValidate, d),
+  batchEnvelope: (d: unknown) => toResult(batchEnvelopeValidate, d),
+  compressedEnvelope: (d: unknown) => toResult(compressedEnvelopeValidate, d),
 };
 
 export type ValidatorName = keyof typeof validators;
@@ -141,7 +149,7 @@ export function validateMessage(kind: ValidatorName, data: unknown): ValidationR
   return validators[kind](data);
 }
 
-// Message Type Code to Validator mapping (v0.7.2)
+// Message Type Code to Validator mapping (v0.7.3)
 const MESSAGE_TYPE_MAP: Record<number, ValidatorName> = {
   200: 'sensorData',
   201: 'sensorHeartbeat',
@@ -164,6 +172,8 @@ const MESSAGE_TYPE_MAP: Record<number, ValidatorName> = {
   604: 'meshStatus',
   605: 'meshMetrics',
   700: 'deviceConfig',
+  800: 'batchEnvelope',
+  810: 'compressedEnvelope',
 };
 
 // Classifier using lightweight heuristics to pick a schema validator.

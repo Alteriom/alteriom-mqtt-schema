@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "message_type": 800,
+  "batch_id": "batch-uuid-12345",
+  "batch_size": 2,
+  "batch_index": 0,
+  "batch_timestamp": "2025-11-04T12:00:00.000Z",
+  "compression": "none",
+  "messages": [
+    {
+      "schema_version": 1,
+      "message_type": 200,
+      "device_id": "SN001",
+      "device_type": "sensor",
+      "timestamp": "2025-11-04T11:59:30.000Z",
+      "firmware_version": "SN 2.1.0",
+      "sensors": {
+        "temperature": {
+          "value": 22.5,
+          "unit": "C"
+        }
+      }
+    },
+    {
+      "schema_version": 1,
+      "message_type": 200,
+      "device_id": "SN002",
+      "device_type": "sensor",
+      "timestamp": "2025-11-04T11:59:45.000Z",
+      "firmware_version": "SN 2.1.0",
+      "sensors": {
+        "humidity": {
+          "value": 45.2,
+          "unit": "%"
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "total_batches": 1,
+    "priority": 1,
+    "source": "GW001"
+  }
+}

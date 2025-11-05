@@ -1,0 +1,12 @@
+{
+  "_comment": "ANTI-PATTERN: Using deprecated field aliases (DO NOT USE)",
+  "_warning": "This example shows what NOT to do. These fields are forbidden.",
+  "schema_version": 1,
+  "device_id": "SN001",
+  "device_type": "sensor",
+  "timestamp": "2025-11-04T12:00:00.000Z",
+  "f": "SN 2.1.0",
+  "_error": "Field 'f' is forbidden. Use 'firmware_version' instead",
+  "fw": "SN 2.1.0",
+  "_error2": "Field 'fw' is forbidden. Use 'firmware_version' instead"
+}

@@ -2559,6 +2559,194 @@ export const device_config_schema = {
     }
   ]
 } as const;
+export const batch_envelope_schema = {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/batch_envelope.schema.json",
+  "title": "Batch Envelope Schema",
+  "description": "Schema for batching multiple MQTT messages into a single transmission to reduce protocol overhead and improve throughput",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "message_type",
+    "batch_id",
+    "batch_size",
+    "messages"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Schema version for compatibility tracking"
+    },
+    "message_type": {
+      "type": "integer",
+      "const": 800,
+      "description": "Message type code for batch envelope (800)"
+    },
+    "batch_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]+$",
+      "minLength": 1,
+      "maxLength": 64,
+      "description": "Unique identifier for this batch (UUID or similar)"
+    },
+    "batch_size": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1000,
+      "description": "Total number of messages in this batch"
+    },
+    "batch_index": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Zero-based index of this batch in a multi-batch sequence (optional for single batch)"
+    },
+    "batch_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the batch was created"
+    },
+    "compression": {
+      "type": "string",
+      "enum": [
+        "none",
+        "gzip",
+        "zlib"
+      ],
+      "default": "none",
+      "description": "Compression algorithm applied to messages array"
+    },
+    "messages": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1000,
+      "description": "Array of individual MQTT messages (any valid schema)",
+      "items": {
+        "type": "object",
+        "required": [
+          "schema_version",
+          "device_id"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "integer"
+          },
+          "device_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Optional batch-level metadata",
+      "properties": {
+        "total_batches": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Total number of batches in a multi-batch sequence"
+        },
+        "priority": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Batch priority (0=low, 1=normal, 2=high, 3=critical)"
+        },
+        "source": {
+          "type": "string",
+          "description": "Origin of the batch (gateway ID, aggregator ID)"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+} as const;
+export const compressed_envelope_schema = {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/compressed_envelope.schema.json",
+  "title": "Compressed Message Envelope Schema",
+  "description": "Schema for compressed MQTT messages to reduce bandwidth usage, particularly useful for cellular/satellite connections",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "message_type",
+    "encoding",
+    "compressed_payload",
+    "original_size_bytes"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Schema version for compatibility tracking"
+    },
+    "message_type": {
+      "type": "integer",
+      "const": 810,
+      "description": "Message type code for compressed envelope (810)"
+    },
+    "encoding": {
+      "type": "string",
+      "enum": [
+        "gzip",
+        "zlib",
+        "brotli",
+        "deflate"
+      ],
+      "description": "Compression algorithm used"
+    },
+    "compressed_payload": {
+      "type": "string",
+      "description": "Base64-encoded compressed message payload"
+    },
+    "original_size_bytes": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Size of uncompressed payload in bytes"
+    },
+    "compressed_size_bytes": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Size of compressed payload in bytes (optional)"
+    },
+    "compression_ratio": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Compression ratio (compressed/original, optional)"
+    },
+    "checksum": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{32,64}$",
+      "description": "MD5 or SHA256 checksum of original payload for integrity verification"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Optional compression metadata",
+      "properties": {
+        "original_message_type": {
+          "type": "integer",
+          "description": "Message type of the compressed payload"
+        },
+        "compression_level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9,
+          "description": "Compression level used (1=fast, 9=best)"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When compression was performed"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+} as const;
 export const mqtt_v1_bundle_json = {
   "$comment": "Convenience bundle referencing all v1 schema artifact filenames for tooling discovery.",
   "version": 1,

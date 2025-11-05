@@ -34,6 +34,8 @@ const meshBridge = schema_data_js_1.mesh_bridge_schema;
 const meshStatus = schema_data_js_1.mesh_status_schema;
 const meshMetrics = schema_data_js_1.mesh_metrics_schema;
 const deviceConfig = schema_data_js_1.device_config_schema;
+const batchEnvelope = schema_data_js_1.batch_envelope_schema;
+const compressedEnvelope = schema_data_js_1.compressed_envelope_schema;
 // Lazy singleton Ajv instance so consumers can optionally supply their own if needed.
 let _ajv = null;
 function getAjv(opts) {
@@ -82,6 +84,8 @@ const meshBridgeValidate = ajv.compile(meshBridge);
 const meshStatusValidate = ajv.compile(meshStatus);
 const meshMetricsValidate = ajv.compile(meshMetrics);
 const deviceConfigValidate = ajv.compile(deviceConfig);
+const batchEnvelopeValidate = ajv.compile(batchEnvelope);
+const compressedEnvelopeValidate = ajv.compile(compressedEnvelope);
 exports.validators = {
     sensorData: (d) => toResult(sensorDataValidate, d),
     sensorHeartbeat: (d) => toResult(sensorHeartbeatValidate, d),
@@ -104,11 +108,13 @@ exports.validators = {
     meshStatus: (d) => toResult(meshStatusValidate, d),
     meshMetrics: (d) => toResult(meshMetricsValidate, d),
     deviceConfig: (d) => toResult(deviceConfigValidate, d),
+    batchEnvelope: (d) => toResult(batchEnvelopeValidate, d),
+    compressedEnvelope: (d) => toResult(compressedEnvelopeValidate, d),
 };
 function validateMessage(kind, data) {
     return exports.validators[kind](data);
 }
-// Message Type Code to Validator mapping (v0.7.2)
+// Message Type Code to Validator mapping (v0.7.3)
 const MESSAGE_TYPE_MAP = {
     200: 'sensorData',
     201: 'sensorHeartbeat',
@@ -131,6 +137,8 @@ const MESSAGE_TYPE_MAP = {
     604: 'meshStatus',
     605: 'meshMetrics',
     700: 'deviceConfig',
+    800: 'batchEnvelope',
+    810: 'compressedEnvelope',
 };
 // Classifier using lightweight heuristics to pick a schema validator.
 // v0.7.2: Fast path using message_type code when present

@@ -29,6 +29,8 @@ export const MessageTypeCodes = {
     MESH_STATUS: 604, // v0.7.2
     MESH_METRICS: 605, // v0.7.2
     DEVICE_CONFIG: 700,
+    BATCH_ENVELOPE: 800, // v0.7.3
+    COMPRESSED_ENVELOPE: 810, // v0.7.3
 };
 // Type Guards ------------------------------------------------
 export function isSensorDataMessage(msg) {
@@ -203,6 +205,12 @@ export function basicValidate(msg) {
             issues.push({ field: 'progress_pct', reason: 'out_of_range' });
     }
     return issues;
+}
+export function isBatchEnvelopeMessage(msg) {
+    return msg && msg.schema_version === 1 && msg.message_type === 800 && typeof msg.batch_id === 'string' && Array.isArray(msg.messages);
+}
+export function isCompressedEnvelopeMessage(msg) {
+    return msg && msg.schema_version === 1 && msg.message_type === 810 && typeof msg.encoding === 'string' && typeof msg.compressed_payload === 'string';
 }
 // Example parse wrapper
 export function parseMessage(json) {

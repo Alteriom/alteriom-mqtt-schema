@@ -1,0 +1,15 @@
+{
+  "_comment": "Basic sensor data message with single temperature reading",
+  "schema_version": 1,
+  "message_type": 200,
+  "device_id": "SN001",
+  "device_type": "sensor",
+  "timestamp": "2025-11-04T12:00:00.000Z",
+  "firmware_version": "SN 2.1.0",
+  "sensors": {
+    "temperature": {
+      "value": 22.5,
+      "unit": "C"
+    }
+  }
+}

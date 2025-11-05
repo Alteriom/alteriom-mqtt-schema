@@ -2133,6 +2133,170 @@ export declare const device_config_schema: {
         readonly additionalProperties: true;
     }];
 };
+export declare const batch_envelope_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/batch_envelope.schema.json";
+    readonly title: "Batch Envelope Schema";
+    readonly description: "Schema for batching multiple MQTT messages into a single transmission to reduce protocol overhead and improve throughput";
+    readonly type: "object";
+    readonly required: readonly ["schema_version", "message_type", "batch_id", "batch_size", "messages"];
+    readonly properties: {
+        readonly schema_version: {
+            readonly type: "integer";
+            readonly const: 1;
+            readonly description: "Schema version for compatibility tracking";
+        };
+        readonly message_type: {
+            readonly type: "integer";
+            readonly const: 800;
+            readonly description: "Message type code for batch envelope (800)";
+        };
+        readonly batch_id: {
+            readonly type: "string";
+            readonly pattern: "^[a-zA-Z0-9_-]+$";
+            readonly minLength: 1;
+            readonly maxLength: 64;
+            readonly description: "Unique identifier for this batch (UUID or similar)";
+        };
+        readonly batch_size: {
+            readonly type: "integer";
+            readonly minimum: 1;
+            readonly maximum: 1000;
+            readonly description: "Total number of messages in this batch";
+        };
+        readonly batch_index: {
+            readonly type: "integer";
+            readonly minimum: 0;
+            readonly description: "Zero-based index of this batch in a multi-batch sequence (optional for single batch)";
+        };
+        readonly batch_timestamp: {
+            readonly type: "string";
+            readonly format: "date-time";
+            readonly description: "ISO 8601 timestamp when the batch was created";
+        };
+        readonly compression: {
+            readonly type: "string";
+            readonly enum: readonly ["none", "gzip", "zlib"];
+            readonly default: "none";
+            readonly description: "Compression algorithm applied to messages array";
+        };
+        readonly messages: {
+            readonly type: "array";
+            readonly minItems: 1;
+            readonly maxItems: 1000;
+            readonly description: "Array of individual MQTT messages (any valid schema)";
+            readonly items: {
+                readonly type: "object";
+                readonly required: readonly ["schema_version", "device_id"];
+                readonly properties: {
+                    readonly schema_version: {
+                        readonly type: "integer";
+                    };
+                    readonly device_id: {
+                        readonly type: "string";
+                    };
+                };
+                readonly additionalProperties: true;
+            };
+        };
+        readonly metadata: {
+            readonly type: "object";
+            readonly description: "Optional batch-level metadata";
+            readonly properties: {
+                readonly total_batches: {
+                    readonly type: "integer";
+                    readonly minimum: 1;
+                    readonly description: "Total number of batches in a multi-batch sequence";
+                };
+                readonly priority: {
+                    readonly type: "integer";
+                    readonly minimum: 0;
+                    readonly maximum: 3;
+                    readonly description: "Batch priority (0=low, 1=normal, 2=high, 3=critical)";
+                };
+                readonly source: {
+                    readonly type: "string";
+                    readonly description: "Origin of the batch (gateway ID, aggregator ID)";
+                };
+            };
+            readonly additionalProperties: true;
+        };
+    };
+    readonly additionalProperties: true;
+};
+export declare const compressed_envelope_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/compressed_envelope.schema.json";
+    readonly title: "Compressed Message Envelope Schema";
+    readonly description: "Schema for compressed MQTT messages to reduce bandwidth usage, particularly useful for cellular/satellite connections";
+    readonly type: "object";
+    readonly required: readonly ["schema_version", "message_type", "encoding", "compressed_payload", "original_size_bytes"];
+    readonly properties: {
+        readonly schema_version: {
+            readonly type: "integer";
+            readonly const: 1;
+            readonly description: "Schema version for compatibility tracking";
+        };
+        readonly message_type: {
+            readonly type: "integer";
+            readonly const: 810;
+            readonly description: "Message type code for compressed envelope (810)";
+        };
+        readonly encoding: {
+            readonly type: "string";
+            readonly enum: readonly ["gzip", "zlib", "brotli", "deflate"];
+            readonly description: "Compression algorithm used";
+        };
+        readonly compressed_payload: {
+            readonly type: "string";
+            readonly description: "Base64-encoded compressed message payload";
+        };
+        readonly original_size_bytes: {
+            readonly type: "integer";
+            readonly minimum: 1;
+            readonly description: "Size of uncompressed payload in bytes";
+        };
+        readonly compressed_size_bytes: {
+            readonly type: "integer";
+            readonly minimum: 1;
+            readonly description: "Size of compressed payload in bytes (optional)";
+        };
+        readonly compression_ratio: {
+            readonly type: "number";
+            readonly minimum: 0;
+            readonly maximum: 1;
+            readonly description: "Compression ratio (compressed/original, optional)";
+        };
+        readonly checksum: {
+            readonly type: "string";
+            readonly pattern: "^[a-fA-F0-9]{32,64}$";
+            readonly description: "MD5 or SHA256 checksum of original payload for integrity verification";
+        };
+        readonly metadata: {
+            readonly type: "object";
+            readonly description: "Optional compression metadata";
+            readonly properties: {
+                readonly original_message_type: {
+                    readonly type: "integer";
+                    readonly description: "Message type of the compressed payload";
+                };
+                readonly compression_level: {
+                    readonly type: "integer";
+                    readonly minimum: 1;
+                    readonly maximum: 9;
+                    readonly description: "Compression level used (1=fast, 9=best)";
+                };
+                readonly timestamp: {
+                    readonly type: "string";
+                    readonly format: "date-time";
+                    readonly description: "When compression was performed";
+                };
+            };
+            readonly additionalProperties: true;
+        };
+    };
+    readonly additionalProperties: true;
+};
 export declare const mqtt_v1_bundle_json: {
     readonly $comment: "Convenience bundle referencing all v1 schema artifact filenames for tooling discovery.";
     readonly version: 1;

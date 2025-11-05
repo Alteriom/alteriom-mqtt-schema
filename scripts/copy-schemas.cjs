@@ -38,6 +38,8 @@ const copyList = [
   'mesh_status.schema.json',        // v0.7.2
   'mesh_metrics.schema.json',       // v0.7.2
   'device_config.schema.json',
+  'batch_envelope.schema.json',     // v0.7.3
+  'compressed_envelope.schema.json', // v0.7.3
   'mqtt_v1_bundle.json',
   'validation_rules.md',
   'ota/ota-manifest.schema.json'

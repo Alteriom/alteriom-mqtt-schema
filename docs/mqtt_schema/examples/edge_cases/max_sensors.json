@@ -1,0 +1,23 @@
+{
+  "_comment": "Sensor data with maximum reasonable number of sensors",
+  "schema_version": 1,
+  "message_type": 200,
+  "device_id": "SN-MULTI-001",
+  "device_type": "sensor",
+  "timestamp": "2025-11-04T12:00:00.000Z",
+  "firmware_version": "SN 2.1.0",
+  "sensors": {
+    "temperature": { "value": 22.5, "unit": "C" },
+    "humidity": { "value": 45.2, "unit": "%" },
+    "pressure": { "value": 1013.25, "unit": "hPa" },
+    "co2": { "value": 420, "unit": "ppm" },
+    "tvoc": { "value": 125, "unit": "ppb" },
+    "pm25": { "value": 12.5, "unit": "μg/m³" },
+    "pm10": { "value": 18.3, "unit": "μg/m³" },
+    "light": { "value": 450, "unit": "lux" },
+    "sound": { "value": 55.2, "unit": "dB" },
+    "motion": { "value": 1, "unit": "boolean" }
+  },
+  "battery_level": 95,
+  "signal_strength": -55
+}
