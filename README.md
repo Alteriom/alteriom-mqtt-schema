@@ -715,6 +715,8 @@ For performance optimization and standardized routing, use the optional `message
 | 604 | `MESH_STATUS` | mesh_status | mesh | Mesh network health status (v0.7.2+) |
 | 605 | `MESH_METRICS` | mesh_metrics | mesh | Mesh network performance metrics (v0.7.2+) |
 | 700 | `DEVICE_CONFIG` | device_config | config | Device configuration management (v0.7.1+) |
+| 800 | `BATCH_ENVELOPE` | batch_envelope | efficiency | Message batching for high-volume scenarios (v0.7.3+) |
+| 810 | `COMPRESSED_ENVELOPE` | compressed_envelope | efficiency | Compressed message envelope (v0.7.3+) |
 
 **Benefits:**
 - **Significantly Faster**: O(1) lookup vs O(n) heuristic matching (avoids 12+ conditional checks)
@@ -760,6 +762,8 @@ const message = {
 | **mesh_status.schema.json** | **Mesh network health status (v0.7.2+)** |
 | **mesh_metrics.schema.json** | **Mesh network performance metrics (v0.7.2+)** |
 | **device_config.schema.json** | **Unified device configuration management for sensors & gateways (v0.7.1+)** |
+| **batch_envelope.schema.json** | **Message batching for 50-90% protocol overhead reduction (v0.7.3+)** |
+| **compressed_envelope.schema.json** | **Compressed message envelope for bandwidth optimization (v0.7.3+)** |
 
 ## Exports
 
@@ -775,18 +779,20 @@ const message = {
 | `GatewayDataMessage`, `GatewayHeartbeatMessage`, `GatewayStatusMessage` | TS interfaces | New gateway types (v0.7.2+) |
 | `MeshStatusMessage`, `MeshMetricsMessage` | TS interfaces | New mesh types (v0.7.2+) |
 | `MeshBridgeMessage` | TS interface | Mesh bridge message type (v0.7.1+) |
+| `BatchEnvelopeMessage`, `CompressedEnvelopeMessage` | TS interfaces | New message types (v0.7.3+) |
 | `isSensorInfoMessage`, `isSensorMetricsMessage` etc. | type guards | Type guards for new messages (v0.7.2+) |
+| `isBatchEnvelopeMessage`, `isCompressedEnvelopeMessage` | type guards | Type guards for new messages (v0.7.3+) |
 | `schemas/*.json` | JSON | Original schema assets (optional) |
 
 ### Validator Keys
 
-`sensorData`, `sensorHeartbeat`, `sensorStatus`, `sensorInfo` (v0.7.2+), `sensorMetrics` (v0.7.2+), `gatewayInfo`, `gatewayMetrics`, `gatewayData` (v0.7.2+), `gatewayHeartbeat` (v0.7.2+), `gatewayStatus` (v0.7.2+), `firmwareStatus`, `controlResponse`, `command`, `commandResponse`, `meshNodeList`, `meshTopology`, `meshAlert`, `meshBridge` (v0.7.1+), `meshStatus` (v0.7.2+), `meshMetrics` (v0.7.2+), `deviceConfig` (v0.7.1+)
+`sensorData`, `sensorHeartbeat`, `sensorStatus`, `sensorInfo` (v0.7.2+), `sensorMetrics` (v0.7.2+), `gatewayInfo`, `gatewayMetrics`, `gatewayData` (v0.7.2+), `gatewayHeartbeat` (v0.7.2+), `gatewayStatus` (v0.7.2+), `firmwareStatus`, `controlResponse`, `command`, `commandResponse`, `meshNodeList`, `meshTopology`, `meshAlert`, `meshBridge` (v0.7.1+), `meshStatus` (v0.7.2+), `meshMetrics` (v0.7.2+), `deviceConfig` (v0.7.1+), `batchEnvelope` (v0.7.3+), `compressedEnvelope` (v0.7.3+)
 
 ### Classification Strategy
 
-**v0.7.2+ Fast Path (when `message_type` present):**
-- Direct O(1) lookup using message type code (200-605, 700)
-- Supports all 21 message types including new sensor_info, sensor_metrics, gateway_data, gateway_heartbeat, gateway_status, mesh_status, mesh_metrics
+**v0.7.3+ Fast Path (when `message_type` present):**
+- Direct O(1) lookup using message type code (200-605, 700, 800, 810)
+- Supports all 23 message types including batch_envelope, compressed_envelope, and all v0.7.2 additions
 - 90% faster than heuristic matching
 - Validates that structure matches declared type
 
