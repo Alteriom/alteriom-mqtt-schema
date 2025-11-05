@@ -26,6 +26,8 @@ export declare const MessageTypeCodes: {
     readonly MESH_STATUS: 604;
     readonly MESH_METRICS: 605;
     readonly DEVICE_CONFIG: 700;
+    readonly BATCH_ENVELOPE: 800;
+    readonly COMPRESSED_ENVELOPE: 810;
 };
 export type MessageTypeCode = typeof MessageTypeCodes[keyof typeof MessageTypeCodes];
 export interface LocationInfo {
@@ -491,7 +493,37 @@ export interface MeshMetricsMessage extends BaseEnvelope {
         [k: string]: unknown;
     }>;
 }
-export type AnyMqttV1Message = SensorDataMessage | SensorHeartbeatMessage | SensorStatusMessage | SensorInfoMessage | SensorMetricsMessage | GatewayInfoMessage | GatewayMetricsMessage | GatewayDataMessage | GatewayHeartbeatMessage | GatewayStatusMessage | FirmwareStatusMessage | ControlResponseMessage | CommandMessage | CommandResponseMessage | MeshNodeListMessage | MeshTopologyMessage | MeshAlertMessage | MeshBridgeMessage | MeshStatusMessage | MeshMetricsMessage | DeviceConfigMessage;
+export type AnyMqttV1Message = SensorDataMessage | SensorHeartbeatMessage | SensorStatusMessage | SensorInfoMessage | SensorMetricsMessage | GatewayInfoMessage | GatewayMetricsMessage | GatewayDataMessage | GatewayHeartbeatMessage | GatewayStatusMessage | FirmwareStatusMessage | ControlResponseMessage | CommandMessage | CommandResponseMessage | MeshNodeListMessage | MeshTopologyMessage | MeshAlertMessage | MeshBridgeMessage | MeshStatusMessage | MeshMetricsMessage | DeviceConfigMessage | BatchEnvelopeMessage | CompressedEnvelopeMessage;
+export interface BatchEnvelopeMessage extends BaseEnvelope {
+    message_type: 800;
+    batch_id: string;
+    batch_size: number;
+    batch_index?: number;
+    batch_timestamp?: string;
+    compression?: 'none' | 'gzip' | 'zlib';
+    messages: AnyMqttV1Message[];
+    metadata?: {
+        total_batches?: number;
+        priority?: number;
+        source?: string;
+        [k: string]: unknown;
+    };
+}
+export interface CompressedEnvelopeMessage extends BaseEnvelope {
+    message_type: 810;
+    encoding: 'gzip' | 'zlib' | 'brotli' | 'deflate';
+    compressed_payload: string;
+    original_size_bytes: number;
+    compressed_size_bytes?: number;
+    compression_ratio?: number;
+    checksum?: string;
+    metadata?: {
+        original_message_type?: number;
+        compression_level?: number;
+        timestamp?: string;
+        [k: string]: unknown;
+    };
+}
 export declare function isSensorDataMessage(msg: any): msg is SensorDataMessage;
 export declare function isSensorHeartbeatMessage(msg: any): msg is SensorHeartbeatMessage;
 export declare function isSensorStatusMessage(msg: any): msg is SensorStatusMessage;
@@ -519,4 +551,6 @@ export interface BasicValidationIssue {
     reason: string;
 }
 export declare function basicValidate(msg: AnyMqttV1Message): BasicValidationIssue[];
+export declare function isBatchEnvelopeMessage(msg: any): msg is BatchEnvelopeMessage;
+export declare function isCompressedEnvelopeMessage(msg: any): msg is CompressedEnvelopeMessage;
 export declare function parseMessage(json: string): AnyMqttV1Message | null;

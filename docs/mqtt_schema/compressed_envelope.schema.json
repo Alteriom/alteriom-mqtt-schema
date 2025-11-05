@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/compressed_envelope.schema.json",
+  "title": "Compressed Message Envelope Schema",
+  "description": "Schema for compressed MQTT messages to reduce bandwidth usage, particularly useful for cellular/satellite connections",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "message_type",
+    "encoding",
+    "compressed_payload",
+    "original_size_bytes"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Schema version for compatibility tracking"
+    },
+    "message_type": {
+      "type": "integer",
+      "const": 810,
+      "description": "Message type code for compressed envelope (810)"
+    },
+    "encoding": {
+      "type": "string",
+      "enum": ["gzip", "zlib", "brotli", "deflate"],
+      "description": "Compression algorithm used"
+    },
+    "compressed_payload": {
+      "type": "string",
+      "description": "Base64-encoded compressed message payload"
+    },
+    "original_size_bytes": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Size of uncompressed payload in bytes"
+    },
+    "compressed_size_bytes": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Size of compressed payload in bytes (optional)"
+    },
+    "compression_ratio": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Compression ratio (compressed/original, optional)"
+    },
+    "checksum": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{32,64}$",
+      "description": "MD5 or SHA256 checksum of original payload for integrity verification"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Optional compression metadata",
+      "properties": {
+        "original_message_type": {
+          "type": "integer",
+          "description": "Message type of the compressed payload"
+        },
+        "compression_level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9,
+          "description": "Compression level used (1=fast, 9=best)"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When compression was performed"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

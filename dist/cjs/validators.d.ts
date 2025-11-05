@@ -28,6 +28,8 @@ export declare const validators: {
     meshStatus: (d: unknown) => ValidationResult;
     meshMetrics: (d: unknown) => ValidationResult;
     deviceConfig: (d: unknown) => ValidationResult;
+    batchEnvelope: (d: unknown) => ValidationResult;
+    compressedEnvelope: (d: unknown) => ValidationResult;
 };
 export type ValidatorName = keyof typeof validators;
 export declare function validateMessage(kind: ValidatorName, data: unknown): ValidationResult;

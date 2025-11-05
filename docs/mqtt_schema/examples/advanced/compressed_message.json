@@ -1,0 +1,16 @@
+{
+  "_comment": "Compressed message envelope (payload is base64-encoded gzip compressed sensor data)",
+  "schema_version": 1,
+  "message_type": 810,
+  "encoding": "gzip",
+  "compressed_payload": "H4sIAAAAAAAAA6tWKkktLlGyUlAqS8wpTtVRKi1OLSoGsZRqAQDJv4fNIAAAAA==",
+  "original_size_bytes": 245,
+  "compressed_size_bytes": 68,
+  "compression_ratio": 0.277,
+  "checksum": "a3c65c2974270fd093ee8a9bf8ae7d0b",
+  "metadata": {
+    "original_message_type": 200,
+    "compression_level": 6,
+    "timestamp": "2025-11-04T12:00:00.000Z"
+  }
+}

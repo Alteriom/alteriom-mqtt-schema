@@ -1,0 +1,9 @@
+dist/
+node_modules/
+schemas/
+wiki_build/
+*.json
+*.md
+package-lock.json
+src/schema_data.ts
+src/generated/

@@ -6,4 +6,3 @@
 // Use explicit .js extensions so ESM build (with dist/esm/package.json type=module) treats them as ESM.
 export * from './validators.js';
 export * from './types.js';
-

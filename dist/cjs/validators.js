@@ -34,6 +34,8 @@ const meshBridge = schema_data_js_1.mesh_bridge_schema;
 const meshStatus = schema_data_js_1.mesh_status_schema;
 const meshMetrics = schema_data_js_1.mesh_metrics_schema;
 const deviceConfig = schema_data_js_1.device_config_schema;
+const batchEnvelope = schema_data_js_1.batch_envelope_schema;
+const compressedEnvelope = schema_data_js_1.compressed_envelope_schema;
 // Lazy singleton Ajv instance so consumers can optionally supply their own if needed.
 let _ajv = null;
 function getAjv(opts) {
@@ -43,7 +45,7 @@ function getAjv(opts) {
         strict: false,
         allErrors: true,
         allowUnionTypes: true,
-        ...opts
+        ...opts,
     });
     (0, ajv_formats_1.default)(_ajv);
     // Add base schema so $ref works for those referencing envelope
@@ -54,7 +56,10 @@ function toResult(v, data) {
     const valid = v(data);
     if (valid)
         return { valid: true };
-    return { valid: false, errors: (v.errors || []).map((e) => `${e.instancePath || '/'} ${e.message || ''}`.trim()) };
+    return {
+        valid: false,
+        errors: (v.errors || []).map((e) => `${e.instancePath || '/'} ${e.message || ''}`.trim()),
+    };
 }
 // Pre-compile validators (they are small; compilation cost negligible for typical web usage)
 const ajv = getAjv();
@@ -79,6 +84,8 @@ const meshBridgeValidate = ajv.compile(meshBridge);
 const meshStatusValidate = ajv.compile(meshStatus);
 const meshMetricsValidate = ajv.compile(meshMetrics);
 const deviceConfigValidate = ajv.compile(deviceConfig);
+const batchEnvelopeValidate = ajv.compile(batchEnvelope);
+const compressedEnvelopeValidate = ajv.compile(compressedEnvelope);
 exports.validators = {
     sensorData: (d) => toResult(sensorDataValidate, d),
     sensorHeartbeat: (d) => toResult(sensorHeartbeatValidate, d),
@@ -100,12 +107,14 @@ exports.validators = {
     meshBridge: (d) => toResult(meshBridgeValidate, d),
     meshStatus: (d) => toResult(meshStatusValidate, d),
     meshMetrics: (d) => toResult(meshMetricsValidate, d),
-    deviceConfig: (d) => toResult(deviceConfigValidate, d)
+    deviceConfig: (d) => toResult(deviceConfigValidate, d),
+    batchEnvelope: (d) => toResult(batchEnvelopeValidate, d),
+    compressedEnvelope: (d) => toResult(compressedEnvelopeValidate, d),
 };
 function validateMessage(kind, data) {
     return exports.validators[kind](data);
 }
-// Message Type Code to Validator mapping (v0.7.2)
+// Message Type Code to Validator mapping (v0.7.3)
 const MESSAGE_TYPE_MAP = {
     200: 'sensorData',
     201: 'sensorHeartbeat',
@@ -127,7 +136,9 @@ const MESSAGE_TYPE_MAP = {
     603: 'meshBridge',
     604: 'meshStatus',
     605: 'meshMetrics',
-    700: 'deviceConfig'
+    700: 'deviceConfig',
+    800: 'batchEnvelope',
+    810: 'compressedEnvelope',
 };
 // Classifier using lightweight heuristics to pick a schema validator.
 // v0.7.2: Fast path using message_type code when present
@@ -170,7 +181,17 @@ function classifyAndValidate(data) {
             return { kind: 'gatewayData', result: exports.validators.gatewayData(data) };
         if (data.metrics)
             return { kind: 'gatewayMetrics', result: exports.validators.gatewayMetrics(data) };
-        if (data.status && ['online', 'offline', 'starting', 'stopping', 'updating', 'maintenance', 'error', 'degraded'].includes(data.status))
+        if (data.status &&
+            [
+                'online',
+                'offline',
+                'starting',
+                'stopping',
+                'updating',
+                'maintenance',
+                'error',
+                'degraded',
+            ].includes(data.status))
             return { kind: 'gatewayStatus', result: exports.validators.gatewayStatus(data) };
         if (data.status_summary)
             return { kind: 'gatewayHeartbeat', result: exports.validators.gatewayHeartbeat(data) };
@@ -182,7 +203,24 @@ function classifyAndValidate(data) {
         return { kind: 'meshTopology', result: exports.validators.meshTopology(data) };
     if (Array.isArray(data.alerts))
         return { kind: 'meshAlert', result: exports.validators.meshAlert(data) };
-    if (data.progress_pct !== undefined || (data.status && ['idle', 'pending', 'scheduled', 'downloading', 'download_paused', 'flashing', 'verifying', 'rebooting', 'completed', 'failed', 'cancelled', 'rolled_back', 'rollback_pending', 'rollback_failed'].includes(data.status)))
+    if (data.progress_pct !== undefined ||
+        (data.status &&
+            [
+                'idle',
+                'pending',
+                'scheduled',
+                'downloading',
+                'download_paused',
+                'flashing',
+                'verifying',
+                'rebooting',
+                'completed',
+                'failed',
+                'cancelled',
+                'rolled_back',
+                'rollback_pending',
+                'rollback_failed',
+            ].includes(data.status)))
         return { kind: 'firmwareStatus', result: exports.validators.firmwareStatus(data) };
     if (data.status && ['ok', 'error'].includes(data.status))
         return { kind: 'controlResponse', result: exports.validators.controlResponse(data) };

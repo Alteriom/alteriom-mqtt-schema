@@ -1,0 +1,15 @@
+{
+  "_comment": "Basic gateway metrics with system stats",
+  "schema_version": 1,
+  "message_type": 301,
+  "device_id": "GW001",
+  "device_type": "gateway",
+  "timestamp": "2025-11-04T12:00:00.000Z",
+  "firmware_version": "GW 1.0.0",
+  "metrics": {
+    "uptime_s": 86400,
+    "cpu_usage_pct": 15.3,
+    "memory_usage_pct": 45.2,
+    "connected_devices": 42
+  }
+}

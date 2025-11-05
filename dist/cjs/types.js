@@ -16,7 +16,6 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // Re-export generated types copied during prebuild from firmware docs into src/generated/types.ts
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore

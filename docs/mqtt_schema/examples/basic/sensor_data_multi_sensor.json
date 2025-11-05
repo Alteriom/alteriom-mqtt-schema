@@ -1,0 +1,28 @@
+{
+  "_comment": "Sensor data with multiple sensors and metadata",
+  "schema_version": 1,
+  "message_type": 200,
+  "device_id": "SN002",
+  "device_type": "sensor",
+  "timestamp": "2025-11-04T12:00:00.000Z",
+  "firmware_version": "SN 2.1.0",
+  "sensors": {
+    "temperature": {
+      "value": 22.5,
+      "unit": "C",
+      "quality_score": 0.95
+    },
+    "humidity": {
+      "value": 45.2,
+      "unit": "%",
+      "quality_score": 0.98
+    },
+    "pressure": {
+      "value": 1013.25,
+      "unit": "hPa",
+      "quality_score": 1.0
+    }
+  },
+  "battery_level": 87,
+  "signal_strength": -65
+}

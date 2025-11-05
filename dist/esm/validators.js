@@ -1,7 +1,7 @@
 import Ajv from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 // Schemas embedded via generated schema_data.ts (copy-schemas.cjs) to avoid filesystem dependency
-import { envelope_schema, sensor_data_schema, sensor_heartbeat_schema, sensor_status_schema, sensor_info_schema, sensor_metrics_schema, gateway_info_schema, gateway_metrics_schema, gateway_data_schema, gateway_heartbeat_schema, gateway_status_schema, firmware_status_schema, control_response_schema, command_schema, command_response_schema, mesh_node_list_schema, mesh_topology_schema, mesh_alert_schema, mesh_bridge_schema, mesh_status_schema, mesh_metrics_schema, device_config_schema } from './schema_data.js';
+import { envelope_schema, sensor_data_schema, sensor_heartbeat_schema, sensor_status_schema, sensor_info_schema, sensor_metrics_schema, gateway_info_schema, gateway_metrics_schema, gateway_data_schema, gateway_heartbeat_schema, gateway_status_schema, firmware_status_schema, control_response_schema, command_schema, command_response_schema, mesh_node_list_schema, mesh_topology_schema, mesh_alert_schema, mesh_bridge_schema, mesh_status_schema, mesh_metrics_schema, device_config_schema, batch_envelope_schema, compressed_envelope_schema, } from './schema_data.js';
 // Load JSON schemas via createRequire so it works in both CJS and ESM builds without import assertions.
 // Bind embedded schema objects for Ajv consumption
 const envelope = envelope_schema;
@@ -26,6 +26,8 @@ const meshBridge = mesh_bridge_schema;
 const meshStatus = mesh_status_schema;
 const meshMetrics = mesh_metrics_schema;
 const deviceConfig = device_config_schema;
+const batchEnvelope = batch_envelope_schema;
+const compressedEnvelope = compressed_envelope_schema;
 // Lazy singleton Ajv instance so consumers can optionally supply their own if needed.
 let _ajv = null;
 function getAjv(opts) {
@@ -35,7 +37,7 @@ function getAjv(opts) {
         strict: false,
         allErrors: true,
         allowUnionTypes: true,
-        ...opts
+        ...opts,
     });
     addFormats(_ajv);
     // Add base schema so $ref works for those referencing envelope
@@ -46,7 +48,10 @@ function toResult(v, data) {
     const valid = v(data);
     if (valid)
         return { valid: true };
-    return { valid: false, errors: (v.errors || []).map((e) => `${e.instancePath || '/'} ${e.message || ''}`.trim()) };
+    return {
+        valid: false,
+        errors: (v.errors || []).map((e) => `${e.instancePath || '/'} ${e.message || ''}`.trim()),
+    };
 }
 // Pre-compile validators (they are small; compilation cost negligible for typical web usage)
 const ajv = getAjv();
@@ -71,6 +76,8 @@ const meshBridgeValidate = ajv.compile(meshBridge);
 const meshStatusValidate = ajv.compile(meshStatus);
 const meshMetricsValidate = ajv.compile(meshMetrics);
 const deviceConfigValidate = ajv.compile(deviceConfig);
+const batchEnvelopeValidate = ajv.compile(batchEnvelope);
+const compressedEnvelopeValidate = ajv.compile(compressedEnvelope);
 export const validators = {
     sensorData: (d) => toResult(sensorDataValidate, d),
     sensorHeartbeat: (d) => toResult(sensorHeartbeatValidate, d),
@@ -92,12 +99,14 @@ export const validators = {
     meshBridge: (d) => toResult(meshBridgeValidate, d),
     meshStatus: (d) => toResult(meshStatusValidate, d),
     meshMetrics: (d) => toResult(meshMetricsValidate, d),
-    deviceConfig: (d) => toResult(deviceConfigValidate, d)
+    deviceConfig: (d) => toResult(deviceConfigValidate, d),
+    batchEnvelope: (d) => toResult(batchEnvelopeValidate, d),
+    compressedEnvelope: (d) => toResult(compressedEnvelopeValidate, d),
 };
 export function validateMessage(kind, data) {
     return validators[kind](data);
 }
-// Message Type Code to Validator mapping (v0.7.2)
+// Message Type Code to Validator mapping (v0.7.3)
 const MESSAGE_TYPE_MAP = {
     200: 'sensorData',
     201: 'sensorHeartbeat',
@@ -119,7 +128,9 @@ const MESSAGE_TYPE_MAP = {
     603: 'meshBridge',
     604: 'meshStatus',
     605: 'meshMetrics',
-    700: 'deviceConfig'
+    700: 'deviceConfig',
+    800: 'batchEnvelope',
+    810: 'compressedEnvelope',
 };
 // Classifier using lightweight heuristics to pick a schema validator.
 // v0.7.2: Fast path using message_type code when present
@@ -162,7 +173,17 @@ export function classifyAndValidate(data) {
             return { kind: 'gatewayData', result: validators.gatewayData(data) };
         if (data.metrics)
             return { kind: 'gatewayMetrics', result: validators.gatewayMetrics(data) };
-        if (data.status && ['online', 'offline', 'starting', 'stopping', 'updating', 'maintenance', 'error', 'degraded'].includes(data.status))
+        if (data.status &&
+            [
+                'online',
+                'offline',
+                'starting',
+                'stopping',
+                'updating',
+                'maintenance',
+                'error',
+                'degraded',
+            ].includes(data.status))
             return { kind: 'gatewayStatus', result: validators.gatewayStatus(data) };
         if (data.status_summary)
             return { kind: 'gatewayHeartbeat', result: validators.gatewayHeartbeat(data) };
@@ -174,7 +195,24 @@ export function classifyAndValidate(data) {
         return { kind: 'meshTopology', result: validators.meshTopology(data) };
     if (Array.isArray(data.alerts))
         return { kind: 'meshAlert', result: validators.meshAlert(data) };
-    if (data.progress_pct !== undefined || (data.status && ['idle', 'pending', 'scheduled', 'downloading', 'download_paused', 'flashing', 'verifying', 'rebooting', 'completed', 'failed', 'cancelled', 'rolled_back', 'rollback_pending', 'rollback_failed'].includes(data.status)))
+    if (data.progress_pct !== undefined ||
+        (data.status &&
+            [
+                'idle',
+                'pending',
+                'scheduled',
+                'downloading',
+                'download_paused',
+                'flashing',
+                'verifying',
+                'rebooting',
+                'completed',
+                'failed',
+                'cancelled',
+                'rolled_back',
+                'rollback_pending',
+                'rollback_failed',
+            ].includes(data.status)))
         return { kind: 'firmwareStatus', result: validators.firmwareStatus(data) };
     if (data.status && ['ok', 'error'].includes(data.status))
         return { kind: 'controlResponse', result: validators.controlResponse(data) };

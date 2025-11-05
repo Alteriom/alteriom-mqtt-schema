@@ -31,6 +31,8 @@ export const MessageTypeCodes = {
   MESH_STATUS: 604,           // v0.7.2
   MESH_METRICS: 605,          // v0.7.2
   DEVICE_CONFIG: 700,
+  BATCH_ENVELOPE: 800,        // v0.7.3
+  COMPRESSED_ENVELOPE: 810,   // v0.7.3
 } as const;
 
 export type MessageTypeCode = typeof MessageTypeCodes[keyof typeof MessageTypeCodes];
@@ -548,7 +550,49 @@ export type AnyMqttV1Message =
   | MeshBridgeMessage
   | MeshStatusMessage
   | MeshMetricsMessage
-  | DeviceConfigMessage;
+  | DeviceConfigMessage
+  | BatchEnvelopeMessage
+  | CompressedEnvelopeMessage;
+
+// ------------------------------------------------------------
+// Batch Envelope (v0.7.3)
+// ------------------------------------------------------------
+
+export interface BatchEnvelopeMessage extends BaseEnvelope {
+  message_type: 800;
+  batch_id: string;
+  batch_size: number;
+  batch_index?: number;
+  batch_timestamp?: string;
+  compression?: 'none' | 'gzip' | 'zlib';
+  messages: AnyMqttV1Message[];
+  metadata?: {
+    total_batches?: number;
+    priority?: number;
+    source?: string;
+    [k: string]: unknown;
+  };
+}
+
+// ------------------------------------------------------------
+// Compressed Envelope (v0.7.3)
+// ------------------------------------------------------------
+
+export interface CompressedEnvelopeMessage extends BaseEnvelope {
+  message_type: 810;
+  encoding: 'gzip' | 'zlib' | 'brotli' | 'deflate';
+  compressed_payload: string;
+  original_size_bytes: number;
+  compressed_size_bytes?: number;
+  compression_ratio?: number;
+  checksum?: string;
+  metadata?: {
+    original_message_type?: number;
+    compression_level?: number;
+    timestamp?: string;
+    [k: string]: unknown;
+  };
+}
 
 // Type Guards ------------------------------------------------
 
@@ -718,6 +762,14 @@ export function basicValidate(msg: AnyMqttV1Message): BasicValidationIssue[] {
     if (msg.progress_pct !== undefined && (msg.progress_pct < 0 || msg.progress_pct > 100)) issues.push({field: 'progress_pct', reason: 'out_of_range'});
   }
   return issues;
+}
+
+export function isBatchEnvelopeMessage(msg: any): msg is BatchEnvelopeMessage {
+  return msg && msg.schema_version === 1 && msg.message_type === 800 && typeof msg.batch_id === 'string' && Array.isArray(msg.messages);
+}
+
+export function isCompressedEnvelopeMessage(msg: any): msg is CompressedEnvelopeMessage {
+  return msg && msg.schema_version === 1 && msg.message_type === 810 && typeof msg.encoding === 'string' && typeof msg.compressed_payload === 'string';
 }
 
 // Example parse wrapper
