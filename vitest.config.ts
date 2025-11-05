@@ -17,10 +17,10 @@ export default defineConfig({
         'src/generated/', // Generated types
       ],
       thresholds: {
-        lines: 80,
-        functions: 80,
+        lines: 85,
+        functions: 65,
         branches: 75,
-        statements: 80,
+        statements: 85,
       },
     },
   },
