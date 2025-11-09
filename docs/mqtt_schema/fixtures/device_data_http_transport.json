@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "message_type": 101,
+  "device_id": "HTTP-SN-001",
+  "device_type": "sensor",
+  "device_role": "sensor",
+  "timestamp": "2025-11-08T22:25:00.000Z",
+  "firmware_version": "HTTP 2.0.0",
+  "sensors": {
+    "temperature": {
+      "value": 24.3,
+      "unit": "C"
+    }
+  },
+  "transport_metadata": {
+    "protocol": "https",
+    "correlation_id": "req-2025-11-08-22250001",
+    "http": {
+      "method": "POST",
+      "path": "/api/v1/devices/HTTP-SN-001/telemetry",
+      "status_code": 201,
+      "request_id": "uuid-12345-abcde-67890",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "AlteriomDevice/2.0",
+        "X-Device-Auth": "Bearer ..."
+      }
+    }
+  }
+}

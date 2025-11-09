@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "message_type": 104,
+  "device_id": "UNI-SN-010",
+  "device_type": "sensor",
+  "device_role": "sensor",
+  "timestamp": "2025-11-08T22:15:00.000Z",
+  "firmware_version": "UNI 1.0.0",
+  "hardware_version": "ESP32-C3-MINI",
+  "mac_address": "AA:BB:CC:DD:EE:FF",
+  "capabilities": {
+    "sensors": ["temperature", "humidity", "pressure"],
+    "mesh_capable": true,
+    "battery_powered": true,
+    "ota_capable": true
+  },
+  "calibration_info": {
+    "temperature_offset": 0.5,
+    "humidity_offset": -1.2,
+    "last_calibration": "2025-10-15T10:00:00.000Z",
+    "calibration_interval_days": 90
+  },
+  "operational_info": {
+    "sample_rate_ms": 60000,
+    "reporting_interval_s": 300,
+    "power_mode": "low_power",
+    "sleep_enabled": true
+  }
+}

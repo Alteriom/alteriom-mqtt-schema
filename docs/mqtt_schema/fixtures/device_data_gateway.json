@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "message_type": 101,
+  "device_id": "UNI-GW-001",
+  "device_type": "gateway",
+  "device_role": "gateway",
+  "timestamp": "2025-11-08T22:00:00.000Z",
+  "firmware_version": "UNI 1.0.0",
+  "hardware_version": "ESP32-S3",
+  "connected_devices": 15,
+  "mesh_nodes": 12,
+  "sensors": {
+    "cpu_temp": {
+      "value": 65.5,
+      "unit": "C"
+    }
+  },
+  "location": {
+    "zone": "data_center",
+    "description": "Main gateway hub"
+  }
+}

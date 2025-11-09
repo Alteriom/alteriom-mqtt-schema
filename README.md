@@ -33,6 +33,10 @@ Firmware emits structured MQTT payloads that must remain tightly aligned with we
 - Helpful error paths (JSON Pointer style)
 - Lightweight (Ajv peer dependency, schemas embedded)
 - Ships original schema JSON files (optional consumption)
+- **NEW in v0.8.0**: ⚠️ BREAKING: Gateway code realignment (300→305, 301→306) with automatic legacy translation
+- **NEW in v0.8.0**: Unified device schemas (10x range) for sensor/gateway/bridge/hybrid deployments
+- **NEW in v0.8.0**: HTTP transport support via `transport_metadata` for REST API integration
+- **NEW in v0.8.0**: Bridge management schemas for painlessMesh v1.8.0+ (5 new message types)
 - **NEW in v0.7.3**: Message batching for 50-90% protocol overhead reduction
 - **NEW in v0.7.3**: Compression support for 60-80% bandwidth savings (gzip, zlib, brotli, deflate)
 - **NEW in v0.7.3**: Comprehensive example repository (9 examples, 4 categories)
@@ -688,9 +692,21 @@ Both sensors and gateways support consistent management:
 - Bulk configuration deployment
 - Standardized across device types
 
-## Message Type Codes (v0.7.2+)
+## Message Type Codes (v0.8.0+)
 
 For performance optimization and standardized routing, use the optional `message_type` field:
+
+### 🆕 Unified Device Codes (v0.8.0+)
+
+| Code | Constant | Message Type | Category | Description |
+|------|----------|--------------|----------|-------------|
+| 101 | `DEVICE_DATA` | device_data | unified | Unified telemetry for all device types (sensor/gateway/bridge/hybrid) |
+| 102 | `DEVICE_HEARTBEAT` | device_heartbeat | unified | Unified presence/health check (all device types) |
+| 103 | `DEVICE_STATUS` | device_status | unified | Unified status change notification (all device types) |
+| 104 | `DEVICE_INFO` | device_info | unified | Unified identification and capabilities (all device types) |
+| 105 | `DEVICE_METRICS` | device_metrics | unified | Unified health and performance metrics (all device types) |
+
+### Sensor-Specific Codes
 
 | Code | Constant | Message Type | Category | Description |
 |------|----------|--------------|----------|-------------|
@@ -699,33 +715,72 @@ For performance optimization and standardized routing, use the optional `message
 | 202 | `SENSOR_STATUS` | sensor_status | telemetry | Sensor status change |
 | 203 | `SENSOR_INFO` | sensor_info | telemetry | Sensor identification and capabilities (v0.7.2+) |
 | 204 | `SENSOR_METRICS` | sensor_metrics | telemetry | Sensor health and performance metrics (v0.7.2+) |
-| 300 | `GATEWAY_INFO` | gateway_info | gateway | Gateway identification |
-| 301 | `GATEWAY_METRICS` | gateway_metrics | gateway | Gateway health metrics |
+
+### Gateway-Specific Codes
+
+| Code | Constant | Message Type | Category | Description |
+|------|----------|--------------|----------|-------------|
 | 302 | `GATEWAY_DATA` | gateway_data | gateway | Gateway telemetry readings (v0.7.2+) |
 | 303 | `GATEWAY_HEARTBEAT` | gateway_heartbeat | gateway | Gateway presence/health check (v0.7.2+) |
 | 304 | `GATEWAY_STATUS` | gateway_status | gateway | Gateway status change notification (v0.7.2+) |
+| 305 | `GATEWAY_INFO` | gateway_info | gateway | Gateway identification ⚠️ **BREAKING v0.8.0: was 300** |
+| 306 | `GATEWAY_METRICS` | gateway_metrics | gateway | Gateway health metrics ⚠️ **BREAKING v0.8.0: was 301** |
+
+> **⚠️ BREAKING CHANGES in v0.8.0**: Gateway codes `300` (info) and `301` (metrics) have been realigned to `305` and `306` for consistency. Legacy codes `300` and `301` are **automatically translated** during a 6-month migration period. See [Migration Guide](#v08-migration-guide) below.
+
+### Command & Control
+
+| Code | Constant | Message Type | Category | Description |
+|------|----------|--------------|----------|-------------|
 | 400 | `COMMAND` | command | control | Device control command |
 | 401 | `COMMAND_RESPONSE` | command_response | control | Command execution result |
 | 402 | `CONTROL_RESPONSE` | control_response | control | Legacy control response (deprecated) |
+
+### Firmware & OTA
+
+| Code | Constant | Message Type | Category | Description |
+|------|----------|--------------|----------|-------------|
 | 500 | `FIRMWARE_STATUS` | firmware_status | ota | Firmware update status (enhanced v0.7.2+) |
+
+### Mesh Network
+
+| Code | Constant | Message Type | Category | Description |
+|------|----------|--------------|----------|-------------|
 | 600 | `MESH_NODE_LIST` | mesh_node_list | mesh | Mesh node inventory |
 | 601 | `MESH_TOPOLOGY` | mesh_topology | mesh | Mesh network topology |
 | 602 | `MESH_ALERT` | mesh_alert | mesh | Mesh network alert |
 | 603 | `MESH_BRIDGE` | mesh_bridge | mesh | Mesh protocol bridge (v0.7.1+) |
 | 604 | `MESH_STATUS` | mesh_status | mesh | Mesh network health status (v0.7.2+) |
 | 605 | `MESH_METRICS` | mesh_metrics | mesh | Mesh network performance metrics (v0.7.2+) |
+
+### Bridge Management (v0.8.0+)
+
+| Code | Constant | Message Type | Category | Description |
+|------|----------|--------------|----------|-------------|
+| 610 | `BRIDGE_STATUS` | bridge_status | bridge | Bridge health and connectivity broadcast |
+| 611 | `BRIDGE_ELECTION` | bridge_election | bridge | RSSI-based bridge election candidacy |
+| 612 | `BRIDGE_TAKEOVER` | bridge_takeover | bridge | Bridge role takeover announcement |
+| 613 | `BRIDGE_COORDINATION` | bridge_coordination | bridge | Multi-bridge coordination and load balancing |
+| 614 | `TIME_SYNC_NTP` | time_sync_ntp | bridge | Bridge-to-mesh NTP time distribution |
+
+### Configuration & Efficiency
+
+| Code | Constant | Message Type | Category | Description |
+|------|----------|--------------|----------|-------------|
 | 700 | `DEVICE_CONFIG` | device_config | config | Device configuration management (v0.7.1+) |
-| 800 | `BATCH_ENVELOPE` | batch_envelope | efficiency | Message batching for high-volume scenarios (v0.7.3+) |
+| 800 | `BATCH_ENVELOPE` | batch_envelope | efficiency | Message batching for 50-90% protocol overhead reduction (v0.7.3+) |
 | 810 | `COMPRESSED_ENVELOPE` | compressed_envelope | efficiency | Compressed message envelope (v0.7.3+) |
 
-**Benefits:**
+### Benefits
+
 - **Significantly Faster**: O(1) lookup vs O(n) heuristic matching (avoids 12+ conditional checks)
 - **Protocol Alignment**: Compatible with CoAP and MQTT-SN numeric type systems
 - **Clear Intent**: Explicit message type declaration
 - **Efficient Routing**: Switch-case routing in backend systems
 - **Backward Compatible**: Falls back to heuristics if omitted
 
-**Usage:**
+### Usage
+
 ```ts
 import { MessageTypeCodes } from '@alteriom/mqtt-schema';
 
@@ -733,6 +788,81 @@ const message = {
   schema_version: 1,
   message_type: MessageTypeCodes.SENSOR_DATA, // 200
   // ... rest of message
+};
+```
+
+### v0.8 Migration Guide
+
+**Breaking Changes:**
+- `GATEWAY_INFO`: Code `300` → `305`
+- `GATEWAY_METRICS`: Code `301` → `306`
+
+**Migration Timeline (6 months):**
+1. **Phase 1 (Months 1-3)**: Both old and new codes accepted. Library automatically translates `300→305` and `301→306`.
+2. **Phase 2 (Months 4-6)**: Deprecation warnings logged for legacy codes.
+3. **Phase 3 (After 6 months)**: Legacy codes `300` and `301` rejected.
+
+**Action Required:**
+
+```ts
+// ❌ Old code (deprecated in v0.8.0)
+const message = {
+  message_type: 300, // gateway_info
+  // ...
+};
+
+// ✅ New code (v0.8.0+)
+const message = {
+  message_type: MessageTypeCodes.GATEWAY_INFO, // 305
+  // ...
+};
+
+// ✅ Better: Use unified device schemas (v0.8.0+)
+const message = {
+  message_type: MessageTypeCodes.DEVICE_INFO, // 104
+  device_role: 'gateway', // Explicit role indicator
+  // ...
+};
+```
+
+**Legacy Code Translation:**
+
+The library includes `LEGACY_CODE_MAP` for automatic translation:
+
+```ts
+import { LEGACY_CODE_MAP } from '@alteriom/mqtt-schema';
+
+console.log(LEGACY_CODE_MAP); // { 300: 305, 301: 306 }
+
+// Automatic translation in classifyAndValidate()
+const oldMessage = { message_type: 301, /* ... */ };
+const { kind, result } = classifyAndValidate(oldMessage);
+// kind === 'gatewayMetrics' (automatically translated 301→306)
+```
+
+**HTTP Transport Support (v0.8.0+):**
+
+New `transport_metadata` field enables HTTP REST API integration:
+
+```ts
+const httpMessage = {
+  schema_version: 1,
+  message_type: 101, // DEVICE_DATA
+  device_id: 'SN001',
+  device_type: 'sensor',
+  timestamp: new Date().toISOString(),
+  firmware_version: 'SN 2.1.5',
+  transport_metadata: {
+    protocol: 'http',
+    correlation_id: 'req-12345',
+    http: {
+      method: 'POST',
+      path: '/api/v1/telemetry',
+      status_code: 200,
+      request_id: 'req-uuid-12345'
+    }
+  },
+  sensors: { temp: { value: 22.5, unit: 'C' } }
 };
 ```
 
@@ -990,3 +1120,25 @@ npm run metadata:apply      # apply changes (requires proper permissions via GIT
 ```
 
 Note: Applying metadata modifies repository settings (description, topics) through the GitHub API; ensure the default token has the necessary repo scopes (in public repositories the workflow GITHUB_TOKEN normally suffices for these fields).
+
+## Additional Documentation
+
+This repository maintains comprehensive documentation across several locations:
+
+### Root Documentation
+- **[CHANGELOG.md](./CHANGELOG.md)** - Complete version history with breaking changes and migration guides
+- **[ROADMAP.md](./ROADMAP.md)** - Planned features and development timeline
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Guidelines for contributing to the project
+- **[SECURITY.md](./SECURITY.md)** - Security policy and vulnerability reporting
+- **[PUBLISH_CHECKLIST.md](./PUBLISH_CHECKLIST.md)** - Release process and verification steps
+- **[API_MONITOR_GUIDE.md](./API_MONITOR_GUIDE.md)** - Integration guide for monitoring systems
+- **[V080_BREAKING_CHANGES.md](./V080_BREAKING_CHANGES.md)** - v0.8.0 migration guide (current)
+
+### docs/ Directory Structure
+- **[docs/README.md](./docs/README.md)** - Documentation index with quick links
+- **[docs/mqtt_schema/](./docs/mqtt_schema/)** - Authoritative schema definitions, types, and fixtures
+- **[docs/releases/](./docs/releases/)** - Historical release notes and summaries
+- **[docs/archive/](./docs/archive/)** - Development history and feature implementation documents
+
+See [docs/README.md](./docs/README.md) for the complete documentation structure.
+

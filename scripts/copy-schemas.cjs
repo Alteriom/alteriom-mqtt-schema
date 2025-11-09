@@ -17,26 +17,43 @@ fs.mkdirSync(destDir, { recursive: true });
 
 const copyList = [
   'envelope.schema.json',
+  // Unified Device Schemas (v0.8.0)
+  'device_data.schema.json',        // v0.8.0
+  'device_heartbeat.schema.json',   // v0.8.0
+  'device_status.schema.json',      // v0.8.0
+  'device_info.schema.json',        // v0.8.0
+  'device_metrics.schema.json',     // v0.8.0
+  // Sensor-Specific Schemas
   'sensor_data.schema.json',
   'sensor_heartbeat.schema.json',
   'sensor_status.schema.json',
   'sensor_info.schema.json',        // v0.7.2
   'sensor_metrics.schema.json',     // v0.7.2
+  // Gateway-Specific Schemas
   'gateway_info.schema.json',
   'gateway_metrics.schema.json',
   'gateway_data.schema.json',       // v0.7.2
   'gateway_heartbeat.schema.json',  // v0.7.2
   'gateway_status.schema.json',     // v0.7.2
+  // Firmware & Control
   'firmware_status.schema.json',
   'control_response.schema.json',
   'command.schema.json',
   'command_response.schema.json',
+  // Mesh Network
   'mesh_node_list.schema.json',
   'mesh_topology.schema.json',
   'mesh_alert.schema.json',
   'mesh_bridge.schema.json',
   'mesh_status.schema.json',        // v0.7.2
   'mesh_metrics.schema.json',       // v0.7.2
+  // Bridge Management
+  'bridge_status.schema.json',      // v0.8.0
+  'bridge_election.schema.json',    // v0.8.0
+  'bridge_takeover.schema.json',    // v0.8.0
+  'bridge_coordination.schema.json', // v0.8.0
+  'time_sync_ntp.schema.json',      // v0.8.0
+  // Configuration & Batching
   'device_config.schema.json',
   'batch_envelope.schema.json',     // v0.7.3
   'compressed_envelope.schema.json', // v0.7.3

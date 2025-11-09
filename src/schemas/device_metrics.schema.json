@@ -1,0 +1,240 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/device_metrics.schema.json",
+  "title": "Unified Device Metrics v1",
+  "description": "Unified health and performance metrics for all device types. Code 105. Replaces sensor_metrics (204) and gateway_metrics (306) for new deployments.",
+  "allOf": [
+    { "$ref": "envelope.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "message_type": {
+          "const": 105,
+          "description": "Unified device metrics message type"
+        },
+        "device_type": {
+          "type": "string",
+          "enum": ["sensor", "gateway", "bridge", "hybrid"],
+          "description": "Device type - supports all device roles"
+        },
+        "device_role": {
+          "type": "string",
+          "enum": ["sensor", "gateway", "bridge", "hybrid"],
+          "description": "Primary device role - may differ from device_type for hybrid deployments"
+        },
+        "firmware_version": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Firmware version (required for device_metrics)"
+        },
+        "metrics": {
+          "type": "object",
+          "description": "Device health and performance metrics",
+          "properties": {
+            "uptime_s": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Device uptime in seconds since last boot"
+            },
+            "battery_level": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Battery level percentage (0-100)"
+            },
+            "battery_voltage": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Battery voltage in volts"
+            },
+            "battery_current_ma": {
+              "type": "number",
+              "description": "Battery current draw in milliamps"
+            },
+            "battery_health": {
+              "type": "string",
+              "enum": ["good", "fair", "poor", "critical", "charging", "unknown"],
+              "description": "Battery health status"
+            },
+            "estimated_battery_life_h": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Estimated remaining battery life in hours"
+            },
+            "signal_strength": {
+              "type": "number",
+              "minimum": -200,
+              "maximum": 0,
+              "description": "Signal strength in dBm (-200 to 0)"
+            },
+            "signal_quality": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Signal quality percentage (0-100)"
+            },
+            "rssi": {
+              "type": "number",
+              "minimum": -200,
+              "maximum": 0,
+              "description": "RSSI (Received Signal Strength Indicator) in dBm"
+            },
+            "snr": {
+              "type": "number",
+              "description": "Signal-to-Noise Ratio in dB"
+            },
+            "link_quality": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 255,
+              "description": "Link Quality Indicator (LQI) for mesh/zigbee networks"
+            },
+            "cpu_usage_pct": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "CPU usage percentage"
+            },
+            "memory_usage_pct": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Memory usage percentage"
+            },
+            "free_memory_bytes": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Free memory in bytes"
+            },
+            "temperature_c": {
+              "type": "number",
+              "description": "Internal/board temperature in Celsius"
+            },
+            "connected_devices": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of connected devices (for gateways/bridges)"
+            },
+            "mesh_nodes": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of mesh nodes (for mesh-enabled devices)"
+            },
+            "sampling_rate_hz": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Current sampling rate in Hz"
+            },
+            "samples_collected": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total samples collected since boot"
+            },
+            "packet_loss_pct": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Packet loss percentage"
+            },
+            "data_throughput_kbps": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Data throughput in kilobits per second"
+            },
+            "storage_usage_pct": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Storage usage percentage"
+            },
+            "storage_total_mb": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Total storage capacity in megabytes"
+            },
+            "storage_free_mb": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Free storage space in megabytes"
+            },
+            "network_rx_kbps": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Network receive bandwidth in kilobits per second"
+            },
+            "network_tx_kbps": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Network transmit bandwidth in kilobits per second"
+            },
+            "active_connections": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of active network connections"
+            },
+            "error_count": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total error count since boot"
+            },
+            "warning_count": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total warning count since boot"
+            },
+            "error_count_24h": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Error count in last 24 hours"
+            },
+            "warning_count_24h": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Warning count in last 24 hours"
+            },
+            "transmission_success_rate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Message transmission success rate percentage"
+            },
+            "last_error": {
+              "type": "string",
+              "maxLength": 256,
+              "description": "Last error message"
+            },
+            "last_error_timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Timestamp of last error (ISO 8601)"
+            },
+            "reboot_count": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of reboots since deployment"
+            },
+            "restart_count": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total restart counter since deployment"
+            },
+            "last_reboot_reason": {
+              "type": "string",
+              "enum": ["power_on", "watchdog", "software_reset", "firmware_update", "crash", "user_initiated", "low_battery", "power_loss", "manual", "update", "unknown"],
+              "description": "Reason for last reboot"
+            },
+            "last_restart_reason": {
+              "type": "string",
+              "maxLength": 128,
+              "description": "Reason for last restart (freeform text)"
+            }
+          },
+          "required": ["uptime_s"],
+          "additionalProperties": true
+        }
+      },
+      "required": ["device_type", "firmware_version", "metrics"],
+      "additionalProperties": true
+    }
+  ]
+}

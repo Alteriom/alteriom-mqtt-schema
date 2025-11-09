@@ -2,12 +2,16 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.alteriom.io/mqtt/v1/gateway_data.schema.json",
   "title": "Gateway Data Message",
-  "description": "Gateway telemetry data message (v0.7.2+). Similar to sensor_data but for gateway-originated sensor readings (environmental sensors on gateway device).",
+  "description": "Gateway telemetry data message. Code 302 aligns with sensor_data pattern. Use device_data (101) for new unified deployments.",
   "allOf": [
     { "$ref": "envelope.schema.json" },
     {
       "type": "object",
       "properties": {
+        "message_type": {
+          "const": 302,
+          "description": "Message type code for gateway_data (no change in v0.8.0)"
+        },
         "device_type": {
           "const": "gateway",
           "description": "Must be 'gateway' for gateway data messages"

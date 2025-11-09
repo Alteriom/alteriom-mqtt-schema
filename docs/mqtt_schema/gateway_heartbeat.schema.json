@@ -2,12 +2,16 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.alteriom.io/mqtt/v1/gateway_heartbeat.schema.json",
   "title": "Gateway Heartbeat Message",
-  "description": "Gateway presence and health check message (v0.7.2+). Minimal message to indicate gateway is alive and responsive.",
+  "description": "Gateway presence and health check message. v0.8.0: No breaking changes (stays at 303). Use device_heartbeat (102) for new unified deployments.",
   "allOf": [
     { "$ref": "envelope.schema.json" },
     {
       "type": "object",
       "properties": {
+        "message_type": {
+          "const": 303,
+          "description": "Message type code for gateway_heartbeat (v0.8.0: unchanged, stays at 303)"
+        },
         "device_type": {
           "const": "gateway",
           "description": "Must be 'gateway' for gateway heartbeat messages"

@@ -8,11 +8,11 @@
     "schema_version": {"type": "integer", "const": 1},
     "message_type": {
       "type": "integer",
-      "description": "Optional message type code for fast classification (v0.7.2)",
-      "enum": [200, 201, 202, 203, 204, 300, 301, 302, 303, 304, 400, 401, 402, 500, 600, 601, 602, 603, 604, 605, 700]
+      "description": "Optional message type code for fast classification (v0.7.2+, v0.8.0 adds 10x unified range). Legacy codes 300,301 supported during migration.",
+      "enum": [101, 102, 103, 104, 105, 200, 201, 202, 203, 204, 300, 301, 302, 303, 304, 305, 306, 400, 401, 402, 500, 600, 601, 602, 603, 604, 605, 610, 611, 612, 613, 614, 700]
     },
     "device_id": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[A-Za-z0-9_-]+$"},
-    "device_type": {"type": "string", "enum": ["sensor", "gateway"]},
+    "device_type": {"type": "string", "enum": ["sensor", "gateway", "bridge", "hybrid"]},
     "timestamp": {"type": "string", "format": "date-time"},
     "firmware_version": {"type": "string", "minLength": 1, "maxLength": 40},
     "hardware_version": {"type": "string", "maxLength": 80},
@@ -36,6 +36,83 @@
         "deployment_type": {"type": "string", "enum": ["indoor", "outdoor", "mobile", "mixed"], "description": "Type of deployment environment"},
         "power_source": {"type": "string", "enum": ["battery", "mains", "solar", "mixed", "other"], "description": "Primary power source"},
         "expected_battery_life_days": {"type": "integer", "minimum": 0, "description": "Expected battery life in days (if battery-powered)"}
+      },
+      "additionalProperties": true
+    },
+    "transport_metadata": {
+      "type": "object",
+      "description": "Transport-layer metadata for HTTP/MQTT delivery context (v0.8.0+)",
+      "properties": {
+        "protocol": {
+          "type": "string",
+          "enum": ["mqtt", "http", "https"],
+          "description": "Transport protocol used for message delivery"
+        },
+        "correlation_id": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "Correlation ID for request/response tracking across protocols"
+        },
+        "http": {
+          "type": "object",
+          "description": "HTTP-specific transport metadata",
+          "properties": {
+            "method": {
+              "type": "string",
+              "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"],
+              "description": "HTTP method used"
+            },
+            "path": {
+              "type": "string",
+              "maxLength": 512,
+              "description": "Request path (e.g., /api/v1/devices/{id}/telemetry)"
+            },
+            "status_code": {
+              "type": "integer",
+              "minimum": 100,
+              "maximum": 599,
+              "description": "HTTP response status code"
+            },
+            "request_id": {
+              "type": "string",
+              "maxLength": 128,
+              "description": "Unique HTTP request identifier"
+            },
+            "headers": {
+              "type": "object",
+              "description": "Relevant HTTP headers (sanitized, no auth tokens)",
+              "additionalProperties": {"type": "string"}
+            }
+          },
+          "additionalProperties": true
+        },
+        "mqtt": {
+          "type": "object",
+          "description": "MQTT-specific transport metadata",
+          "properties": {
+            "topic": {
+              "type": "string",
+              "maxLength": 256,
+              "description": "MQTT topic where message was published"
+            },
+            "qos": {
+              "type": "integer",
+              "enum": [0, 1, 2],
+              "description": "MQTT Quality of Service level"
+            },
+            "retained": {
+              "type": "boolean",
+              "description": "Whether message was published with retain flag"
+            },
+            "message_id": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 65535,
+              "description": "MQTT message/packet identifier"
+            }
+          },
+          "additionalProperties": true
+        }
       },
       "additionalProperties": true
     }

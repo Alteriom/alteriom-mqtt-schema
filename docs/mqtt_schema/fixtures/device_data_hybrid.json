@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "message_type": 101,
+  "device_id": "UNI-HYBRID-001",
+  "device_type": "hybrid",
+  "device_role": "hybrid",
+  "timestamp": "2025-11-08T22:00:00.000Z",
+  "firmware_version": "UNI 1.0.0",
+  "hardware_version": "ESP32-S3-WROOM",
+  "sensors": {
+    "temperature": {
+      "value": 23.1,
+      "unit": "C",
+      "accuracy": 0.5
+    },
+    "pressure": {
+      "value": 1013.25,
+      "unit": "hPa",
+      "accuracy": 1.0
+    }
+  },
+  "connected_devices": 8,
+  "mesh_nodes": 5,
+  "location": {
+    "latitude": 40.7128,
+    "longitude": -74.0060,
+    "zone": "rooftop_station",
+    "description": "Weather station with mesh gateway"
+  },
+  "transport_metadata": {
+    "protocol": "mqtt",
+    "mqtt": {
+      "topic": "alteriom/v1/devices/UNI-HYBRID-001/telemetry",
+      "qos": 1,
+      "retained": false
+    }
+  }
+}

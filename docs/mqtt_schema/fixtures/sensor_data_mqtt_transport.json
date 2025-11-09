@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "message_type": 200,
+  "device_id": "MQTT-SN-001",
+  "device_type": "sensor",
+  "timestamp": "2025-11-08T22:30:00.000Z",
+  "firmware_version": "MQTT 2.1.0",
+  "sensors": {
+    "humidity": {
+      "value": 52.8,
+      "unit": "%"
+    }
+  },
+  "transport_metadata": {
+    "protocol": "mqtt",
+    "correlation_id": "msg-humidity-001",
+    "mqtt": {
+      "topic": "alteriom/v1/sensors/MQTT-SN-001/data",
+      "qos": 1,
+      "retained": false,
+      "message_id": 54321
+    }
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/device_data.schema.json",
+  "title": "Unified Device Data Message v1",
+  "description": "Unified telemetry data message for all device types (sensors, gateways, bridges, hybrids). Code 101. Replaces sensor_data (200) and gateway_data (302) for new deployments.",
+  "allOf": [
+    { "$ref": "envelope.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "message_type": {
+          "const": 101,
+          "description": "Unified device data message type"
+        },
+        "device_type": {
+          "type": "string",
+          "enum": ["sensor", "gateway", "bridge", "hybrid"],
+          "description": "Device type - supports all device roles"
+        },
+        "device_role": {
+          "type": "string",
+          "enum": ["sensor", "gateway", "bridge", "hybrid"],
+          "description": "Primary device role - may differ from device_type for hybrid deployments"
+        },
+        "firmware_version": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Firmware version (required for device_data)"
+        },
+        "sensors": {
+          "type": "object",
+          "description": "Sensor readings from device's onboard sensors",
+          "patternProperties": {
+            "^[a-z0-9_]+$": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "description": "Sensor reading value (required)"
+                },
+                "unit": {
+                  "type": "string",
+                  "description": "Unit of measurement (e.g., 'celsius', 'percent', 'ppm')"
+                },
+                "raw_value": {
+                  "type": "number",
+                  "description": "Raw ADC or uncalibrated value"
+                },
+                "calibrated_value": {
+                  "type": "number",
+                  "description": "Calibrated sensor value"
+                },
+                "quality_score": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1,
+                  "description": "Data quality score (0-1, 1 = best)"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Human-readable sensor name"
+                },
+                "location": {
+                  "type": "string",
+                  "description": "Physical location of sensor on device"
+                },
+                "timestamp": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Per-sensor reading timestamp (ISO 8601)"
+                },
+                "accuracy": {
+                  "type": "number",
+                  "minimum": 0,
+                  "description": "Sensor accuracy (±value in units)"
+                },
+                "last_calibration": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Last calibration date (ISO 8601)"
+                },
+                "error_margin_pct": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100,
+                  "description": "Error margin percentage (0-100)"
+                },
+                "operational_range": {
+                  "type": "object",
+                  "properties": {
+                    "min": { "type": "number" },
+                    "max": { "type": "number" }
+                  },
+                  "required": ["min", "max"],
+                  "description": "Operational range limits",
+                  "additionalProperties": false
+                },
+                "additional_data": {
+                  "type": "object",
+                  "description": "Additional sensor-specific metadata",
+                  "additionalProperties": true
+                }
+              },
+              "required": ["value"],
+              "additionalProperties": true
+            }
+          },
+          "minProperties": 1,
+          "additionalProperties": false
+        },
+        "battery_level": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Battery level percentage (0-100)"
+        },
+        "signal_strength": {
+          "type": "number",
+          "minimum": -200,
+          "maximum": 0,
+          "description": "WiFi/network signal strength in dBm"
+        },
+        "additional": {
+          "type": "object",
+          "description": "Additional device-specific data",
+          "additionalProperties": true
+        }
+      },
+      "required": ["device_type", "firmware_version", "sensors"],
+      "additionalProperties": true
+    }
+  ]
+}

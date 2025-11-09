@@ -2,10 +2,15 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.alteriom.io/mqtt/v1/gateway_metrics.schema.json",
   "title": "Gateway Metrics v1",
+  "description": "Gateway health and performance metrics. BREAKING v0.8.0: message_type changed from 301 to 306 for alignment with sensor_metrics (204). Use device_metrics (105) for new deployments.",
   "allOf": [{"$ref": "envelope.schema.json"}],
   "type": "object",
   "required": ["metrics"],
   "properties": {
+    "message_type": {
+      "enum": [301, 306],
+      "description": "Message type code for gateway_metrics. v0.8.0 BREAKING: changed from 301 to 306. Both codes accepted for backward compatibility during migration period."
+    },
     "metrics": {
       "type": "object",
       "required": ["uptime_s"],

@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/bridge_election.schema.json",
+  "title": "Bridge Election Message",
+  "description": "RSSI-based bridge election candidacy announcement (Type 611)",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "envelope.schema.json"
+    }
+  ],
+  "properties": {
+    "message_type": {
+      "const": 611,
+      "description": "Message type code for bridge election messages"
+    },
+    "event": {
+      "const": "bridge_election",
+      "description": "Event identifier for bridge election candidacy"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "candidate_node_id",
+        "router_rssi",
+        "uptime_s",
+        "bridge_priority"
+      ],
+      "properties": {
+        "candidate_node_id": {
+          "type": "integer",
+          "description": "Unique identifier of the candidate node",
+          "minimum": 1
+        },
+        "router_rssi": {
+          "type": "integer",
+          "description": "Router signal strength in dBm (primary election criterion - higher wins)",
+          "minimum": -200,
+          "maximum": 0
+        },
+        "uptime_s": {
+          "type": "integer",
+          "description": "Node uptime in seconds (tiebreaker - higher preferred)",
+          "minimum": 0
+        },
+        "bridge_priority": {
+          "type": "integer",
+          "description": "Configured bridge priority (0-255, higher wins)",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "power_source": {
+          "type": "string",
+          "enum": ["mains", "battery", "solar", "unknown"],
+          "description": "Node power source (mains preferred for stability)"
+        },
+        "previous_bridge_role": {
+          "type": "string",
+          "enum": ["primary", "secondary", "backup", "standby", "none"],
+          "description": "Previous bridge role (experience indicator)"
+        },
+        "memory_free_kb": {
+          "type": "integer",
+          "description": "Free memory in kilobytes (resource availability)",
+          "minimum": 0
+        },
+        "battery_level": {
+          "type": "integer",
+          "description": "Battery level percentage (for battery-powered nodes)",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "triggered_by": {
+          "type": "string",
+          "enum": ["bridge_offline", "internet_lost", "manual_trigger", "periodic_health_check"],
+          "description": "Event that triggered this election"
+        },
+        "election_round": {
+          "type": "integer",
+          "description": "Election round number (increments on retries)",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

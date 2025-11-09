@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/device_status.schema.json",
+  "title": "Unified Device Status v1",
+  "description": "Unified status change notification for all device types. Code 103. Replaces sensor_status (202) and gateway_status (304) for new deployments.",
+  "allOf": [
+    { "$ref": "envelope.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "message_type": {
+          "const": 103,
+          "description": "Unified device status message type"
+        },
+        "device_type": {
+          "type": "string",
+          "enum": ["sensor", "gateway", "bridge", "hybrid"],
+          "description": "Device type - supports all device roles"
+        },
+        "device_role": {
+          "type": "string",
+          "enum": ["sensor", "gateway", "bridge", "hybrid"],
+          "description": "Primary device role - may differ from device_type for hybrid deployments"
+        },
+        "firmware_version": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Firmware version (required for device_status)"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["online", "offline", "starting", "stopping", "updating", "maintenance", "error", "degraded"],
+          "description": "Current device operational status"
+        },
+        "previous_status": {
+          "type": "string",
+          "enum": ["online", "offline", "starting", "stopping", "updating", "maintenance", "error", "degraded"],
+          "description": "Previous status before this change"
+        },
+        "status_reason": {
+          "type": "string",
+          "maxLength": 256,
+          "description": "Human-readable reason for status change"
+        },
+        "error_code": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "Machine-readable error code if status is 'error'"
+        },
+        "uptime_s": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Device uptime in seconds"
+        },
+        "connected_devices": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of connected devices (for gateways/bridges)"
+        },
+        "battery_level": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Battery level percentage (0-100) for battery-powered devices"
+        },
+        "signal_strength": {
+          "type": "number",
+          "minimum": -200,
+          "maximum": 0,
+          "description": "Network signal strength in dBm"
+        },
+        "recovery_action": {
+          "type": "string",
+          "enum": ["none", "restart_pending", "restarting", "user_intervention_required", "automatic_recovery"],
+          "description": "Planned or ongoing recovery action"
+        },
+        "estimated_recovery_time_s": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Estimated time to recovery in seconds"
+        }
+      },
+      "required": ["device_type", "firmware_version", "status"],
+      "additionalProperties": true
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/bridge_takeover.schema.json",
+  "title": "Bridge Takeover Message",
+  "description": "Bridge role takeover announcement after successful election (Type 612)",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "envelope.schema.json"
+    }
+  ],
+  "properties": {
+    "message_type": {
+      "const": 612,
+      "description": "Message type code for bridge takeover messages"
+    },
+    "event": {
+      "const": "bridge_takeover",
+      "description": "Event identifier for bridge role takeover"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "new_bridge_node_id",
+        "takeover_reason",
+        "router_rssi"
+      ],
+      "properties": {
+        "new_bridge_node_id": {
+          "type": "integer",
+          "description": "Node ID of the new bridge (election winner)",
+          "minimum": 1
+        },
+        "previous_bridge_node_id": {
+          "type": "integer",
+          "description": "Node ID of the previous bridge (if applicable)",
+          "minimum": 1
+        },
+        "takeover_reason": {
+          "type": "string",
+          "enum": [
+            "election_winner",
+            "failover_triggered",
+            "manual_assignment",
+            "configuration_change",
+            "bridge_offline",
+            "internet_lost",
+            "priority_changed"
+          ],
+          "description": "Reason for bridge role takeover"
+        },
+        "router_rssi": {
+          "type": "integer",
+          "description": "New bridge router signal strength in dBm",
+          "minimum": -200,
+          "maximum": 0
+        },
+        "gateway_ip": {
+          "type": "string",
+          "description": "New bridge gateway IP address",
+          "format": "ipv4"
+        },
+        "local_ip": {
+          "type": "string",
+          "description": "New bridge local IP address",
+          "format": "ipv4"
+        },
+        "router_ssid": {
+          "type": "string",
+          "description": "Connected router SSID",
+          "maxLength": 32
+        },
+        "election_participants": {
+          "type": "integer",
+          "description": "Number of nodes that participated in election",
+          "minimum": 1
+        },
+        "election_duration_ms": {
+          "type": "integer",
+          "description": "Election duration in milliseconds",
+          "minimum": 0
+        },
+        "winning_rssi": {
+          "type": "integer",
+          "description": "Winning candidate RSSI (primary criterion)",
+          "minimum": -200,
+          "maximum": 0
+        },
+        "services_ready": {
+          "type": "boolean",
+          "description": "All bridge services (MQTT, NTP, etc.) are operational"
+        },
+        "mqtt_connected": {
+          "type": "boolean",
+          "description": "MQTT broker connection status"
+        },
+        "ntp_synced": {
+          "type": "boolean",
+          "description": "NTP time synchronization status"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

@@ -2,9 +2,14 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.alteriom.io/mqtt/v1/gateway_info.schema.json",
   "title": "Gateway Info v1",
+  "description": "Gateway identification and capabilities. BREAKING v0.8.0: message_type changed from 300 to 305 for alignment with sensor_info (203). Use device_info (104) for new deployments.",
   "allOf": [{"$ref": "envelope.schema.json"}],
   "type": "object",
   "properties": {
+    "message_type": {
+      "enum": [300, 305],
+      "description": "Message type code for gateway_info. v0.8.0 BREAKING: changed from 300 to 305. Both codes accepted for backward compatibility during migration period."
+    },
     "mac_address": {"type": "string", "pattern": "^[0-9A-Fa-f:]{17}$"},
     "ip_address": {"type": "string", "format": "ipv4"},
     "capabilities": {

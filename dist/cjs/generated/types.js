@@ -2,11 +2,16 @@
 /**
  * Auto-generated TypeScript types for Alteriom MQTT Schema v1
  * Source: docs/mqtt_schema/*.schema.json
- * Generation Date: 2025-10-23 (v0.7.2)
+ * Generation Date: 2025-11-08 (v0.8.0 BREAKING CHANGES)
  * NOTE: This file is maintained in firmware repo for UI alignment. Changes require coordinated review.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MessageTypeCodes = void 0;
+exports.LEGACY_CODE_MAP = exports.MessageTypeCodes = void 0;
+exports.isDeviceDataMessage = isDeviceDataMessage;
+exports.isDeviceHeartbeatMessage = isDeviceHeartbeatMessage;
+exports.isDeviceStatusMessage = isDeviceStatusMessage;
+exports.isDeviceInfoMessage = isDeviceInfoMessage;
+exports.isDeviceMetricsMessage = isDeviceMetricsMessage;
 exports.isSensorDataMessage = isSensorDataMessage;
 exports.isSensorHeartbeatMessage = isSensorHeartbeatMessage;
 exports.isSensorStatusMessage = isSensorStatusMessage;
@@ -28,40 +33,86 @@ exports.isMeshBridgeMessage = isMeshBridgeMessage;
 exports.isDeviceConfigMessage = isDeviceConfigMessage;
 exports.isMeshStatusMessage = isMeshStatusMessage;
 exports.isMeshMetricsMessage = isMeshMetricsMessage;
+exports.isBridgeStatusMessage = isBridgeStatusMessage;
+exports.isBridgeElectionMessage = isBridgeElectionMessage;
+exports.isBridgeTakeoverMessage = isBridgeTakeoverMessage;
+exports.isBridgeCoordinationMessage = isBridgeCoordinationMessage;
+exports.isTimeSyncNtpMessage = isTimeSyncNtpMessage;
 exports.classifyMessage = classifyMessage;
 exports.basicValidate = basicValidate;
 exports.isBatchEnvelopeMessage = isBatchEnvelopeMessage;
 exports.isCompressedEnvelopeMessage = isCompressedEnvelopeMessage;
 exports.parseMessage = parseMessage;
 // ------------------------------------------------------------
-// Message Type Codes (v0.7.2)
+// Message Type Codes (v0.8.0 BREAKING CHANGES)
 // ------------------------------------------------------------
 exports.MessageTypeCodes = {
+    // Unified Device Codes (v0.8.0+) - Recommended for new deployments
+    DEVICE_DATA: 101, // v0.8.0 - Unified telemetry (replaces 200, 302)
+    DEVICE_HEARTBEAT: 102, // v0.8.0 - Unified heartbeat (replaces 201, 303)
+    DEVICE_STATUS: 103, // v0.8.0 - Unified status (replaces 202, 304)
+    DEVICE_INFO: 104, // v0.8.0 - Unified info (replaces 203, 305)
+    DEVICE_METRICS: 105, // v0.8.0 - Unified metrics (replaces 204, 306)
+    // Sensor-Specific Codes (20x) - No breaking changes
     SENSOR_DATA: 200,
     SENSOR_HEARTBEAT: 201,
     SENSOR_STATUS: 202,
     SENSOR_INFO: 203, // v0.7.2
     SENSOR_METRICS: 204, // v0.7.2
-    GATEWAY_INFO: 300,
-    GATEWAY_METRICS: 301,
-    GATEWAY_DATA: 302, // v0.7.2
-    GATEWAY_HEARTBEAT: 303, // v0.7.2
-    GATEWAY_STATUS: 304, // v0.7.2
+    // Gateway-Specific Codes (30x) - BREAKING: 300→305, 301→306
+    GATEWAY_DATA: 302, // v0.7.2 (no change)
+    GATEWAY_HEARTBEAT: 303, // v0.7.2 (no change)
+    GATEWAY_STATUS: 304, // v0.7.2 (no change)
+    GATEWAY_INFO: 305, // v0.8.0 BREAKING - was 300
+    GATEWAY_METRICS: 306, // v0.8.0 BREAKING - was 301
+    // Command & Control
     COMMAND: 400,
     COMMAND_RESPONSE: 401,
     CONTROL_RESPONSE: 402, // deprecated
+    // Firmware Updates
     FIRMWARE_STATUS: 500,
+    // Mesh Network
     MESH_NODE_LIST: 600,
     MESH_TOPOLOGY: 601,
     MESH_ALERT: 602,
     MESH_BRIDGE: 603,
     MESH_STATUS: 604, // v0.7.2
     MESH_METRICS: 605, // v0.7.2
+    // Bridge Management (painlessMesh v1.8.0)
+    BRIDGE_STATUS: 610, // v0.8.0 - painlessMesh v1.8.0 unified firmware
+    BRIDGE_ELECTION: 611, // v0.8.0 - RSSI-based failover election
+    BRIDGE_TAKEOVER: 612, // v0.8.0 - Bridge role takeover
+    BRIDGE_COORDINATION: 613, // v0.8.0 - Multi-bridge coordination
+    TIME_SYNC_NTP: 614, // v0.8.0 - Bridge NTP time distribution
+    // Configuration
     DEVICE_CONFIG: 700,
+    // Batching & Compression
     BATCH_ENVELOPE: 800, // v0.7.3
     COMPRESSED_ENVELOPE: 810, // v0.7.3
 };
+// Legacy code mapping for backward compatibility (v0.8.0)
+exports.LEGACY_CODE_MAP = {
+    300: 305, // gateway_info moved to 305
+    301: 306, // gateway_metrics moved to 306
+};
 // Type Guards ------------------------------------------------
+// Unified Device Type Guards (v0.8.0+)
+function isDeviceDataMessage(msg) {
+    return msg && msg.schema_version === 1 && ['sensor', 'gateway', 'bridge', 'hybrid'].includes(msg.device_type) && typeof msg.sensors === 'object' && (msg.message_type === 101 || msg.device_role !== undefined);
+}
+function isDeviceHeartbeatMessage(msg) {
+    return msg && msg.schema_version === 1 && ['sensor', 'gateway', 'bridge', 'hybrid'].includes(msg.device_type) && msg.message_type === 102;
+}
+function isDeviceStatusMessage(msg) {
+    return msg && msg.schema_version === 1 && ['sensor', 'gateway', 'bridge', 'hybrid'].includes(msg.device_type) && msg.message_type === 103 && typeof msg.status === 'string';
+}
+function isDeviceInfoMessage(msg) {
+    return msg && msg.schema_version === 1 && ['sensor', 'gateway', 'bridge', 'hybrid'].includes(msg.device_type) && msg.message_type === 104 && !!msg.firmware_version;
+}
+function isDeviceMetricsMessage(msg) {
+    return msg && msg.schema_version === 1 && ['sensor', 'gateway', 'bridge', 'hybrid'].includes(msg.device_type) && msg.message_type === 105 && typeof msg.metrics === 'object' && typeof msg.metrics.uptime_s === 'number';
+}
+// Sensor Type Guards
 function isSensorDataMessage(msg) {
     return msg && msg.schema_version === 1 && msg.device_type === 'sensor' && typeof msg.sensors === 'object';
 }
@@ -125,23 +176,50 @@ function isMeshStatusMessage(msg) {
 function isMeshMetricsMessage(msg) {
     return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && msg.mesh_network_id && typeof msg.metrics === 'object' && typeof msg.metrics.uptime_s === 'number';
 }
+function isBridgeStatusMessage(msg) {
+    return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && msg.event === 'bridge_status' && typeof msg.bridge_node_id !== 'undefined' && typeof msg.internet_connected === 'boolean';
+}
+function isBridgeElectionMessage(msg) {
+    return msg && msg.schema_version === 1 && msg.event === 'bridge_election' && typeof msg.candidate_node_id !== 'undefined' && typeof msg.router_rssi === 'number';
+}
+function isBridgeTakeoverMessage(msg) {
+    return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && msg.event === 'bridge_takeover' && typeof msg.new_bridge_node_id !== 'undefined' && typeof msg.takeover_reason === 'string';
+}
+function isBridgeCoordinationMessage(msg) {
+    return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && msg.event === 'bridge_coordination' && typeof msg.bridge_node_id !== 'undefined' && typeof msg.bridge_role === 'string';
+}
+function isTimeSyncNtpMessage(msg) {
+    return msg && msg.schema_version === 1 && msg.device_type === 'gateway' && msg.event === 'time_sync_ntp' && typeof msg.bridge_node_id !== 'undefined' && typeof msg.ntp_time_unix === 'number';
+}
 function classifyMessage(msg) {
-    // Fast path: use message_type if present (v0.7.2)
+    // Fast path: use message_type if present (v0.7.2+)
     if (msg.message_type) {
-        switch (msg.message_type) {
+        // Apply legacy code translation for v0.8.0 breaking changes
+        const translatedType = exports.LEGACY_CODE_MAP[msg.message_type] || msg.message_type;
+        switch (translatedType) {
+            // Unified device codes (v0.8.0+)
+            case exports.MessageTypeCodes.DEVICE_DATA: return isDeviceDataMessage(msg) ? msg : null;
+            case exports.MessageTypeCodes.DEVICE_HEARTBEAT: return isDeviceHeartbeatMessage(msg) ? msg : null;
+            case exports.MessageTypeCodes.DEVICE_STATUS: return isDeviceStatusMessage(msg) ? msg : null;
+            case exports.MessageTypeCodes.DEVICE_INFO: return isDeviceInfoMessage(msg) ? msg : null;
+            case exports.MessageTypeCodes.DEVICE_METRICS: return isDeviceMetricsMessage(msg) ? msg : null;
+            // Sensor-specific codes
             case exports.MessageTypeCodes.SENSOR_DATA: return isSensorDataMessage(msg) ? msg : null;
             case exports.MessageTypeCodes.SENSOR_HEARTBEAT: return isSensorHeartbeatMessage(msg) ? msg : null;
             case exports.MessageTypeCodes.SENSOR_STATUS: return isSensorStatusMessage(msg) ? msg : null;
             case exports.MessageTypeCodes.SENSOR_INFO: return isSensorInfoMessage(msg) ? msg : null;
             case exports.MessageTypeCodes.SENSOR_METRICS: return isSensorMetricsMessage(msg) ? msg : null;
+            // Gateway-specific codes (with BREAKING changes)
             case exports.MessageTypeCodes.GATEWAY_INFO: return isGatewayInfoMessage(msg) ? msg : null;
             case exports.MessageTypeCodes.GATEWAY_METRICS: return isGatewayMetricsMessage(msg) ? msg : null;
             case exports.MessageTypeCodes.GATEWAY_DATA: return isGatewayDataMessage(msg) ? msg : null;
             case exports.MessageTypeCodes.GATEWAY_HEARTBEAT: return isGatewayHeartbeatMessage(msg) ? msg : null;
             case exports.MessageTypeCodes.GATEWAY_STATUS: return isGatewayStatusMessage(msg) ? msg : null;
+            // Command & Control
             case exports.MessageTypeCodes.COMMAND: return isCommandMessage(msg) ? msg : null;
             case exports.MessageTypeCodes.COMMAND_RESPONSE: return isCommandResponseMessage(msg) ? msg : null;
             case exports.MessageTypeCodes.CONTROL_RESPONSE: return isControlResponseMessage(msg) ? msg : null;
+            // Firmware & Mesh
             case exports.MessageTypeCodes.FIRMWARE_STATUS: return isFirmwareStatusMessage(msg) ? msg : null;
             case exports.MessageTypeCodes.MESH_NODE_LIST: return isMeshNodeListMessage(msg) ? msg : null;
             case exports.MessageTypeCodes.MESH_TOPOLOGY: return isMeshTopologyMessage(msg) ? msg : null;
@@ -149,11 +227,29 @@ function classifyMessage(msg) {
             case exports.MessageTypeCodes.MESH_BRIDGE: return isMeshBridgeMessage(msg) ? msg : null;
             case exports.MessageTypeCodes.MESH_STATUS: return isMeshStatusMessage(msg) ? msg : null;
             case exports.MessageTypeCodes.MESH_METRICS: return isMeshMetricsMessage(msg) ? msg : null;
+            // Bridge Management
+            case exports.MessageTypeCodes.BRIDGE_STATUS: return isBridgeStatusMessage(msg) ? msg : null;
+            case exports.MessageTypeCodes.BRIDGE_ELECTION: return isBridgeElectionMessage(msg) ? msg : null;
+            case exports.MessageTypeCodes.BRIDGE_TAKEOVER: return isBridgeTakeoverMessage(msg) ? msg : null;
+            case exports.MessageTypeCodes.BRIDGE_COORDINATION: return isBridgeCoordinationMessage(msg) ? msg : null;
+            case exports.MessageTypeCodes.TIME_SYNC_NTP: return isTimeSyncNtpMessage(msg) ? msg : null;
+            // Configuration
             case exports.MessageTypeCodes.DEVICE_CONFIG: return isDeviceConfigMessage(msg) ? msg : null;
             default: return null;
         }
     }
     // Fallback: use heuristic classification for backward compatibility
+    // Priority: Unified device types → specific types → mesh/bridge → commands
+    if (isDeviceDataMessage(msg))
+        return msg;
+    if (isDeviceMetricsMessage(msg))
+        return msg;
+    if (isDeviceInfoMessage(msg))
+        return msg;
+    if (isDeviceStatusMessage(msg))
+        return msg;
+    if (isDeviceHeartbeatMessage(msg))
+        return msg;
     if (isSensorDataMessage(msg))
         return msg;
     if (isSensorMetricsMessage(msg))
@@ -173,6 +269,16 @@ function classifyMessage(msg) {
     if (isMeshStatusMessage(msg))
         return msg;
     if (isMeshMetricsMessage(msg))
+        return msg;
+    if (isBridgeStatusMessage(msg))
+        return msg;
+    if (isBridgeElectionMessage(msg))
+        return msg;
+    if (isBridgeTakeoverMessage(msg))
+        return msg;
+    if (isBridgeCoordinationMessage(msg))
+        return msg;
+    if (isTimeSyncNtpMessage(msg))
         return msg;
     if (isDeviceConfigMessage(msg))
         return msg;

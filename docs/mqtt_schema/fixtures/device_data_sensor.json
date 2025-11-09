@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "message_type": 101,
+  "device_id": "UNI-SN-001",
+  "device_type": "sensor",
+  "device_role": "sensor",
+  "timestamp": "2025-11-08T22:00:00.000Z",
+  "firmware_version": "UNI 1.0.0",
+  "hardware_version": "ESP32-C3",
+  "sensors": {
+    "temperature": {
+      "value": 22.5,
+      "unit": "C",
+      "accuracy": 0.5,
+      "timestamp": "2025-11-08T22:00:00.000Z"
+    },
+    "humidity": {
+      "value": 45.2,
+      "unit": "%",
+      "accuracy": 3.0,
+      "timestamp": "2025-11-08T22:00:00.000Z"
+    }
+  },
+  "location": {
+    "zone": "warehouse_A",
+    "description": "Temperature monitoring station"
+  }
+}

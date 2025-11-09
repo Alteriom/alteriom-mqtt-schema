@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/time_sync_ntp.schema.json",
+  "title": "Time Sync NTP Message",
+  "description": "Bridge-to-mesh NTP time distribution for synchronized timestamps (Type 614)",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "envelope.schema.json"
+    }
+  ],
+  "properties": {
+    "message_type": {
+      "const": 614,
+      "description": "Message type code for NTP time sync messages"
+    },
+    "event": {
+      "const": "time_sync_ntp",
+      "description": "Event identifier for NTP time synchronization"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "bridge_node_id",
+        "ntp_time_unix",
+        "ntp_server",
+        "accuracy_ms"
+      ],
+      "properties": {
+        "bridge_node_id": {
+          "type": "integer",
+          "description": "Node ID of the bridge distributing time",
+          "minimum": 1
+        },
+        "ntp_time_unix": {
+          "type": "integer",
+          "description": "Current Unix timestamp (seconds since epoch)",
+          "minimum": 0
+        },
+        "ntp_time_iso": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Current time in ISO 8601 format"
+        },
+        "ntp_server": {
+          "type": "string",
+          "description": "NTP server used for synchronization (e.g., pool.ntp.org)",
+          "maxLength": 255
+        },
+        "accuracy_ms": {
+          "type": "number",
+          "description": "Time accuracy in milliseconds (±)",
+          "minimum": 0
+        },
+        "stratum": {
+          "type": "integer",
+          "description": "NTP stratum level (1=primary reference, 2-15=secondary)",
+          "minimum": 1,
+          "maximum": 15
+        },
+        "timezone": {
+          "type": "string",
+          "description": "Timezone identifier (e.g., America/New_York, UTC)",
+          "maxLength": 64
+        },
+        "utc_offset_minutes": {
+          "type": "integer",
+          "description": "UTC offset in minutes (e.g., -300 for EST, 0 for UTC)",
+          "minimum": -720,
+          "maximum": 840
+        },
+        "last_sync_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of last successful NTP sync (ISO 8601)"
+        },
+        "sync_interval_s": {
+          "type": "integer",
+          "description": "NTP synchronization interval in seconds",
+          "minimum": 1
+        },
+        "sync_source": {
+          "type": "string",
+          "enum": ["ntp_server", "gps", "rtc_module", "cellular", "manual"],
+          "description": "Source of the authoritative time"
+        },
+        "confidence_level": {
+          "type": "string",
+          "enum": ["high", "medium", "low"],
+          "description": "Confidence in time accuracy (high: <50ms, medium: <500ms, low: >500ms)"
+        },
+        "network_latency_ms": {
+          "type": "number",
+          "description": "Network latency to NTP server in milliseconds",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

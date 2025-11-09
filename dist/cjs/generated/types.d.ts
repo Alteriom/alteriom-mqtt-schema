@@ -1,20 +1,25 @@
 /**
  * Auto-generated TypeScript types for Alteriom MQTT Schema v1
  * Source: docs/mqtt_schema/*.schema.json
- * Generation Date: 2025-10-23 (v0.7.2)
+ * Generation Date: 2025-11-08 (v0.8.0 BREAKING CHANGES)
  * NOTE: This file is maintained in firmware repo for UI alignment. Changes require coordinated review.
  */
 export declare const MessageTypeCodes: {
+    readonly DEVICE_DATA: 101;
+    readonly DEVICE_HEARTBEAT: 102;
+    readonly DEVICE_STATUS: 103;
+    readonly DEVICE_INFO: 104;
+    readonly DEVICE_METRICS: 105;
     readonly SENSOR_DATA: 200;
     readonly SENSOR_HEARTBEAT: 201;
     readonly SENSOR_STATUS: 202;
     readonly SENSOR_INFO: 203;
     readonly SENSOR_METRICS: 204;
-    readonly GATEWAY_INFO: 300;
-    readonly GATEWAY_METRICS: 301;
     readonly GATEWAY_DATA: 302;
     readonly GATEWAY_HEARTBEAT: 303;
     readonly GATEWAY_STATUS: 304;
+    readonly GATEWAY_INFO: 305;
+    readonly GATEWAY_METRICS: 306;
     readonly COMMAND: 400;
     readonly COMMAND_RESPONSE: 401;
     readonly CONTROL_RESPONSE: 402;
@@ -25,9 +30,18 @@ export declare const MessageTypeCodes: {
     readonly MESH_BRIDGE: 603;
     readonly MESH_STATUS: 604;
     readonly MESH_METRICS: 605;
+    readonly BRIDGE_STATUS: 610;
+    readonly BRIDGE_ELECTION: 611;
+    readonly BRIDGE_TAKEOVER: 612;
+    readonly BRIDGE_COORDINATION: 613;
+    readonly TIME_SYNC_NTP: 614;
     readonly DEVICE_CONFIG: 700;
     readonly BATCH_ENVELOPE: 800;
     readonly COMPRESSED_ENVELOPE: 810;
+};
+export declare const LEGACY_CODE_MAP: {
+    readonly 300: 305;
+    readonly 301: 306;
 };
 export type MessageTypeCode = typeof MessageTypeCodes[keyof typeof MessageTypeCodes];
 export interface LocationInfo {
@@ -45,16 +59,37 @@ export interface EnvironmentInfo {
     expected_battery_life_days?: number;
     [k: string]: unknown;
 }
+export interface TransportMetadata {
+    protocol?: 'mqtt' | 'http' | 'https';
+    correlation_id?: string;
+    http?: {
+        method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+        path?: string;
+        status_code?: number;
+        request_id?: string;
+        headers?: Record<string, string>;
+        [k: string]: unknown;
+    };
+    mqtt?: {
+        topic?: string;
+        qos?: 0 | 1 | 2;
+        retained?: boolean;
+        message_id?: number;
+        [k: string]: unknown;
+    };
+    [k: string]: unknown;
+}
 export interface BaseEnvelope {
     schema_version: 1;
     message_type?: MessageTypeCode;
     device_id: string;
-    device_type: 'sensor' | 'gateway';
+    device_type: 'sensor' | 'gateway' | 'bridge' | 'hybrid';
     timestamp: string;
     firmware_version?: string;
     hardware_version?: string;
     location?: LocationInfo;
     environment?: EnvironmentInfo;
+    transport_metadata?: TransportMetadata;
     [k: string]: unknown;
 }
 export interface SensorEntry {
@@ -235,6 +270,140 @@ export interface GatewayStatusMessage extends BaseEnvelope {
     recovery_action?: 'none' | 'restart_pending' | 'restarting' | 'user_intervention_required' | 'automatic_recovery';
     estimated_recovery_time_s?: number;
 }
+export interface DeviceDataMessage extends BaseEnvelope {
+    message_type?: 101;
+    device_type: 'sensor' | 'gateway' | 'bridge' | 'hybrid';
+    device_role?: 'sensor' | 'gateway' | 'bridge' | 'hybrid';
+    firmware_version: string;
+    sensors: Record<string, SensorEntry>;
+    battery_level?: number;
+    signal_strength?: number;
+    additional?: Record<string, unknown>;
+}
+export interface DeviceHeartbeatMessage extends BaseEnvelope {
+    message_type?: 102;
+    device_type: 'sensor' | 'gateway' | 'bridge' | 'hybrid';
+    device_role?: 'sensor' | 'gateway' | 'bridge' | 'hybrid';
+    firmware_version?: string;
+    uptime_s?: number;
+    connected_devices?: number;
+    mesh_nodes?: number;
+    status_summary?: 'healthy' | 'degraded' | 'critical' | 'maintenance';
+    battery_level?: number;
+    signal_strength?: number;
+}
+export interface DeviceStatusMessage extends BaseEnvelope {
+    message_type?: 103;
+    device_type: 'sensor' | 'gateway' | 'bridge' | 'hybrid';
+    device_role?: 'sensor' | 'gateway' | 'bridge' | 'hybrid';
+    firmware_version: string;
+    status: 'online' | 'offline' | 'starting' | 'stopping' | 'updating' | 'maintenance' | 'error' | 'degraded';
+    previous_status?: 'online' | 'offline' | 'starting' | 'stopping' | 'updating' | 'maintenance' | 'error' | 'degraded';
+    status_reason?: string;
+    error_code?: string;
+    uptime_s?: number;
+    connected_devices?: number;
+    battery_level?: number;
+    signal_strength?: number;
+    recovery_action?: 'none' | 'restart_pending' | 'restarting' | 'user_intervention_required' | 'automatic_recovery';
+    estimated_recovery_time_s?: number;
+}
+export interface DeviceInfoMessage extends BaseEnvelope {
+    message_type?: 104;
+    device_type: 'sensor' | 'gateway' | 'bridge' | 'hybrid';
+    device_role?: 'sensor' | 'gateway' | 'bridge' | 'hybrid';
+    firmware_version: string;
+    hardware_version?: string;
+    mac_address?: string;
+    ip_address?: string;
+    chip_id?: string;
+    manufacturer?: string;
+    model?: string;
+    capabilities?: {
+        available_sensors?: string[];
+        max_nodes?: number;
+        supports_mesh?: boolean;
+        supports_ota?: boolean;
+        firmware_update?: boolean;
+        power_source?: 'battery' | 'mains' | 'solar' | 'mixed' | 'other';
+        battery_type?: string;
+        sampling_rates?: {
+            min_interval_ms?: number;
+            max_interval_ms?: number;
+            [k: string]: unknown;
+        };
+        communication_protocols?: string[];
+        additional_features?: Record<string, unknown>;
+        [k: string]: unknown;
+    };
+    calibration_info?: {
+        last_calibration?: string;
+        calibration_due?: string;
+        factory_calibrated?: boolean;
+        calibration_certificate?: string;
+        [k: string]: unknown;
+    };
+    operational_info?: {
+        operating_temp_range?: {
+            min_celsius?: number;
+            max_celsius?: number;
+        };
+        operating_humidity_range?: {
+            min_percent?: number;
+            max_percent?: number;
+        };
+        ip_rating?: string;
+        warranty_expires?: string;
+        [k: string]: unknown;
+    };
+}
+export interface DeviceMetricsMessage extends BaseEnvelope {
+    message_type?: 105;
+    device_type: 'sensor' | 'gateway' | 'bridge' | 'hybrid';
+    device_role?: 'sensor' | 'gateway' | 'bridge' | 'hybrid';
+    firmware_version: string;
+    metrics: {
+        uptime_s: number;
+        battery_level?: number;
+        battery_voltage?: number;
+        battery_current_ma?: number;
+        battery_health?: 'good' | 'fair' | 'poor' | 'critical' | 'charging' | 'unknown';
+        estimated_battery_life_h?: number;
+        signal_strength?: number;
+        signal_quality?: number;
+        rssi?: number;
+        snr?: number;
+        link_quality?: number;
+        cpu_usage_pct?: number;
+        memory_usage_pct?: number;
+        free_memory_bytes?: number;
+        temperature_c?: number;
+        connected_devices?: number;
+        mesh_nodes?: number;
+        sampling_rate_hz?: number;
+        samples_collected?: number;
+        packet_loss_pct?: number;
+        data_throughput_kbps?: number;
+        storage_usage_pct?: number;
+        storage_total_mb?: number;
+        storage_free_mb?: number;
+        network_rx_kbps?: number;
+        network_tx_kbps?: number;
+        active_connections?: number;
+        error_count?: number;
+        warning_count?: number;
+        error_count_24h?: number;
+        warning_count_24h?: number;
+        transmission_success_rate?: number;
+        last_error?: string;
+        last_error_timestamp?: string;
+        reboot_count?: number;
+        restart_count?: number;
+        last_reboot_reason?: 'power_on' | 'watchdog' | 'software_reset' | 'firmware_update' | 'crash' | 'user_initiated' | 'low_battery' | 'power_loss' | 'manual' | 'update' | 'unknown';
+        last_restart_reason?: string;
+        [k: string]: unknown;
+    };
+}
 export interface FirmwareStatusMessage extends BaseEnvelope {
     status: 'idle' | 'pending' | 'scheduled' | 'downloading' | 'download_paused' | 'flashing' | 'verifying' | 'rebooting' | 'completed' | 'failed' | 'cancelled' | 'rolled_back' | 'rollback_pending' | 'rollback_failed';
     event?: string;
@@ -387,6 +556,7 @@ export interface DeviceConfigMessage extends BaseEnvelope {
         }>;
         network_config?: {
             wifi_ssid?: string;
+            wifi_password?: string;
             wifi_channel?: number;
             mesh_prefix?: string;
             mesh_password?: string;
@@ -394,6 +564,27 @@ export interface DeviceConfigMessage extends BaseEnvelope {
             mqtt_broker?: string;
             mqtt_port?: number;
             mqtt_topic_prefix?: string;
+        };
+        bridge_config?: {
+            can_be_bridge?: boolean;
+            router_ssid?: string;
+            router_password?: string;
+            router_channel?: number;
+            bridge_priority?: number;
+            bridge_role?: 'auto' | 'primary' | 'secondary' | 'backup' | 'disabled';
+            failover_enabled?: boolean;
+            election_timeout_s?: number;
+            status_broadcast_interval_s?: number;
+            bridge_selection_strategy?: 'priority_based' | 'round_robin' | 'best_signal' | 'load_balanced';
+            multi_bridge_enabled?: boolean;
+            max_bridges?: number;
+            rssi_threshold_dbm?: number;
+            prefer_mains_power?: boolean;
+            ntp_sync_enabled?: boolean;
+            ntp_server?: string;
+            ntp_sync_interval_s?: number;
+            time_broadcast_interval_s?: number;
+            [k: string]: unknown;
         };
         ota_config?: {
             auto_update?: boolean;
@@ -413,6 +604,169 @@ export interface DeviceConfigMessage extends BaseEnvelope {
         field?: string;
         error?: string;
     }>;
+}
+export interface BridgeStatusMessage extends BaseEnvelope {
+    device_type: 'gateway';
+    firmware_version: string;
+    message_type?: 610;
+    event: 'bridge_status';
+    bridge_node_id: number | string;
+    internet_connected: boolean;
+    router_ssid?: string;
+    router_rssi?: number;
+    router_channel?: number;
+    router_bssid?: string;
+    gateway_ip?: string;
+    local_ip?: string;
+    subnet_mask?: string;
+    dns_server?: string;
+    uptime_s?: number;
+    internet_uptime_s?: number;
+    bridge_priority?: number;
+    bridge_role?: 'primary' | 'secondary' | 'backup' | 'standby';
+    connected_nodes?: number;
+    queued_messages?: number;
+    messages_relayed_24h?: number;
+    total_disconnects?: number;
+    last_disconnect_reason?: string;
+    battery_level?: number;
+    free_memory_bytes?: number;
+    cpu_usage_pct?: number;
+    temperature_c?: number;
+    mesh_network_id?: string;
+    failover_enabled?: boolean;
+    backup_bridges?: (number | string)[];
+    health_status?: 'healthy' | 'degraded' | 'critical' | 'failing';
+    last_election_time?: string;
+    election_wins?: number;
+}
+export interface BridgeElectionMessage extends BaseEnvelope {
+    device_type: 'sensor' | 'gateway';
+    firmware_version: string;
+    message_type?: 611;
+    event: 'bridge_election';
+    candidate_node_id: number | string;
+    router_ssid?: string;
+    router_rssi: number;
+    router_channel?: number;
+    uptime_s?: number;
+    free_memory_bytes?: number;
+    battery_level?: number;
+    power_source?: 'battery' | 'mains' | 'solar' | 'mixed' | 'other';
+    bridge_priority?: number;
+    previous_bridge_role?: boolean;
+    can_become_bridge?: boolean;
+    router_credentials_set?: boolean;
+    election_round?: number;
+    triggered_by?: 'bridge_offline' | 'bridge_internet_lost' | 'manual' | 'periodic_check' | 'split_brain';
+    previous_bridge_node_id?: number | string;
+    mesh_network_id?: string;
+    cpu_usage_pct?: number;
+    temperature_c?: number;
+    election_timeout_s?: number;
+}
+export interface BridgeTakeoverMessage extends BaseEnvelope {
+    device_type: 'gateway';
+    firmware_version: string;
+    message_type?: 612;
+    event: 'bridge_takeover';
+    new_bridge_node_id: number | string;
+    previous_bridge_node_id?: number | string;
+    takeover_reason: 'election_winner' | 'primary_bridge_offline' | 'internet_connection_lost' | 'manual_promotion' | 'configuration_change' | 'failover_triggered' | 'split_brain_resolution' | 'scheduled_rotation';
+    router_ssid?: string;
+    router_rssi?: number;
+    gateway_ip?: string;
+    local_ip?: string;
+    internet_connected?: boolean;
+    bridge_priority?: number;
+    bridge_role?: 'primary' | 'secondary' | 'backup' | 'standby';
+    election_round?: number;
+    election_participants?: number;
+    election_duration_ms?: number;
+    winning_rssi?: number;
+    mesh_network_id?: string;
+    connected_nodes?: number;
+    queued_messages?: number;
+    failover_enabled?: boolean;
+    backup_bridges?: (number | string)[];
+    transition_time_ms?: number;
+    services_ready?: boolean;
+    mqtt_connected?: boolean;
+    ntp_synced?: boolean;
+}
+export interface BridgeCoordinationMessage extends BaseEnvelope {
+    device_type: 'gateway';
+    firmware_version: string;
+    message_type?: 613;
+    event: 'bridge_coordination';
+    bridge_node_id: number | string;
+    bridge_role: 'primary' | 'secondary' | 'backup' | 'standby';
+    bridge_priority?: number;
+    internet_connected?: boolean;
+    router_rssi?: number;
+    peer_bridges?: Array<{
+        node_id: number | string;
+        role?: 'primary' | 'secondary' | 'backup' | 'standby';
+        priority?: number;
+        internet_connected?: boolean;
+        last_seen?: string;
+        rssi?: number;
+        load_percentage?: number;
+        [k: string]: unknown;
+    }>;
+    load_percentage?: number;
+    connected_nodes?: number;
+    messages_relayed_1h?: number;
+    queued_messages?: number;
+    average_latency_ms?: number;
+    packet_loss_pct?: number;
+    selection_strategy?: 'priority_based' | 'round_robin' | 'best_signal' | 'traffic_type' | 'load_balanced';
+    traffic_routing?: {
+        alarm_messages?: number | string;
+        sensor_data?: number | string;
+        control_commands?: number | string;
+        firmware_updates?: number | string;
+        [k: string]: unknown;
+    };
+    mesh_network_id?: string;
+    coordination_enabled?: boolean;
+    max_bridges?: number;
+    failover_threshold_s?: number;
+    health_status?: 'healthy' | 'degraded' | 'critical' | 'failing';
+    conflict_resolution?: 'priority_wins' | 'rssi_wins' | 'newest_wins' | 'manual_override';
+    last_role_change?: string;
+    uptime_s?: number;
+    cpu_usage_pct?: number;
+    free_memory_bytes?: number;
+}
+export interface TimeSyncNtpMessage extends BaseEnvelope {
+    device_type: 'gateway';
+    firmware_version: string;
+    message_type?: 614;
+    event: 'time_sync_ntp';
+    bridge_node_id: number | string;
+    ntp_time_unix: number;
+    ntp_time_iso?: string;
+    ntp_server?: string;
+    accuracy_ms?: number;
+    stratum?: number;
+    last_sync_ago_s?: number;
+    sync_interval_s?: number;
+    timezone?: string;
+    utc_offset_minutes?: number;
+    daylight_saving?: boolean;
+    mesh_network_id?: string;
+    broadcast_interval_s?: number;
+    sync_source?: 'ntp_server' | 'gps' | 'rtc_module' | 'cellular' | 'manual' | 'other';
+    leap_indicator?: number;
+    reference_id?: string;
+    root_delay_ms?: number;
+    root_dispersion_ms?: number;
+    network_latency_ms?: number;
+    confidence_level?: number;
+    rtc_drift_ppm?: number;
+    requires_rtc_update?: boolean;
+    critical_timestamp?: boolean;
 }
 export interface MeshStatusMessage extends BaseEnvelope {
     device_type: 'gateway';
@@ -439,6 +793,25 @@ export interface MeshStatusMessage extends BaseEnvelope {
     }>;
     last_topology_change?: string;
     mesh_protocol?: 'painlessMesh' | 'esp-now' | 'ble-mesh' | 'thread' | 'zigbee';
+    active_bridges?: Array<{
+        bridge_node_id: number | string;
+        bridge_role?: 'primary' | 'secondary' | 'backup' | 'standby';
+        internet_connected?: boolean;
+        router_rssi?: number;
+        uptime_s?: number;
+        connected_nodes?: number;
+        priority?: number;
+        health_status?: 'healthy' | 'degraded' | 'critical' | 'failing';
+        last_seen?: string;
+        [k: string]: unknown;
+    }>;
+    primary_bridge_node_id?: number | string;
+    bridge_failover_enabled?: boolean;
+    last_bridge_election?: string;
+    bridge_election_count_24h?: number;
+    bridge_coordination_enabled?: boolean;
+    ntp_time_source?: number | string;
+    time_sync_status?: 'synced' | 'unsynchronized' | 'degraded' | 'unavailable';
 }
 export interface MeshMetricsMessage extends BaseEnvelope {
     device_type: 'gateway';
@@ -493,7 +866,7 @@ export interface MeshMetricsMessage extends BaseEnvelope {
         [k: string]: unknown;
     }>;
 }
-export type AnyMqttV1Message = SensorDataMessage | SensorHeartbeatMessage | SensorStatusMessage | SensorInfoMessage | SensorMetricsMessage | GatewayInfoMessage | GatewayMetricsMessage | GatewayDataMessage | GatewayHeartbeatMessage | GatewayStatusMessage | FirmwareStatusMessage | ControlResponseMessage | CommandMessage | CommandResponseMessage | MeshNodeListMessage | MeshTopologyMessage | MeshAlertMessage | MeshBridgeMessage | MeshStatusMessage | MeshMetricsMessage | DeviceConfigMessage | BatchEnvelopeMessage | CompressedEnvelopeMessage;
+export type AnyMqttV1Message = DeviceDataMessage | DeviceHeartbeatMessage | DeviceStatusMessage | DeviceInfoMessage | DeviceMetricsMessage | SensorDataMessage | SensorHeartbeatMessage | SensorStatusMessage | SensorInfoMessage | SensorMetricsMessage | GatewayInfoMessage | GatewayMetricsMessage | GatewayDataMessage | GatewayHeartbeatMessage | GatewayStatusMessage | FirmwareStatusMessage | ControlResponseMessage | CommandMessage | CommandResponseMessage | MeshNodeListMessage | MeshTopologyMessage | MeshAlertMessage | MeshBridgeMessage | MeshStatusMessage | MeshMetricsMessage | BridgeStatusMessage | BridgeElectionMessage | BridgeTakeoverMessage | BridgeCoordinationMessage | TimeSyncNtpMessage | DeviceConfigMessage | BatchEnvelopeMessage | CompressedEnvelopeMessage;
 export interface BatchEnvelopeMessage extends BaseEnvelope {
     message_type: 800;
     batch_id: string;
@@ -524,6 +897,11 @@ export interface CompressedEnvelopeMessage extends BaseEnvelope {
         [k: string]: unknown;
     };
 }
+export declare function isDeviceDataMessage(msg: any): msg is DeviceDataMessage;
+export declare function isDeviceHeartbeatMessage(msg: any): msg is DeviceHeartbeatMessage;
+export declare function isDeviceStatusMessage(msg: any): msg is DeviceStatusMessage;
+export declare function isDeviceInfoMessage(msg: any): msg is DeviceInfoMessage;
+export declare function isDeviceMetricsMessage(msg: any): msg is DeviceMetricsMessage;
 export declare function isSensorDataMessage(msg: any): msg is SensorDataMessage;
 export declare function isSensorHeartbeatMessage(msg: any): msg is SensorHeartbeatMessage;
 export declare function isSensorStatusMessage(msg: any): msg is SensorStatusMessage;
@@ -545,6 +923,11 @@ export declare function isMeshBridgeMessage(msg: any): msg is MeshBridgeMessage;
 export declare function isDeviceConfigMessage(msg: any): msg is DeviceConfigMessage;
 export declare function isMeshStatusMessage(msg: any): msg is MeshStatusMessage;
 export declare function isMeshMetricsMessage(msg: any): msg is MeshMetricsMessage;
+export declare function isBridgeStatusMessage(msg: any): msg is BridgeStatusMessage;
+export declare function isBridgeElectionMessage(msg: any): msg is BridgeElectionMessage;
+export declare function isBridgeTakeoverMessage(msg: any): msg is BridgeTakeoverMessage;
+export declare function isBridgeCoordinationMessage(msg: any): msg is BridgeCoordinationMessage;
+export declare function isTimeSyncNtpMessage(msg: any): msg is TimeSyncNtpMessage;
 export declare function classifyMessage(msg: any): AnyMqttV1Message | null;
 export interface BasicValidationIssue {
     field?: string;

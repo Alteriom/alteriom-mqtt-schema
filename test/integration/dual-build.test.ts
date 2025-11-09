@@ -180,7 +180,16 @@ describe('Dual Build Integration', () => {
       
       expect(types.MessageTypeCodes).toBeDefined();
       expect(types.MessageTypeCodes.SENSOR_DATA).toBe(200);
-      expect(types.MessageTypeCodes.GATEWAY_METRICS).toBe(301);
+      expect(types.MessageTypeCodes.GATEWAY_METRICS).toBe(306); // v0.8.0 breaking change: 301 → 306
+      expect(types.MessageTypeCodes.GATEWAY_INFO).toBe(305); // v0.8.0 breaking change: 300 → 305
+    });
+
+    it('should export LEGACY_CODE_MAP for backward compatibility', async () => {
+      const types = await import('../../dist/cjs/types.js');
+      
+      expect(types.LEGACY_CODE_MAP).toBeDefined();
+      expect(types.LEGACY_CODE_MAP[300]).toBe(305);
+      expect(types.LEGACY_CODE_MAP[301]).toBe(306);
     });
   });
 });

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "message_type": 103,
+  "device_id": "UNI-BRIDGE-001",
+  "device_type": "bridge",
+  "device_role": "bridge",
+  "timestamp": "2025-11-08T22:10:00.000Z",
+  "firmware_version": "UNI 1.0.0",
+  "status": "online",
+  "previous_status": "starting",
+  "status_reason": "Bridge initialization complete",
+  "uptime_s": 120,
+  "configuration_change": true,
+  "configuration_version": "1.2.0"
+}

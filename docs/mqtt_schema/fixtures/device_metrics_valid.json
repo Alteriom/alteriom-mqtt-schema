@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "message_type": 105,
+  "device_id": "UNI-GW-005",
+  "device_type": "gateway",
+  "device_role": "gateway",
+  "timestamp": "2025-11-08T22:20:00.000Z",
+  "firmware_version": "UNI 1.0.0",
+  "metrics": {
+    "uptime_s": 864000,
+    "battery_level": 85,
+    "signal_strength": -55,
+    "memory_usage_pct": 45.2,
+    "cpu_usage_pct": 32.1,
+    "temperature_c": 62.5,
+    "connected_devices": 25,
+    "mesh_nodes": 20,
+    "storage_usage_pct": 38.5,
+    "storage_total_mb": 4096,
+    "storage_free_mb": 2519,
+    "network_rx_kbps": 125.5,
+    "network_tx_kbps": 89.3,
+    "active_connections": 28,
+    "error_count_24h": 3,
+    "warning_count_24h": 12,
+    "restart_count": 2,
+    "last_restart_reason": "firmware_update"
+  }
+}

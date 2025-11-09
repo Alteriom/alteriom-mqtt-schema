@@ -1,0 +1,35 @@
+# Release Summaries
+
+Historical release documentation for @alteriom/mqtt-schema.
+
+## Available Releases
+
+### v0.7.3 (Previous Release)
+- **[V073_RELEASE_SUMMARY.md](./V073_RELEASE_SUMMARY.md)** - Release notes and feature highlights
+- **[RELEASE_READY_V073.md](./RELEASE_READY_V073.md)** - Pre-release checklist and verification
+
+**Highlights**: Message batching, compression support, comprehensive examples, 87% test coverage
+
+### v0.7.1
+- **[V071_RELEASE_SUMMARY.md](./V071_RELEASE_SUMMARY.md)** - Release notes and feature highlights
+
+**Highlights**: Message type codes, PainlessMesh bridge schema, fast classification
+
+## Current Release
+
+📍 **v0.8.0** (November 2025)
+
+See root documentation for current release:
+- **[V080_BREAKING_CHANGES.md](../../V080_BREAKING_CHANGES.md)** - Migration guide
+- **[CHANGELOG.md](../../CHANGELOG.md)** - Complete version history
+
+**v0.8.0 Highlights**:
+- ⚠️ Breaking changes: Gateway code realignment (300→305, 301→306)
+- Unified device schemas (101-105) for sensor/gateway/bridge/hybrid
+- HTTP transport support via `transport_metadata`
+- Bridge management schemas (610-614) for painlessMesh v1.8.0+
+- Automatic legacy code translation with 6-month migration window
+
+## Release Process
+
+For maintainers, see [PUBLISH_CHECKLIST.md](../../PUBLISH_CHECKLIST.md) for the release workflow.

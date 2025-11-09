@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/bridge_status.schema.json",
+  "title": "Bridge Status Message",
+  "description": "Bridge health and connectivity status broadcast from active bridge nodes (Type 610)",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "envelope.schema.json"
+    }
+  ],
+  "properties": {
+    "message_type": {
+      "const": 610,
+      "description": "Message type code for bridge status messages"
+    },
+    "event": {
+      "const": "bridge_status",
+      "description": "Event identifier for bridge status broadcasts"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "bridge_node_id",
+        "internet_connected",
+        "router_rssi",
+        "uptime_s",
+        "bridge_priority",
+        "connected_nodes",
+        "health_status"
+      ],
+      "properties": {
+        "bridge_node_id": {
+          "type": "integer",
+          "description": "Unique identifier of the bridge node",
+          "minimum": 1
+        },
+        "internet_connected": {
+          "type": "boolean",
+          "description": "Internet connectivity status (critical for failover decisions)"
+        },
+        "router_rssi": {
+          "type": "integer",
+          "description": "Router signal strength in dBm (higher is better)",
+          "minimum": -200,
+          "maximum": 0
+        },
+        "gateway_ip": {
+          "type": "string",
+          "description": "Bridge gateway IP address",
+          "format": "ipv4"
+        },
+        "local_ip": {
+          "type": "string",
+          "description": "Bridge local IP address",
+          "format": "ipv4"
+        },
+        "router_ssid": {
+          "type": "string",
+          "description": "Connected router SSID",
+          "maxLength": 32
+        },
+        "uptime_s": {
+          "type": "integer",
+          "description": "Bridge uptime in seconds",
+          "minimum": 0
+        },
+        "bridge_priority": {
+          "type": "integer",
+          "description": "Bridge priority for election (0-255, higher wins)",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "bridge_role": {
+          "type": "string",
+          "enum": ["primary", "secondary", "backup", "standby"],
+          "description": "Current bridge role in the mesh"
+        },
+        "connected_nodes": {
+          "type": "integer",
+          "description": "Number of mesh nodes connected to this bridge",
+          "minimum": 0
+        },
+        "queued_messages": {
+          "type": "integer",
+          "description": "Number of messages in bridge queue awaiting transmission",
+          "minimum": 0
+        },
+        "health_status": {
+          "type": "string",
+          "enum": ["healthy", "degraded", "warning", "critical"],
+          "description": "Overall bridge health status"
+        },
+        "last_internet_disconnect": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of last Internet disconnection (ISO 8601)"
+        },
+        "disconnect_count_24h": {
+          "type": "integer",
+          "description": "Number of disconnections in last 24 hours",
+          "minimum": 0
+        },
+        "avg_latency_ms": {
+          "type": "number",
+          "description": "Average Internet latency in milliseconds",
+          "minimum": 0
+        },
+        "memory_free_kb": {
+          "type": "integer",
+          "description": "Free memory in kilobytes",
+          "minimum": 0
+        },
+        "cpu_load_pct": {
+          "type": "number",
+          "description": "CPU load percentage",
+          "minimum": 0,
+          "maximum": 100
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

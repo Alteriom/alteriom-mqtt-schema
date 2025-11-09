@@ -11,8 +11,8 @@ export declare const envelope_schema: {
         };
         readonly message_type: {
             readonly type: "integer";
-            readonly description: "Optional message type code for fast classification (v0.7.2)";
-            readonly enum: readonly [200, 201, 202, 203, 204, 300, 301, 302, 303, 304, 400, 401, 402, 500, 600, 601, 602, 603, 604, 605, 700];
+            readonly description: "Optional message type code for fast classification (v0.7.2+, v0.8.0 adds 10x unified range). Legacy codes 300,301 supported during migration.";
+            readonly enum: readonly [101, 102, 103, 104, 105, 200, 201, 202, 203, 204, 300, 301, 302, 303, 304, 305, 306, 400, 401, 402, 500, 600, 601, 602, 603, 604, 605, 610, 611, 612, 613, 614, 700];
         };
         readonly device_id: {
             readonly type: "string";
@@ -22,7 +22,7 @@ export declare const envelope_schema: {
         };
         readonly device_type: {
             readonly type: "string";
-            readonly enum: readonly ["sensor", "gateway"];
+            readonly enum: readonly ["sensor", "gateway", "bridge", "hybrid"];
         };
         readonly timestamp: {
             readonly type: "string";
@@ -95,8 +95,807 @@ export declare const envelope_schema: {
             };
             readonly additionalProperties: true;
         };
+        readonly transport_metadata: {
+            readonly type: "object";
+            readonly description: "Transport-layer metadata for HTTP/MQTT delivery context (v0.8.0+)";
+            readonly properties: {
+                readonly protocol: {
+                    readonly type: "string";
+                    readonly enum: readonly ["mqtt", "http", "https"];
+                    readonly description: "Transport protocol used for message delivery";
+                };
+                readonly correlation_id: {
+                    readonly type: "string";
+                    readonly maxLength: 128;
+                    readonly description: "Correlation ID for request/response tracking across protocols";
+                };
+                readonly http: {
+                    readonly type: "object";
+                    readonly description: "HTTP-specific transport metadata";
+                    readonly properties: {
+                        readonly method: {
+                            readonly type: "string";
+                            readonly enum: readonly ["GET", "POST", "PUT", "PATCH", "DELETE"];
+                            readonly description: "HTTP method used";
+                        };
+                        readonly path: {
+                            readonly type: "string";
+                            readonly maxLength: 512;
+                            readonly description: "Request path (e.g., /api/v1/devices/{id}/telemetry)";
+                        };
+                        readonly status_code: {
+                            readonly type: "integer";
+                            readonly minimum: 100;
+                            readonly maximum: 599;
+                            readonly description: "HTTP response status code";
+                        };
+                        readonly request_id: {
+                            readonly type: "string";
+                            readonly maxLength: 128;
+                            readonly description: "Unique HTTP request identifier";
+                        };
+                        readonly headers: {
+                            readonly type: "object";
+                            readonly description: "Relevant HTTP headers (sanitized, no auth tokens)";
+                            readonly additionalProperties: {
+                                readonly type: "string";
+                            };
+                        };
+                    };
+                    readonly additionalProperties: true;
+                };
+                readonly mqtt: {
+                    readonly type: "object";
+                    readonly description: "MQTT-specific transport metadata";
+                    readonly properties: {
+                        readonly topic: {
+                            readonly type: "string";
+                            readonly maxLength: 256;
+                            readonly description: "MQTT topic where message was published";
+                        };
+                        readonly qos: {
+                            readonly type: "integer";
+                            readonly enum: readonly [0, 1, 2];
+                            readonly description: "MQTT Quality of Service level";
+                        };
+                        readonly retained: {
+                            readonly type: "boolean";
+                            readonly description: "Whether message was published with retain flag";
+                        };
+                        readonly message_id: {
+                            readonly type: "integer";
+                            readonly minimum: 0;
+                            readonly maximum: 65535;
+                            readonly description: "MQTT message/packet identifier";
+                        };
+                    };
+                    readonly additionalProperties: true;
+                };
+            };
+            readonly additionalProperties: true;
+        };
     };
     readonly additionalProperties: true;
+};
+export declare const device_data_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/device_data.schema.json";
+    readonly title: "Unified Device Data Message v1";
+    readonly description: "Unified telemetry data message for all device types (sensors, gateways, bridges, hybrids). Code 101. Replaces sensor_data (200) and gateway_data (302) for new deployments.";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }, {
+        readonly type: "object";
+        readonly properties: {
+            readonly message_type: {
+                readonly const: 101;
+                readonly description: "Unified device data message type";
+            };
+            readonly device_type: {
+                readonly type: "string";
+                readonly enum: readonly ["sensor", "gateway", "bridge", "hybrid"];
+                readonly description: "Device type - supports all device roles";
+            };
+            readonly device_role: {
+                readonly type: "string";
+                readonly enum: readonly ["sensor", "gateway", "bridge", "hybrid"];
+                readonly description: "Primary device role - may differ from device_type for hybrid deployments";
+            };
+            readonly firmware_version: {
+                readonly type: "string";
+                readonly minLength: 1;
+                readonly description: "Firmware version (required for device_data)";
+            };
+            readonly sensors: {
+                readonly type: "object";
+                readonly description: "Sensor readings from device's onboard sensors";
+                readonly patternProperties: {
+                    readonly "^[a-z0-9_]+$": {
+                        readonly type: "object";
+                        readonly properties: {
+                            readonly value: {
+                                readonly type: "number";
+                                readonly description: "Sensor reading value (required)";
+                            };
+                            readonly unit: {
+                                readonly type: "string";
+                                readonly description: "Unit of measurement (e.g., 'celsius', 'percent', 'ppm')";
+                            };
+                            readonly raw_value: {
+                                readonly type: "number";
+                                readonly description: "Raw ADC or uncalibrated value";
+                            };
+                            readonly calibrated_value: {
+                                readonly type: "number";
+                                readonly description: "Calibrated sensor value";
+                            };
+                            readonly quality_score: {
+                                readonly type: "number";
+                                readonly minimum: 0;
+                                readonly maximum: 1;
+                                readonly description: "Data quality score (0-1, 1 = best)";
+                            };
+                            readonly name: {
+                                readonly type: "string";
+                                readonly description: "Human-readable sensor name";
+                            };
+                            readonly location: {
+                                readonly type: "string";
+                                readonly description: "Physical location of sensor on device";
+                            };
+                            readonly timestamp: {
+                                readonly type: "string";
+                                readonly format: "date-time";
+                                readonly description: "Per-sensor reading timestamp (ISO 8601)";
+                            };
+                            readonly accuracy: {
+                                readonly type: "number";
+                                readonly minimum: 0;
+                                readonly description: "Sensor accuracy (±value in units)";
+                            };
+                            readonly last_calibration: {
+                                readonly type: "string";
+                                readonly format: "date-time";
+                                readonly description: "Last calibration date (ISO 8601)";
+                            };
+                            readonly error_margin_pct: {
+                                readonly type: "number";
+                                readonly minimum: 0;
+                                readonly maximum: 100;
+                                readonly description: "Error margin percentage (0-100)";
+                            };
+                            readonly operational_range: {
+                                readonly type: "object";
+                                readonly properties: {
+                                    readonly min: {
+                                        readonly type: "number";
+                                    };
+                                    readonly max: {
+                                        readonly type: "number";
+                                    };
+                                };
+                                readonly required: readonly ["min", "max"];
+                                readonly description: "Operational range limits";
+                                readonly additionalProperties: false;
+                            };
+                            readonly additional_data: {
+                                readonly type: "object";
+                                readonly description: "Additional sensor-specific metadata";
+                                readonly additionalProperties: true;
+                            };
+                        };
+                        readonly required: readonly ["value"];
+                        readonly additionalProperties: true;
+                    };
+                };
+                readonly minProperties: 1;
+                readonly additionalProperties: false;
+            };
+            readonly battery_level: {
+                readonly type: "integer";
+                readonly minimum: 0;
+                readonly maximum: 100;
+                readonly description: "Battery level percentage (0-100)";
+            };
+            readonly signal_strength: {
+                readonly type: "number";
+                readonly minimum: -200;
+                readonly maximum: 0;
+                readonly description: "WiFi/network signal strength in dBm";
+            };
+            readonly additional: {
+                readonly type: "object";
+                readonly description: "Additional device-specific data";
+                readonly additionalProperties: true;
+            };
+        };
+        readonly required: readonly ["device_type", "firmware_version", "sensors"];
+        readonly additionalProperties: true;
+    }];
+};
+export declare const device_heartbeat_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/device_heartbeat.schema.json";
+    readonly title: "Unified Device Heartbeat v1";
+    readonly description: "Unified presence and health check message for all device types. Code 102. Replaces sensor_heartbeat (201) and gateway_heartbeat (303) for new deployments.";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }, {
+        readonly type: "object";
+        readonly properties: {
+            readonly message_type: {
+                readonly const: 102;
+                readonly description: "Unified device heartbeat message type";
+            };
+            readonly device_type: {
+                readonly type: "string";
+                readonly enum: readonly ["sensor", "gateway", "bridge", "hybrid"];
+                readonly description: "Device type - supports all device roles";
+            };
+            readonly device_role: {
+                readonly type: "string";
+                readonly enum: readonly ["sensor", "gateway", "bridge", "hybrid"];
+                readonly description: "Primary device role - may differ from device_type for hybrid deployments";
+            };
+            readonly uptime_s: {
+                readonly type: "number";
+                readonly minimum: 0;
+                readonly description: "Device uptime in seconds since last boot";
+            };
+            readonly connected_devices: {
+                readonly type: "integer";
+                readonly minimum: 0;
+                readonly description: "Number of connected devices (for gateways/bridges)";
+            };
+            readonly mesh_nodes: {
+                readonly type: "integer";
+                readonly minimum: 0;
+                readonly description: "Number of mesh nodes in network (for mesh-enabled devices)";
+            };
+            readonly status_summary: {
+                readonly type: "string";
+                readonly enum: readonly ["healthy", "degraded", "critical", "maintenance"];
+                readonly description: "Overall device health status";
+            };
+            readonly battery_level: {
+                readonly type: "integer";
+                readonly minimum: 0;
+                readonly maximum: 100;
+                readonly description: "Battery level percentage (0-100) for battery-powered devices";
+            };
+            readonly signal_strength: {
+                readonly type: "number";
+                readonly minimum: -200;
+                readonly maximum: 0;
+                readonly description: "WiFi/network signal strength in dBm";
+            };
+        };
+        readonly required: readonly ["device_type"];
+        readonly additionalProperties: true;
+    }];
+};
+export declare const device_status_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/device_status.schema.json";
+    readonly title: "Unified Device Status v1";
+    readonly description: "Unified status change notification for all device types. Code 103. Replaces sensor_status (202) and gateway_status (304) for new deployments.";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }, {
+        readonly type: "object";
+        readonly properties: {
+            readonly message_type: {
+                readonly const: 103;
+                readonly description: "Unified device status message type";
+            };
+            readonly device_type: {
+                readonly type: "string";
+                readonly enum: readonly ["sensor", "gateway", "bridge", "hybrid"];
+                readonly description: "Device type - supports all device roles";
+            };
+            readonly device_role: {
+                readonly type: "string";
+                readonly enum: readonly ["sensor", "gateway", "bridge", "hybrid"];
+                readonly description: "Primary device role - may differ from device_type for hybrid deployments";
+            };
+            readonly firmware_version: {
+                readonly type: "string";
+                readonly minLength: 1;
+                readonly description: "Firmware version (required for device_status)";
+            };
+            readonly status: {
+                readonly type: "string";
+                readonly enum: readonly ["online", "offline", "starting", "stopping", "updating", "maintenance", "error", "degraded"];
+                readonly description: "Current device operational status";
+            };
+            readonly previous_status: {
+                readonly type: "string";
+                readonly enum: readonly ["online", "offline", "starting", "stopping", "updating", "maintenance", "error", "degraded"];
+                readonly description: "Previous status before this change";
+            };
+            readonly status_reason: {
+                readonly type: "string";
+                readonly maxLength: 256;
+                readonly description: "Human-readable reason for status change";
+            };
+            readonly error_code: {
+                readonly type: "string";
+                readonly maxLength: 64;
+                readonly description: "Machine-readable error code if status is 'error'";
+            };
+            readonly uptime_s: {
+                readonly type: "number";
+                readonly minimum: 0;
+                readonly description: "Device uptime in seconds";
+            };
+            readonly connected_devices: {
+                readonly type: "integer";
+                readonly minimum: 0;
+                readonly description: "Number of connected devices (for gateways/bridges)";
+            };
+            readonly battery_level: {
+                readonly type: "integer";
+                readonly minimum: 0;
+                readonly maximum: 100;
+                readonly description: "Battery level percentage (0-100) for battery-powered devices";
+            };
+            readonly signal_strength: {
+                readonly type: "number";
+                readonly minimum: -200;
+                readonly maximum: 0;
+                readonly description: "Network signal strength in dBm";
+            };
+            readonly recovery_action: {
+                readonly type: "string";
+                readonly enum: readonly ["none", "restart_pending", "restarting", "user_intervention_required", "automatic_recovery"];
+                readonly description: "Planned or ongoing recovery action";
+            };
+            readonly estimated_recovery_time_s: {
+                readonly type: "number";
+                readonly minimum: 0;
+                readonly description: "Estimated time to recovery in seconds";
+            };
+        };
+        readonly required: readonly ["device_type", "firmware_version", "status"];
+        readonly additionalProperties: true;
+    }];
+};
+export declare const device_info_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/device_info.schema.json";
+    readonly title: "Unified Device Info v1";
+    readonly description: "Unified identification and capabilities message for all device types. Code 104. Replaces sensor_info (203) and gateway_info (305) for new deployments.";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }, {
+        readonly type: "object";
+        readonly properties: {
+            readonly message_type: {
+                readonly const: 104;
+                readonly description: "Unified device info message type";
+            };
+            readonly device_type: {
+                readonly type: "string";
+                readonly enum: readonly ["sensor", "gateway", "bridge", "hybrid"];
+                readonly description: "Device type - supports all device roles";
+            };
+            readonly device_role: {
+                readonly type: "string";
+                readonly enum: readonly ["sensor", "gateway", "bridge", "hybrid"];
+                readonly description: "Primary device role - may differ from device_type for hybrid deployments";
+            };
+            readonly firmware_version: {
+                readonly type: "string";
+                readonly minLength: 1;
+                readonly description: "Firmware version (required for device_info)";
+            };
+            readonly hardware_version: {
+                readonly type: "string";
+                readonly minLength: 1;
+                readonly description: "Hardware version identifier";
+            };
+            readonly mac_address: {
+                readonly type: "string";
+                readonly pattern: "^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$";
+                readonly description: "MAC address in format 00:11:22:33:44:55";
+            };
+            readonly ip_address: {
+                readonly type: "string";
+                readonly format: "ipv4";
+                readonly description: "IPv4 address (for network-connected devices)";
+            };
+            readonly chip_id: {
+                readonly type: "string";
+                readonly description: "Unique chip/device identifier";
+            };
+            readonly manufacturer: {
+                readonly type: "string";
+                readonly description: "Device manufacturer name";
+            };
+            readonly model: {
+                readonly type: "string";
+                readonly description: "Device model identifier";
+            };
+            readonly capabilities: {
+                readonly type: "object";
+                readonly description: "Device capabilities and features";
+                readonly properties: {
+                    readonly available_sensors: {
+                        readonly type: "array";
+                        readonly description: "List of available sensor types";
+                        readonly items: {
+                            readonly type: "string";
+                            readonly examples: readonly ["temperature", "humidity", "pressure", "light", "motion", "co2", "voc", "pm25"];
+                        };
+                    };
+                    readonly max_nodes: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Maximum nodes supported (for gateways/bridges)";
+                    };
+                    readonly supports_mesh: {
+                        readonly type: "boolean";
+                        readonly description: "Whether device can participate in mesh network";
+                    };
+                    readonly supports_ota: {
+                        readonly type: "boolean";
+                        readonly description: "Whether device supports firmware updates";
+                    };
+                    readonly firmware_update: {
+                        readonly type: "boolean";
+                        readonly description: "Alias for supports_ota (backward compatibility)";
+                    };
+                    readonly power_source: {
+                        readonly type: "string";
+                        readonly enum: readonly ["battery", "mains", "solar", "mixed", "other"];
+                        readonly description: "Primary power source type";
+                    };
+                    readonly battery_type: {
+                        readonly type: "string";
+                        readonly description: "Battery type if battery-powered (e.g., 'CR2032', 'LiPo 3.7V')";
+                    };
+                    readonly sampling_rates: {
+                        readonly type: "object";
+                        readonly description: "Min/max sampling intervals supported";
+                        readonly properties: {
+                            readonly min_interval_ms: {
+                                readonly type: "number";
+                                readonly minimum: 0;
+                            };
+                            readonly max_interval_ms: {
+                                readonly type: "number";
+                                readonly minimum: 0;
+                            };
+                        };
+                        readonly additionalProperties: true;
+                    };
+                    readonly communication_protocols: {
+                        readonly type: "array";
+                        readonly description: "Supported communication protocols";
+                        readonly items: {
+                            readonly type: "string";
+                            readonly examples: readonly ["wifi", "ble", "zigbee", "lora", "mesh", "mqtt", "http"];
+                        };
+                    };
+                    readonly additional_features: {
+                        readonly type: "object";
+                        readonly description: "Additional device-specific features";
+                        readonly additionalProperties: true;
+                    };
+                };
+                readonly additionalProperties: true;
+            };
+            readonly calibration_info: {
+                readonly type: "object";
+                readonly description: "Device calibration information";
+                readonly properties: {
+                    readonly last_calibration: {
+                        readonly type: "string";
+                        readonly format: "date-time";
+                        readonly description: "Last calibration timestamp (ISO 8601)";
+                    };
+                    readonly calibration_due: {
+                        readonly type: "string";
+                        readonly format: "date-time";
+                        readonly description: "Next calibration due date (ISO 8601)";
+                    };
+                    readonly factory_calibrated: {
+                        readonly type: "boolean";
+                        readonly description: "Whether device is factory calibrated";
+                    };
+                    readonly calibration_certificate: {
+                        readonly type: "string";
+                        readonly description: "Calibration certificate reference/URL";
+                    };
+                };
+                readonly additionalProperties: true;
+            };
+            readonly operational_info: {
+                readonly type: "object";
+                readonly description: "Operational parameters and limits";
+                readonly properties: {
+                    readonly operating_temp_range: {
+                        readonly type: "object";
+                        readonly properties: {
+                            readonly min_celsius: {
+                                readonly type: "number";
+                            };
+                            readonly max_celsius: {
+                                readonly type: "number";
+                            };
+                        };
+                    };
+                    readonly operating_humidity_range: {
+                        readonly type: "object";
+                        readonly properties: {
+                            readonly min_percent: {
+                                readonly type: "number";
+                                readonly minimum: 0;
+                                readonly maximum: 100;
+                            };
+                            readonly max_percent: {
+                                readonly type: "number";
+                                readonly minimum: 0;
+                                readonly maximum: 100;
+                            };
+                        };
+                    };
+                    readonly ip_rating: {
+                        readonly type: "string";
+                        readonly pattern: "^IP[0-9]{2}$";
+                        readonly description: "IP rating (e.g., 'IP65')";
+                    };
+                    readonly warranty_expires: {
+                        readonly type: "string";
+                        readonly format: "date-time";
+                        readonly description: "Warranty expiration date (ISO 8601)";
+                    };
+                };
+                readonly additionalProperties: true;
+            };
+        };
+        readonly required: readonly ["device_type", "firmware_version"];
+        readonly additionalProperties: true;
+    }];
+};
+export declare const device_metrics_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/device_metrics.schema.json";
+    readonly title: "Unified Device Metrics v1";
+    readonly description: "Unified health and performance metrics for all device types. Code 105. Replaces sensor_metrics (204) and gateway_metrics (306) for new deployments.";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }, {
+        readonly type: "object";
+        readonly properties: {
+            readonly message_type: {
+                readonly const: 105;
+                readonly description: "Unified device metrics message type";
+            };
+            readonly device_type: {
+                readonly type: "string";
+                readonly enum: readonly ["sensor", "gateway", "bridge", "hybrid"];
+                readonly description: "Device type - supports all device roles";
+            };
+            readonly device_role: {
+                readonly type: "string";
+                readonly enum: readonly ["sensor", "gateway", "bridge", "hybrid"];
+                readonly description: "Primary device role - may differ from device_type for hybrid deployments";
+            };
+            readonly firmware_version: {
+                readonly type: "string";
+                readonly minLength: 1;
+                readonly description: "Firmware version (required for device_metrics)";
+            };
+            readonly metrics: {
+                readonly type: "object";
+                readonly description: "Device health and performance metrics";
+                readonly properties: {
+                    readonly uptime_s: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly description: "Device uptime in seconds since last boot";
+                    };
+                    readonly battery_level: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly maximum: 100;
+                        readonly description: "Battery level percentage (0-100)";
+                    };
+                    readonly battery_voltage: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly description: "Battery voltage in volts";
+                    };
+                    readonly battery_current_ma: {
+                        readonly type: "number";
+                        readonly description: "Battery current draw in milliamps";
+                    };
+                    readonly battery_health: {
+                        readonly type: "string";
+                        readonly enum: readonly ["good", "fair", "poor", "critical", "charging", "unknown"];
+                        readonly description: "Battery health status";
+                    };
+                    readonly estimated_battery_life_h: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly description: "Estimated remaining battery life in hours";
+                    };
+                    readonly signal_strength: {
+                        readonly type: "number";
+                        readonly minimum: -200;
+                        readonly maximum: 0;
+                        readonly description: "Signal strength in dBm (-200 to 0)";
+                    };
+                    readonly signal_quality: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly maximum: 100;
+                        readonly description: "Signal quality percentage (0-100)";
+                    };
+                    readonly rssi: {
+                        readonly type: "number";
+                        readonly minimum: -200;
+                        readonly maximum: 0;
+                        readonly description: "RSSI (Received Signal Strength Indicator) in dBm";
+                    };
+                    readonly snr: {
+                        readonly type: "number";
+                        readonly description: "Signal-to-Noise Ratio in dB";
+                    };
+                    readonly link_quality: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly maximum: 255;
+                        readonly description: "Link Quality Indicator (LQI) for mesh/zigbee networks";
+                    };
+                    readonly cpu_usage_pct: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly maximum: 100;
+                        readonly description: "CPU usage percentage";
+                    };
+                    readonly memory_usage_pct: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly maximum: 100;
+                        readonly description: "Memory usage percentage";
+                    };
+                    readonly free_memory_bytes: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Free memory in bytes";
+                    };
+                    readonly temperature_c: {
+                        readonly type: "number";
+                        readonly description: "Internal/board temperature in Celsius";
+                    };
+                    readonly connected_devices: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Number of connected devices (for gateways/bridges)";
+                    };
+                    readonly mesh_nodes: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Number of mesh nodes (for mesh-enabled devices)";
+                    };
+                    readonly sampling_rate_hz: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly description: "Current sampling rate in Hz";
+                    };
+                    readonly samples_collected: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Total samples collected since boot";
+                    };
+                    readonly packet_loss_pct: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly maximum: 100;
+                        readonly description: "Packet loss percentage";
+                    };
+                    readonly data_throughput_kbps: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly description: "Data throughput in kilobits per second";
+                    };
+                    readonly storage_usage_pct: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly maximum: 100;
+                        readonly description: "Storage usage percentage";
+                    };
+                    readonly storage_total_mb: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly description: "Total storage capacity in megabytes";
+                    };
+                    readonly storage_free_mb: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly description: "Free storage space in megabytes";
+                    };
+                    readonly network_rx_kbps: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly description: "Network receive bandwidth in kilobits per second";
+                    };
+                    readonly network_tx_kbps: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly description: "Network transmit bandwidth in kilobits per second";
+                    };
+                    readonly active_connections: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Number of active network connections";
+                    };
+                    readonly error_count: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Total error count since boot";
+                    };
+                    readonly warning_count: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Total warning count since boot";
+                    };
+                    readonly error_count_24h: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Error count in last 24 hours";
+                    };
+                    readonly warning_count_24h: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Warning count in last 24 hours";
+                    };
+                    readonly transmission_success_rate: {
+                        readonly type: "number";
+                        readonly minimum: 0;
+                        readonly maximum: 100;
+                        readonly description: "Message transmission success rate percentage";
+                    };
+                    readonly last_error: {
+                        readonly type: "string";
+                        readonly maxLength: 256;
+                        readonly description: "Last error message";
+                    };
+                    readonly last_error_timestamp: {
+                        readonly type: "string";
+                        readonly format: "date-time";
+                        readonly description: "Timestamp of last error (ISO 8601)";
+                    };
+                    readonly reboot_count: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Number of reboots since deployment";
+                    };
+                    readonly restart_count: {
+                        readonly type: "integer";
+                        readonly minimum: 0;
+                        readonly description: "Total restart counter since deployment";
+                    };
+                    readonly last_reboot_reason: {
+                        readonly type: "string";
+                        readonly enum: readonly ["power_on", "watchdog", "software_reset", "firmware_update", "crash", "user_initiated", "low_battery", "power_loss", "manual", "update", "unknown"];
+                        readonly description: "Reason for last reboot";
+                    };
+                    readonly last_restart_reason: {
+                        readonly type: "string";
+                        readonly maxLength: 128;
+                        readonly description: "Reason for last restart (freeform text)";
+                    };
+                };
+                readonly required: readonly ["uptime_s"];
+                readonly additionalProperties: true;
+            };
+        };
+        readonly required: readonly ["device_type", "firmware_version", "metrics"];
+        readonly additionalProperties: true;
+    }];
 };
 export declare const sensor_data_schema: {
     readonly $schema: "https://json-schema.org/draft/2020-12/schema";
@@ -586,11 +1385,16 @@ export declare const gateway_info_schema: {
     readonly $schema: "https://json-schema.org/draft/2020-12/schema";
     readonly $id: "https://schemas.alteriom.io/mqtt/v1/gateway_info.schema.json";
     readonly title: "Gateway Info v1";
+    readonly description: "Gateway identification and capabilities. BREAKING v0.8.0: message_type changed from 300 to 305 for alignment with sensor_info (203). Use device_info (104) for new deployments.";
     readonly allOf: readonly [{
         readonly $ref: "envelope.schema.json";
     }];
     readonly type: "object";
     readonly properties: {
+        readonly message_type: {
+            readonly enum: readonly [300, 305];
+            readonly description: "Message type code for gateway_info. v0.8.0 BREAKING: changed from 300 to 305. Both codes accepted for backward compatibility during migration period.";
+        };
         readonly mac_address: {
             readonly type: "string";
             readonly pattern: "^[0-9A-Fa-f:]{17}$";
@@ -622,12 +1426,17 @@ export declare const gateway_metrics_schema: {
     readonly $schema: "https://json-schema.org/draft/2020-12/schema";
     readonly $id: "https://schemas.alteriom.io/mqtt/v1/gateway_metrics.schema.json";
     readonly title: "Gateway Metrics v1";
+    readonly description: "Gateway health and performance metrics. BREAKING v0.8.0: message_type changed from 301 to 306 for alignment with sensor_metrics (204). Use device_metrics (105) for new deployments.";
     readonly allOf: readonly [{
         readonly $ref: "envelope.schema.json";
     }];
     readonly type: "object";
     readonly required: readonly ["metrics"];
     readonly properties: {
+        readonly message_type: {
+            readonly enum: readonly [301, 306];
+            readonly description: "Message type code for gateway_metrics. v0.8.0 BREAKING: changed from 301 to 306. Both codes accepted for backward compatibility during migration period.";
+        };
         readonly metrics: {
             readonly type: "object";
             readonly required: readonly ["uptime_s"];
@@ -727,12 +1536,16 @@ export declare const gateway_data_schema: {
     readonly $schema: "https://json-schema.org/draft/2020-12/schema";
     readonly $id: "https://schemas.alteriom.io/mqtt/v1/gateway_data.schema.json";
     readonly title: "Gateway Data Message";
-    readonly description: "Gateway telemetry data message (v0.7.2+). Similar to sensor_data but for gateway-originated sensor readings (environmental sensors on gateway device).";
+    readonly description: "Gateway telemetry data message. Code 302 aligns with sensor_data pattern. Use device_data (101) for new unified deployments.";
     readonly allOf: readonly [{
         readonly $ref: "envelope.schema.json";
     }, {
         readonly type: "object";
         readonly properties: {
+            readonly message_type: {
+                readonly const: 302;
+                readonly description: "Message type code for gateway_data (no change in v0.8.0)";
+            };
             readonly device_type: {
                 readonly const: "gateway";
                 readonly description: "Must be 'gateway' for gateway data messages";
@@ -844,12 +1657,16 @@ export declare const gateway_heartbeat_schema: {
     readonly $schema: "https://json-schema.org/draft/2020-12/schema";
     readonly $id: "https://schemas.alteriom.io/mqtt/v1/gateway_heartbeat.schema.json";
     readonly title: "Gateway Heartbeat Message";
-    readonly description: "Gateway presence and health check message (v0.7.2+). Minimal message to indicate gateway is alive and responsive.";
+    readonly description: "Gateway presence and health check message. v0.8.0: No breaking changes (stays at 303). Use device_heartbeat (102) for new unified deployments.";
     readonly allOf: readonly [{
         readonly $ref: "envelope.schema.json";
     }, {
         readonly type: "object";
         readonly properties: {
+            readonly message_type: {
+                readonly const: 303;
+                readonly description: "Message type code for gateway_heartbeat (v0.8.0: unchanged, stays at 303)";
+            };
             readonly device_type: {
                 readonly const: "gateway";
                 readonly description: "Must be 'gateway' for gateway heartbeat messages";
@@ -888,12 +1705,16 @@ export declare const gateway_status_schema: {
     readonly $schema: "https://json-schema.org/draft/2020-12/schema";
     readonly $id: "https://schemas.alteriom.io/mqtt/v1/gateway_status.schema.json";
     readonly title: "Gateway Status Message";
-    readonly description: "Gateway status change notification (v0.7.2+). Reports gateway operational state changes.";
+    readonly description: "Gateway status change notification. BREAKING v0.8.0: message_type changed from 304 to 304 (no change - already aligned with sensor_status at 202). Use device_status (103) for new deployments.";
     readonly allOf: readonly [{
         readonly $ref: "envelope.schema.json";
     }, {
         readonly type: "object";
         readonly properties: {
+            readonly message_type: {
+                readonly const: 304;
+                readonly description: "Message type code for gateway_status (no change in v0.8.0)";
+            };
             readonly device_type: {
                 readonly const: "gateway";
                 readonly description: "Must be 'gateway' for gateway status messages";
@@ -1934,6 +2755,523 @@ export declare const mesh_metrics_schema: {
         readonly required: readonly ["device_type", "firmware_version", "metrics"];
         readonly additionalProperties: true;
     }];
+};
+export declare const bridge_status_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/bridge_status.schema.json";
+    readonly title: "Bridge Status Message";
+    readonly description: "Bridge health and connectivity status broadcast from active bridge nodes (Type 610)";
+    readonly type: "object";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }];
+    readonly properties: {
+        readonly message_type: {
+            readonly const: 610;
+            readonly description: "Message type code for bridge status messages";
+        };
+        readonly event: {
+            readonly const: "bridge_status";
+            readonly description: "Event identifier for bridge status broadcasts";
+        };
+        readonly data: {
+            readonly type: "object";
+            readonly required: readonly ["bridge_node_id", "internet_connected", "router_rssi", "uptime_s", "bridge_priority", "connected_nodes", "health_status"];
+            readonly properties: {
+                readonly bridge_node_id: {
+                    readonly type: "integer";
+                    readonly description: "Unique identifier of the bridge node";
+                    readonly minimum: 1;
+                };
+                readonly internet_connected: {
+                    readonly type: "boolean";
+                    readonly description: "Internet connectivity status (critical for failover decisions)";
+                };
+                readonly router_rssi: {
+                    readonly type: "integer";
+                    readonly description: "Router signal strength in dBm (higher is better)";
+                    readonly minimum: -200;
+                    readonly maximum: 0;
+                };
+                readonly gateway_ip: {
+                    readonly type: "string";
+                    readonly description: "Bridge gateway IP address";
+                    readonly format: "ipv4";
+                };
+                readonly local_ip: {
+                    readonly type: "string";
+                    readonly description: "Bridge local IP address";
+                    readonly format: "ipv4";
+                };
+                readonly router_ssid: {
+                    readonly type: "string";
+                    readonly description: "Connected router SSID";
+                    readonly maxLength: 32;
+                };
+                readonly uptime_s: {
+                    readonly type: "integer";
+                    readonly description: "Bridge uptime in seconds";
+                    readonly minimum: 0;
+                };
+                readonly bridge_priority: {
+                    readonly type: "integer";
+                    readonly description: "Bridge priority for election (0-255, higher wins)";
+                    readonly minimum: 0;
+                    readonly maximum: 255;
+                };
+                readonly bridge_role: {
+                    readonly type: "string";
+                    readonly enum: readonly ["primary", "secondary", "backup", "standby"];
+                    readonly description: "Current bridge role in the mesh";
+                };
+                readonly connected_nodes: {
+                    readonly type: "integer";
+                    readonly description: "Number of mesh nodes connected to this bridge";
+                    readonly minimum: 0;
+                };
+                readonly queued_messages: {
+                    readonly type: "integer";
+                    readonly description: "Number of messages in bridge queue awaiting transmission";
+                    readonly minimum: 0;
+                };
+                readonly health_status: {
+                    readonly type: "string";
+                    readonly enum: readonly ["healthy", "degraded", "warning", "critical"];
+                    readonly description: "Overall bridge health status";
+                };
+                readonly last_internet_disconnect: {
+                    readonly type: "string";
+                    readonly format: "date-time";
+                    readonly description: "Timestamp of last Internet disconnection (ISO 8601)";
+                };
+                readonly disconnect_count_24h: {
+                    readonly type: "integer";
+                    readonly description: "Number of disconnections in last 24 hours";
+                    readonly minimum: 0;
+                };
+                readonly avg_latency_ms: {
+                    readonly type: "number";
+                    readonly description: "Average Internet latency in milliseconds";
+                    readonly minimum: 0;
+                };
+                readonly memory_free_kb: {
+                    readonly type: "integer";
+                    readonly description: "Free memory in kilobytes";
+                    readonly minimum: 0;
+                };
+                readonly cpu_load_pct: {
+                    readonly type: "number";
+                    readonly description: "CPU load percentage";
+                    readonly minimum: 0;
+                    readonly maximum: 100;
+                };
+            };
+            readonly additionalProperties: true;
+        };
+    };
+};
+export declare const bridge_election_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/bridge_election.schema.json";
+    readonly title: "Bridge Election Message";
+    readonly description: "RSSI-based bridge election candidacy announcement (Type 611)";
+    readonly type: "object";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }];
+    readonly properties: {
+        readonly message_type: {
+            readonly const: 611;
+            readonly description: "Message type code for bridge election messages";
+        };
+        readonly event: {
+            readonly const: "bridge_election";
+            readonly description: "Event identifier for bridge election candidacy";
+        };
+        readonly data: {
+            readonly type: "object";
+            readonly required: readonly ["candidate_node_id", "router_rssi", "uptime_s", "bridge_priority"];
+            readonly properties: {
+                readonly candidate_node_id: {
+                    readonly type: "integer";
+                    readonly description: "Unique identifier of the candidate node";
+                    readonly minimum: 1;
+                };
+                readonly router_rssi: {
+                    readonly type: "integer";
+                    readonly description: "Router signal strength in dBm (primary election criterion - higher wins)";
+                    readonly minimum: -200;
+                    readonly maximum: 0;
+                };
+                readonly uptime_s: {
+                    readonly type: "integer";
+                    readonly description: "Node uptime in seconds (tiebreaker - higher preferred)";
+                    readonly minimum: 0;
+                };
+                readonly bridge_priority: {
+                    readonly type: "integer";
+                    readonly description: "Configured bridge priority (0-255, higher wins)";
+                    readonly minimum: 0;
+                    readonly maximum: 255;
+                };
+                readonly power_source: {
+                    readonly type: "string";
+                    readonly enum: readonly ["mains", "battery", "solar", "unknown"];
+                    readonly description: "Node power source (mains preferred for stability)";
+                };
+                readonly previous_bridge_role: {
+                    readonly type: "string";
+                    readonly enum: readonly ["primary", "secondary", "backup", "standby", "none"];
+                    readonly description: "Previous bridge role (experience indicator)";
+                };
+                readonly memory_free_kb: {
+                    readonly type: "integer";
+                    readonly description: "Free memory in kilobytes (resource availability)";
+                    readonly minimum: 0;
+                };
+                readonly battery_level: {
+                    readonly type: "integer";
+                    readonly description: "Battery level percentage (for battery-powered nodes)";
+                    readonly minimum: 0;
+                    readonly maximum: 100;
+                };
+                readonly triggered_by: {
+                    readonly type: "string";
+                    readonly enum: readonly ["bridge_offline", "internet_lost", "manual_trigger", "periodic_health_check"];
+                    readonly description: "Event that triggered this election";
+                };
+                readonly election_round: {
+                    readonly type: "integer";
+                    readonly description: "Election round number (increments on retries)";
+                    readonly minimum: 1;
+                };
+            };
+            readonly additionalProperties: true;
+        };
+    };
+};
+export declare const bridge_takeover_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/bridge_takeover.schema.json";
+    readonly title: "Bridge Takeover Message";
+    readonly description: "Bridge role takeover announcement after successful election (Type 612)";
+    readonly type: "object";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }];
+    readonly properties: {
+        readonly message_type: {
+            readonly const: 612;
+            readonly description: "Message type code for bridge takeover messages";
+        };
+        readonly event: {
+            readonly const: "bridge_takeover";
+            readonly description: "Event identifier for bridge role takeover";
+        };
+        readonly data: {
+            readonly type: "object";
+            readonly required: readonly ["new_bridge_node_id", "takeover_reason", "router_rssi"];
+            readonly properties: {
+                readonly new_bridge_node_id: {
+                    readonly type: "integer";
+                    readonly description: "Node ID of the new bridge (election winner)";
+                    readonly minimum: 1;
+                };
+                readonly previous_bridge_node_id: {
+                    readonly type: "integer";
+                    readonly description: "Node ID of the previous bridge (if applicable)";
+                    readonly minimum: 1;
+                };
+                readonly takeover_reason: {
+                    readonly type: "string";
+                    readonly enum: readonly ["election_winner", "failover_triggered", "manual_assignment", "configuration_change", "bridge_offline", "internet_lost", "priority_changed"];
+                    readonly description: "Reason for bridge role takeover";
+                };
+                readonly router_rssi: {
+                    readonly type: "integer";
+                    readonly description: "New bridge router signal strength in dBm";
+                    readonly minimum: -200;
+                    readonly maximum: 0;
+                };
+                readonly gateway_ip: {
+                    readonly type: "string";
+                    readonly description: "New bridge gateway IP address";
+                    readonly format: "ipv4";
+                };
+                readonly local_ip: {
+                    readonly type: "string";
+                    readonly description: "New bridge local IP address";
+                    readonly format: "ipv4";
+                };
+                readonly router_ssid: {
+                    readonly type: "string";
+                    readonly description: "Connected router SSID";
+                    readonly maxLength: 32;
+                };
+                readonly election_participants: {
+                    readonly type: "integer";
+                    readonly description: "Number of nodes that participated in election";
+                    readonly minimum: 1;
+                };
+                readonly election_duration_ms: {
+                    readonly type: "integer";
+                    readonly description: "Election duration in milliseconds";
+                    readonly minimum: 0;
+                };
+                readonly winning_rssi: {
+                    readonly type: "integer";
+                    readonly description: "Winning candidate RSSI (primary criterion)";
+                    readonly minimum: -200;
+                    readonly maximum: 0;
+                };
+                readonly services_ready: {
+                    readonly type: "boolean";
+                    readonly description: "All bridge services (MQTT, NTP, etc.) are operational";
+                };
+                readonly mqtt_connected: {
+                    readonly type: "boolean";
+                    readonly description: "MQTT broker connection status";
+                };
+                readonly ntp_synced: {
+                    readonly type: "boolean";
+                    readonly description: "NTP time synchronization status";
+                };
+            };
+            readonly additionalProperties: true;
+        };
+    };
+};
+export declare const bridge_coordination_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/bridge_coordination.schema.json";
+    readonly title: "Bridge Coordination Message";
+    readonly description: "Multi-bridge coordination and load balancing protocol (Type 613)";
+    readonly type: "object";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }];
+    readonly properties: {
+        readonly message_type: {
+            readonly const: 613;
+            readonly description: "Message type code for bridge coordination messages";
+        };
+        readonly event: {
+            readonly const: "bridge_coordination";
+            readonly description: "Event identifier for multi-bridge coordination";
+        };
+        readonly data: {
+            readonly type: "object";
+            readonly required: readonly ["bridge_node_id", "bridge_role", "bridge_priority", "load_percentage"];
+            readonly properties: {
+                readonly bridge_node_id: {
+                    readonly type: "integer";
+                    readonly description: "Unique identifier of the coordinating bridge";
+                    readonly minimum: 1;
+                };
+                readonly bridge_role: {
+                    readonly type: "string";
+                    readonly enum: readonly ["primary", "secondary", "backup", "standby"];
+                    readonly description: "Current role in multi-bridge coordination";
+                };
+                readonly bridge_priority: {
+                    readonly type: "integer";
+                    readonly description: "Bridge priority for conflict resolution (0-255)";
+                    readonly minimum: 0;
+                    readonly maximum: 255;
+                };
+                readonly peer_bridges: {
+                    readonly type: "array";
+                    readonly description: "List of other active bridges in the mesh";
+                    readonly items: {
+                        readonly type: "object";
+                        readonly required: readonly ["bridge_node_id", "bridge_role", "last_seen"];
+                        readonly properties: {
+                            readonly bridge_node_id: {
+                                readonly type: "integer";
+                                readonly description: "Peer bridge node ID";
+                                readonly minimum: 1;
+                            };
+                            readonly bridge_role: {
+                                readonly type: "string";
+                                readonly enum: readonly ["primary", "secondary", "backup", "standby"];
+                                readonly description: "Peer bridge role";
+                            };
+                            readonly internet_connected: {
+                                readonly type: "boolean";
+                                readonly description: "Peer Internet connectivity status";
+                            };
+                            readonly router_rssi: {
+                                readonly type: "integer";
+                                readonly description: "Peer router RSSI";
+                                readonly minimum: -200;
+                                readonly maximum: 0;
+                            };
+                            readonly load_percentage: {
+                                readonly type: "number";
+                                readonly description: "Peer bridge load percentage";
+                                readonly minimum: 0;
+                                readonly maximum: 100;
+                            };
+                            readonly health_status: {
+                                readonly type: "string";
+                                readonly enum: readonly ["healthy", "degraded", "warning", "critical"];
+                                readonly description: "Peer bridge health status";
+                            };
+                            readonly last_seen: {
+                                readonly type: "string";
+                                readonly format: "date-time";
+                                readonly description: "Last status update from peer bridge (ISO 8601)";
+                            };
+                        };
+                        readonly additionalProperties: true;
+                    };
+                };
+                readonly load_percentage: {
+                    readonly type: "number";
+                    readonly description: "Current bridge load percentage (0-100)";
+                    readonly minimum: 0;
+                    readonly maximum: 100;
+                };
+                readonly connected_nodes: {
+                    readonly type: "integer";
+                    readonly description: "Number of mesh nodes using this bridge";
+                    readonly minimum: 0;
+                };
+                readonly messages_relayed_1m: {
+                    readonly type: "integer";
+                    readonly description: "Messages relayed in last minute";
+                    readonly minimum: 0;
+                };
+                readonly selection_strategy: {
+                    readonly type: "string";
+                    readonly enum: readonly ["priority_based", "round_robin", "best_signal", "load_balanced", "manual"];
+                    readonly description: "Strategy for selecting bridge for new connections";
+                };
+                readonly traffic_routing: {
+                    readonly type: "object";
+                    readonly description: "Traffic routing configuration by message type";
+                    readonly properties: {
+                        readonly alarm_messages: {
+                            readonly type: "string";
+                            readonly enum: readonly ["primary_only", "all_bridges", "best_signal"];
+                            readonly description: "Routing strategy for alarm messages";
+                        };
+                        readonly sensor_data: {
+                            readonly type: "string";
+                            readonly enum: readonly ["load_balanced", "primary_only", "round_robin"];
+                            readonly description: "Routing strategy for sensor telemetry";
+                        };
+                        readonly control_commands: {
+                            readonly type: "string";
+                            readonly enum: readonly ["primary_only", "any_available", "best_signal"];
+                            readonly description: "Routing strategy for control commands";
+                        };
+                        readonly firmware_updates: {
+                            readonly type: "string";
+                            readonly enum: readonly ["primary_only", "dedicated_bridge", "best_signal"];
+                            readonly description: "Routing strategy for OTA firmware updates";
+                        };
+                    };
+                    readonly additionalProperties: true;
+                };
+            };
+            readonly additionalProperties: true;
+        };
+    };
+};
+export declare const time_sync_ntp_schema: {
+    readonly $schema: "https://json-schema.org/draft/2020-12/schema";
+    readonly $id: "https://schemas.alteriom.io/mqtt/v1/time_sync_ntp.schema.json";
+    readonly title: "Time Sync NTP Message";
+    readonly description: "Bridge-to-mesh NTP time distribution for synchronized timestamps (Type 614)";
+    readonly type: "object";
+    readonly allOf: readonly [{
+        readonly $ref: "envelope.schema.json";
+    }];
+    readonly properties: {
+        readonly message_type: {
+            readonly const: 614;
+            readonly description: "Message type code for NTP time sync messages";
+        };
+        readonly event: {
+            readonly const: "time_sync_ntp";
+            readonly description: "Event identifier for NTP time synchronization";
+        };
+        readonly data: {
+            readonly type: "object";
+            readonly required: readonly ["bridge_node_id", "ntp_time_unix", "ntp_server", "accuracy_ms"];
+            readonly properties: {
+                readonly bridge_node_id: {
+                    readonly type: "integer";
+                    readonly description: "Node ID of the bridge distributing time";
+                    readonly minimum: 1;
+                };
+                readonly ntp_time_unix: {
+                    readonly type: "integer";
+                    readonly description: "Current Unix timestamp (seconds since epoch)";
+                    readonly minimum: 0;
+                };
+                readonly ntp_time_iso: {
+                    readonly type: "string";
+                    readonly format: "date-time";
+                    readonly description: "Current time in ISO 8601 format";
+                };
+                readonly ntp_server: {
+                    readonly type: "string";
+                    readonly description: "NTP server used for synchronization (e.g., pool.ntp.org)";
+                    readonly maxLength: 255;
+                };
+                readonly accuracy_ms: {
+                    readonly type: "number";
+                    readonly description: "Time accuracy in milliseconds (±)";
+                    readonly minimum: 0;
+                };
+                readonly stratum: {
+                    readonly type: "integer";
+                    readonly description: "NTP stratum level (1=primary reference, 2-15=secondary)";
+                    readonly minimum: 1;
+                    readonly maximum: 15;
+                };
+                readonly timezone: {
+                    readonly type: "string";
+                    readonly description: "Timezone identifier (e.g., America/New_York, UTC)";
+                    readonly maxLength: 64;
+                };
+                readonly utc_offset_minutes: {
+                    readonly type: "integer";
+                    readonly description: "UTC offset in minutes (e.g., -300 for EST, 0 for UTC)";
+                    readonly minimum: -720;
+                    readonly maximum: 840;
+                };
+                readonly last_sync_time: {
+                    readonly type: "string";
+                    readonly format: "date-time";
+                    readonly description: "Timestamp of last successful NTP sync (ISO 8601)";
+                };
+                readonly sync_interval_s: {
+                    readonly type: "integer";
+                    readonly description: "NTP synchronization interval in seconds";
+                    readonly minimum: 1;
+                };
+                readonly sync_source: {
+                    readonly type: "string";
+                    readonly enum: readonly ["ntp_server", "gps", "rtc_module", "cellular", "manual"];
+                    readonly description: "Source of the authoritative time";
+                };
+                readonly confidence_level: {
+                    readonly type: "string";
+                    readonly enum: readonly ["high", "medium", "low"];
+                    readonly description: "Confidence in time accuracy (high: <50ms, medium: <500ms, low: >500ms)";
+                };
+                readonly network_latency_ms: {
+                    readonly type: "number";
+                    readonly description: "Network latency to NTP server in milliseconds";
+                    readonly minimum: 0;
+                };
+            };
+            readonly additionalProperties: true;
+        };
+    };
 };
 export declare const device_config_schema: {
     readonly $schema: "https://json-schema.org/draft/2020-12/schema";

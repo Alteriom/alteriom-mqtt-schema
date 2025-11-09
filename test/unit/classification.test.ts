@@ -51,10 +51,10 @@ describe('Classification', () => {
       expect(result.valid).toBe(true);
     });
 
-    it('should use fast path for gateway metrics with message_type 301', () => {
+    it('should use fast path for gateway metrics with message_type 306', () => {
       const message = {
         schema_version: 1,
-        message_type: 301,
+        message_type: 306,
         device_id: 'GW001',
         device_type: 'gateway',
         timestamp: '2025-11-04T22:00:00.000Z',
@@ -66,6 +66,43 @@ describe('Classification', () => {
 
       const { kind, result } = classifyAndValidate(message);
       expect(kind).toBe('gatewayMetrics');
+      expect(result.valid).toBe(true);
+    });
+
+    it('should translate legacy gateway metrics code 301 to 306', () => {
+      const message = {
+        schema_version: 1,
+        message_type: 301, // Legacy code
+        device_id: 'GW001',
+        device_type: 'gateway',
+        timestamp: '2025-11-04T22:00:00.000Z',
+        firmware_version: 'GW 1.0.0',
+        metrics: {
+          uptime_s: 86400,
+        },
+      };
+
+      const { kind, result } = classifyAndValidate(message);
+      expect(kind).toBe('gatewayMetrics');
+      expect(result.valid).toBe(true);
+    });
+
+    it('should translate legacy gateway info code 300 to 305', () => {
+      const message = {
+        schema_version: 1,
+        message_type: 300, // Legacy code
+        device_id: 'GW001',
+        device_type: 'gateway',
+        timestamp: '2025-11-04T22:00:00.000Z',
+        firmware_version: 'GW 1.0.0',
+        hardware_version: 'ESP32-S3',
+        capabilities: {
+          max_connections: 10,
+        },
+      };
+
+      const { kind, result } = classifyAndValidate(message);
+      expect(kind).toBe('gatewayInfo');
       expect(result.valid).toBe(true);
     });
 

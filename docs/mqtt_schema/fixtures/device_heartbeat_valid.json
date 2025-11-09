@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "message_type": 102,
+  "device_id": "UNI-GW-002",
+  "device_type": "gateway",
+  "device_role": "gateway",
+  "timestamp": "2025-11-08T22:05:00.000Z",
+  "firmware_version": "UNI 1.0.0",
+  "uptime_s": 432000,
+  "connected_devices": 20,
+  "mesh_nodes": 18,
+  "status_summary": "healthy"
+}

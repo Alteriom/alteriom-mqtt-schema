@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/device_info.schema.json",
+  "title": "Unified Device Info v1",
+  "description": "Unified identification and capabilities message for all device types. Code 104. Replaces sensor_info (203) and gateway_info (305) for new deployments.",
+  "allOf": [
+    { "$ref": "envelope.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "message_type": {
+          "const": 104,
+          "description": "Unified device info message type"
+        },
+        "device_type": {
+          "type": "string",
+          "enum": ["sensor", "gateway", "bridge", "hybrid"],
+          "description": "Device type - supports all device roles"
+        },
+        "device_role": {
+          "type": "string",
+          "enum": ["sensor", "gateway", "bridge", "hybrid"],
+          "description": "Primary device role - may differ from device_type for hybrid deployments"
+        },
+        "firmware_version": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Firmware version (required for device_info)"
+        },
+        "hardware_version": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Hardware version identifier"
+        },
+        "mac_address": {
+          "type": "string",
+          "pattern": "^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$",
+          "description": "MAC address in format 00:11:22:33:44:55"
+        },
+        "ip_address": {
+          "type": "string",
+          "format": "ipv4",
+          "description": "IPv4 address (for network-connected devices)"
+        },
+        "chip_id": {
+          "type": "string",
+          "description": "Unique chip/device identifier"
+        },
+        "manufacturer": {
+          "type": "string",
+          "description": "Device manufacturer name"
+        },
+        "model": {
+          "type": "string",
+          "description": "Device model identifier"
+        },
+        "capabilities": {
+          "type": "object",
+          "description": "Device capabilities and features",
+          "properties": {
+            "available_sensors": {
+              "type": "array",
+              "description": "List of available sensor types",
+              "items": {
+                "type": "string",
+                "examples": ["temperature", "humidity", "pressure", "light", "motion", "co2", "voc", "pm25"]
+              }
+            },
+            "max_nodes": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Maximum nodes supported (for gateways/bridges)"
+            },
+            "supports_mesh": {
+              "type": "boolean",
+              "description": "Whether device can participate in mesh network"
+            },
+            "supports_ota": {
+              "type": "boolean",
+              "description": "Whether device supports firmware updates"
+            },
+            "firmware_update": {
+              "type": "boolean",
+              "description": "Alias for supports_ota (backward compatibility)"
+            },
+            "power_source": {
+              "type": "string",
+              "enum": ["battery", "mains", "solar", "mixed", "other"],
+              "description": "Primary power source type"
+            },
+            "battery_type": {
+              "type": "string",
+              "description": "Battery type if battery-powered (e.g., 'CR2032', 'LiPo 3.7V')"
+            },
+            "sampling_rates": {
+              "type": "object",
+              "description": "Min/max sampling intervals supported",
+              "properties": {
+                "min_interval_ms": { "type": "number", "minimum": 0 },
+                "max_interval_ms": { "type": "number", "minimum": 0 }
+              },
+              "additionalProperties": true
+            },
+            "communication_protocols": {
+              "type": "array",
+              "description": "Supported communication protocols",
+              "items": {
+                "type": "string",
+                "examples": ["wifi", "ble", "zigbee", "lora", "mesh", "mqtt", "http"]
+              }
+            },
+            "additional_features": {
+              "type": "object",
+              "description": "Additional device-specific features",
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        },
+        "calibration_info": {
+          "type": "object",
+          "description": "Device calibration information",
+          "properties": {
+            "last_calibration": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Last calibration timestamp (ISO 8601)"
+            },
+            "calibration_due": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Next calibration due date (ISO 8601)"
+            },
+            "factory_calibrated": {
+              "type": "boolean",
+              "description": "Whether device is factory calibrated"
+            },
+            "calibration_certificate": {
+              "type": "string",
+              "description": "Calibration certificate reference/URL"
+            }
+          },
+          "additionalProperties": true
+        },
+        "operational_info": {
+          "type": "object",
+          "description": "Operational parameters and limits",
+          "properties": {
+            "operating_temp_range": {
+              "type": "object",
+              "properties": {
+                "min_celsius": { "type": "number" },
+                "max_celsius": { "type": "number" }
+              }
+            },
+            "operating_humidity_range": {
+              "type": "object",
+              "properties": {
+                "min_percent": { "type": "number", "minimum": 0, "maximum": 100 },
+                "max_percent": { "type": "number", "minimum": 0, "maximum": 100 }
+              }
+            },
+            "ip_rating": {
+              "type": "string",
+              "pattern": "^IP[0-9]{2}$",
+              "description": "IP rating (e.g., 'IP65')"
+            },
+            "warranty_expires": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Warranty expiration date (ISO 8601)"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "required": ["device_type", "firmware_version"],
+      "additionalProperties": true
+    }
+  ]
+}

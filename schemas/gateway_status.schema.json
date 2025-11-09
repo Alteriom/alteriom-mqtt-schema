@@ -2,12 +2,16 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.alteriom.io/mqtt/v1/gateway_status.schema.json",
   "title": "Gateway Status Message",
-  "description": "Gateway status change notification (v0.7.2+). Reports gateway operational state changes.",
+  "description": "Gateway status change notification. BREAKING v0.8.0: message_type changed from 304 to 304 (no change - already aligned with sensor_status at 202). Use device_status (103) for new deployments.",
   "allOf": [
     { "$ref": "envelope.schema.json" },
     {
       "type": "object",
       "properties": {
+        "message_type": {
+          "const": 304,
+          "description": "Message type code for gateway_status (no change in v0.8.0)"
+        },
         "device_type": {
           "const": "gateway",
           "description": "Must be 'gateway' for gateway status messages"
