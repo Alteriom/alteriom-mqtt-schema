@@ -271,7 +271,16 @@ export function classifyAndValidate(data) {
         if (data.sensors)
             return { kind: 'deviceData', result: validators.deviceData(data) };
         if (data.status &&
-            ['online', 'offline', 'starting', 'stopping', 'updating', 'maintenance', 'error', 'degraded'].includes(data.status))
+            [
+                'online',
+                'offline',
+                'starting',
+                'stopping',
+                'updating',
+                'maintenance',
+                'error',
+                'degraded',
+            ].includes(data.status))
             return { kind: 'deviceStatus', result: validators.deviceStatus(data) };
         if (data.status_summary || data.uptime_s !== undefined)
             return { kind: 'deviceHeartbeat', result: validators.deviceHeartbeat(data) };

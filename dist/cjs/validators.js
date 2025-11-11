@@ -265,7 +265,16 @@ function classifyAndValidate(data) {
         if (data.sensors)
             return { kind: 'deviceData', result: exports.validators.deviceData(data) };
         if (data.status &&
-            ['online', 'offline', 'starting', 'stopping', 'updating', 'maintenance', 'error', 'degraded'].includes(data.status))
+            [
+                'online',
+                'offline',
+                'starting',
+                'stopping',
+                'updating',
+                'maintenance',
+                'error',
+                'degraded',
+            ].includes(data.status))
             return { kind: 'deviceStatus', result: exports.validators.deviceStatus(data) };
         if (data.status_summary || data.uptime_s !== undefined)
             return { kind: 'deviceHeartbeat', result: exports.validators.deviceHeartbeat(data) };
