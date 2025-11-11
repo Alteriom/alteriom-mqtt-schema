@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "message_type": 612,
+  "device_id": "MESH-NODE-987654321",
+  "device_type": "gateway",
+  "timestamp": "2025-11-11T02:36:30.000Z",
+  "firmware_version": "GW 1.8.2",
+  "event": "bridge_takeover",
+  "data": {
+    "new_bridge_node_id": 987654321,
+    "previous_bridge_node_id": 123456789,
+    "takeover_reason": "election_winner",
+    "router_rssi": -55,
+    "gateway_ip": "192.168.1.1",
+    "local_ip": "192.168.1.105",
+    "router_ssid": "AlteriomMesh",
+    "election_participants": 3,
+    "election_duration_ms": 5000,
+    "winning_rssi": -55,
+    "services_ready": true,
+    "mqtt_connected": true,
+    "ntp_synced": true
+  }
+}

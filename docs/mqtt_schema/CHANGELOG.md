@@ -1,5 +1,44 @@
 # MQTT Schema Artifacts Changelog
 
+## 2025-11-11 (v0.8.1 - PainlessMesh v1.8.2 Compatibility Verification)
+
+### Compatibility Update: PainlessMesh v1.8.2 Support Verified
+
+This update verifies full compatibility with painlessMesh v1.8.2, which introduced:
+- **Multi-Bridge Coordination** - Load balancing across multiple simultaneous bridges (Type 613)
+- **Message Queue for Offline Mode** - Priority-based queuing with zero data loss
+
+Our existing schemas (v0.8.0) fully support all painlessMesh v1.8.2 features:
+
+#### Verified Schemas for v1.8.2:
+- ✅ **bridge_status (610)** - Tracks bridge health with queued_messages field for message queue feature
+- ✅ **bridge_election (611)** - Supports RSSI-based bridge election
+- ✅ **bridge_takeover (612)** - Announces bridge role changes
+- ✅ **bridge_coordination (613)** - Implements multi-bridge coordination with priority_based, round_robin, and best_signal strategies
+- ✅ **time_sync_ntp (614)** - Distributes NTP time across mesh
+
+#### New Test Fixtures:
+- `bridge_status_valid.json` - Primary bridge health broadcast
+- `bridge_election_valid.json` - Election candidacy announcement
+- `bridge_takeover_valid.json` - Successful takeover notification
+- `bridge_coordination_valid.json` - Priority-based multi-bridge coordination
+- `bridge_coordination_roundrobin.json` - Round-robin load balancing strategy
+- `time_sync_ntp_valid.json` - NTP time synchronization broadcast
+
+#### Test Coverage:
+- **161 total tests passing** (69 unit + 49 CJS fixtures + 49 ESM fixtures)
+- Added 6 new bridge management fixtures
+- All schemas validate against painlessMesh v1.8.2 message structures
+
+#### Documentation Updates:
+- README updated to reference painlessMesh v1.8.0-v1.8.2+ support
+- CHANGELOG updated with v1.8.2 compatibility verification
+- All bridge management schemas verified against v1.8.2 implementation
+
+**No breaking changes** - Existing code continues to work without modification.
+
+---
+
 ## 2025-11-08 (v0.8.0 - Unified Firmware & Bridge Management Release)
 
 ### Major Release: PainlessMesh v1.8.0 Unified Firmware Support

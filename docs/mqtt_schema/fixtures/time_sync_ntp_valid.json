@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "message_type": 614,
+  "device_id": "GW-BRIDGE-01",
+  "device_type": "gateway",
+  "timestamp": "2025-11-11T02:36:00.000Z",
+  "firmware_version": "GW 1.8.2",
+  "event": "time_sync_ntp",
+  "data": {
+    "bridge_node_id": 123456789,
+    "ntp_time_unix": 1731292560,
+    "ntp_time_iso": "2025-11-11T02:36:00.000Z",
+    "ntp_server": "pool.ntp.org",
+    "accuracy_ms": 25.5,
+    "stratum": 2,
+    "timezone": "UTC",
+    "utc_offset_minutes": 0,
+    "last_sync_time": "2025-11-11T02:30:00.000Z",
+    "sync_interval_s": 3600,
+    "sync_source": "ntp_server",
+    "confidence_level": "high",
+    "network_latency_ms": 15.2
+  }
+}
