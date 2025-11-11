@@ -73,7 +73,13 @@
     }
   },
   "files": [
-    "dist/",
+    "dist/cjs/*.js",
+    "dist/cjs/index.d.ts",
+    "dist/cjs/validators.d.ts",
+    "dist/cjs/types.d.ts",
+    "dist/cjs/generated/",
+    "dist/esm/*.js",
+    "dist/esm/package.json",
     "schemas/",
     "types/",
     "README.md",
