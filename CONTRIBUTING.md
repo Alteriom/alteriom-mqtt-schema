@@ -288,7 +288,7 @@ Major releases should include:
 
 - [README.md](./README.md) - Package overview
 - [PUBLISH_CHECKLIST.md](./PUBLISH_CHECKLIST.md) - Release process
-- [docs/mqtt_schema/CHANGELOG.md](./docs/mqtt_schema/CHANGELOG.md) - Version history
+- [CHANGELOG.md](./CHANGELOG.md) - Version history (see also [docs/mqtt_schema/CHANGELOG.md](./docs/mqtt_schema/CHANGELOG.md) for detailed changelog)
 - [docs/PAINLESSMESH_INTEGRATION.md](./docs/PAINLESSMESH_INTEGRATION.md) - Mesh integration guide
 
 ### Support
