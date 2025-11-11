@@ -14,11 +14,14 @@ See: [mqtt_schema/README.md](mqtt_schema/README.md)
 
 ### `/releases/` - Historical Release Documentation
 Archive of release summaries from previous versions:
-- `V071_RELEASE_SUMMARY.md` - v0.7.1 release notes
+- `V081_RELEASE_SUMMARY.md` - v0.8.1 release notes (current)
 - `V073_RELEASE_SUMMARY.md` - v0.7.3 release notes
+- `V071_RELEASE_SUMMARY.md` - v0.7.1 release notes
 - `RELEASE_READY_V073.md` - v0.7.3 release checklist
 
-**Current Release**: See [V080_BREAKING_CHANGES.md](../V080_BREAKING_CHANGES.md) in root
+**Current Release**: See [releases/README.md](releases/README.md) for details
+
+**Breaking Changes**: See [V080_BREAKING_CHANGES.md](../V080_BREAKING_CHANGES.md) in root for v0.8.0 migration
 
 ### `/archive/` - Development History
 Historical development documents and reviews:
@@ -70,12 +73,24 @@ Essential documentation maintained in the repository root:
 
 ## Version History
 
-See [CHANGELOG.md](../CHANGELOG.md) for complete version history.
+See [CHANGELOG.md](../CHANGELOG.md) (redirect) or [mqtt_schema/CHANGELOG.md](mqtt_schema/CHANGELOG.md) (detailed) for complete version history.
 
-**Latest Release**: v0.8.0 (November 2025)
+**Latest Release**: v0.8.1 (November 2025)
+- ✅ PainlessMesh v1.8.2 compatibility verification
+- ✅ Multi-bridge coordination support
+- ✅ 161 tests passing (69 unit + 92 fixtures)
+
+**Previous Release**: v0.8.0 (November 2025)
 - Unified device schemas (101-105)
 - HTTP transport support
 - Bridge management (610-614)
 - Breaking changes: Gateway code realignment (300→305, 301→306)
 
-See [V080_BREAKING_CHANGES.md](../V080_BREAKING_CHANGES.md) for migration guide.
+See [releases/README.md](releases/README.md) for all release notes and [V080_BREAKING_CHANGES.md](../V080_BREAKING_CHANGES.md) for v0.8.0 migration guide.
+
+## Additional Documentation
+
+### Technical Guides
+- **[OTA_MANIFEST.md](OTA_MANIFEST.md)** - OTA firmware update manifest reference
+- **[PAINLESSMESH_INTEGRATION.md](PAINLESSMESH_INTEGRATION.md)** - PainlessMesh protocol integration guide
+- **[SCHEMA_MAP.md](SCHEMA_MAP.md)** - Complete schema reference with type codes
