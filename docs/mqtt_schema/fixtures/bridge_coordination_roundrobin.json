@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "message_type": 613,
+  "device_id": "GW-BRIDGE-02",
+  "device_type": "gateway",
+  "timestamp": "2025-11-11T02:36:00.000Z",
+  "firmware_version": "GW 1.8.2",
+  "event": "bridge_coordination",
+  "data": {
+    "bridge_node_id": 234567890,
+    "bridge_role": "secondary",
+    "bridge_priority": 5,
+    "peer_bridges": [
+      {
+        "bridge_node_id": 123456789,
+        "bridge_role": "primary",
+        "internet_connected": true,
+        "router_rssi": -45,
+        "load_percentage": 45.3,
+        "health_status": "healthy",
+        "last_seen": "2025-11-11T02:36:00.000Z"
+      }
+    ],
+    "load_percentage": 15.5,
+    "connected_nodes": 4,
+    "messages_relayed_1m": 45,
+    "selection_strategy": "round_robin",
+    "traffic_routing": {
+      "alarm_messages": "all_bridges",
+      "sensor_data": "round_robin",
+      "control_commands": "any_available",
+      "firmware_updates": "best_signal"
+    }
+  }
+}

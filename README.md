@@ -36,7 +36,7 @@ Firmware emits structured MQTT payloads that must remain tightly aligned with we
 - **NEW in v0.8.0**: ⚠️ BREAKING: Gateway code realignment (300→305, 301→306) with automatic legacy translation
 - **NEW in v0.8.0**: Unified device schemas (10x range) for sensor/gateway/bridge/hybrid deployments
 - **NEW in v0.8.0**: HTTP transport support via `transport_metadata` for REST API integration
-- **NEW in v0.8.0**: Bridge management schemas for painlessMesh v1.8.0+ (5 new message types)
+- **NEW in v0.8.0**: Bridge management schemas for painlessMesh v1.8.0-v1.8.2+ (5 new message types)
 - **NEW in v0.7.3**: Message batching for 50-90% protocol overhead reduction
 - **NEW in v0.7.3**: Compression support for 60-80% bandwidth savings (gzip, zlib, brotli, deflate)
 - **NEW in v0.7.3**: Comprehensive example repository (9 examples, 4 categories)

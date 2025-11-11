@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "message_type": 611,
+  "device_id": "MESH-NODE-987654321",
+  "device_type": "sensor",
+  "timestamp": "2025-11-11T02:36:00.000Z",
+  "firmware_version": "SN 1.8.2",
+  "event": "bridge_election",
+  "data": {
+    "candidate_node_id": 987654321,
+    "router_rssi": -55,
+    "uptime_s": 43200,
+    "bridge_priority": 5,
+    "power_source": "mains",
+    "previous_bridge_role": "secondary",
+    "memory_free_kb": 38000,
+    "triggered_by": "bridge_offline",
+    "election_round": 1
+  }
+}

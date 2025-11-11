@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "message_type": 610,
+  "device_id": "GW-BRIDGE-01",
+  "device_type": "gateway",
+  "timestamp": "2025-11-11T02:36:00.000Z",
+  "firmware_version": "GW 1.8.2",
+  "event": "bridge_status",
+  "data": {
+    "bridge_node_id": 123456789,
+    "internet_connected": true,
+    "router_rssi": -45,
+    "gateway_ip": "192.168.1.1",
+    "local_ip": "192.168.1.100",
+    "router_ssid": "AlteriomMesh",
+    "uptime_s": 86400,
+    "bridge_priority": 10,
+    "bridge_role": "primary",
+    "connected_nodes": 12,
+    "queued_messages": 0,
+    "health_status": "healthy",
+    "disconnect_count_24h": 0,
+    "avg_latency_ms": 15.5,
+    "memory_free_kb": 45000,
+    "cpu_load_pct": 35.2
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "message_type": 613,
+  "device_id": "GW-BRIDGE-01",
+  "device_type": "gateway",
+  "timestamp": "2025-11-11T02:36:00.000Z",
+  "firmware_version": "GW 1.8.2",
+  "event": "bridge_coordination",
+  "data": {
+    "bridge_node_id": 123456789,
+    "bridge_role": "primary",
+    "bridge_priority": 10,
+    "peer_bridges": [
+      {
+        "bridge_node_id": 234567890,
+        "bridge_role": "secondary",
+        "internet_connected": true,
+        "router_rssi": -60,
+        "load_percentage": 15.5,
+        "health_status": "healthy",
+        "last_seen": "2025-11-11T02:35:55.000Z"
+      },
+      {
+        "bridge_node_id": 345678901,
+        "bridge_role": "standby",
+        "internet_connected": true,
+        "router_rssi": -70,
+        "load_percentage": 0,
+        "health_status": "healthy",
+        "last_seen": "2025-11-11T02:35:58.000Z"
+      }
+    ],
+    "load_percentage": 45.3,
+    "connected_nodes": 8,
+    "messages_relayed_1m": 120,
+    "selection_strategy": "priority_based",
+    "traffic_routing": {
+      "alarm_messages": "primary_only",
+      "sensor_data": "load_balanced",
+      "control_commands": "primary_only",
+      "firmware_updates": "dedicated_bridge"
+    }
+  }
+}
