@@ -94,3 +94,9 @@ See [releases/README.md](releases/README.md) for all release notes and [V080_BRE
 - **[OTA_MANIFEST.md](OTA_MANIFEST.md)** - OTA firmware update manifest reference
 - **[PAINLESSMESH_INTEGRATION.md](PAINLESSMESH_INTEGRATION.md)** - PainlessMesh protocol integration guide
 - **[SCHEMA_MAP.md](SCHEMA_MAP.md)** - Complete schema reference with type codes
+- **[SCHEMA_COVERAGE_AND_EXTENSIBILITY.md](SCHEMA_COVERAGE_AND_EXTENSIBILITY.md)** - Comprehensive schema coverage assessment and extensibility patterns
+- **[SCHEMA_EXTENSIBILITY_GUIDE.md](SCHEMA_EXTENSIBILITY_GUIDE.md)** - Detailed guide for extending schemas without breaking changes
+- **[HTTP_TRANSPORT_GUIDE.md](HTTP_TRANSPORT_GUIDE.md)** - Complete guide for HTTP/MQTT bridge implementation
+
+### Code Examples
+- **[examples/mqtt-to-http-bridge.js](examples/mqtt-to-http-bridge.js)** - Working MQTT-to-HTTP bridge implementation with offline queuing
