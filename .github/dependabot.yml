@@ -41,6 +41,5 @@ updates:
     open-pull-requests-limit: 3
     labels:
       - "dependencies"
-      - "github-actions"
     commit-message:
       prefix: "chore(ci)"
