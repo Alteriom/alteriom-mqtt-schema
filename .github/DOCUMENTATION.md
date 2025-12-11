@@ -215,7 +215,6 @@ Documentation is continuously improved. To suggest changes:
 3. **Questions**: Use Discussions or Issues
 
 **Last Updated**: December 2025  
-**Documentation Version**: 1.0.0  
 **Package Version**: 0.8.1
 
 ---
