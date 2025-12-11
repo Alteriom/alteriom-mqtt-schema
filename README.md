@@ -51,7 +51,24 @@ Firmware emits structured MQTT payloads that must remain tightly aligned with we
 
 ## Documentation
 
-📚 **[GitHub Wiki](https://github.com/Alteriom/alteriom-mqtt-schema/wiki)** - Comprehensive API documentation, schema references, validation rules, and guides
+### Quick Links
+
+- 📚 **[GitHub Wiki](https://github.com/Alteriom/alteriom-mqtt-schema/wiki)** - Comprehensive API documentation, schema references, and guides
+- 🔧 **[Development Guide](./DEVELOPMENT.md)** - Environment setup, build system, and workflow
+- 🧪 **[Testing Guide](./TESTING.md)** - Testing strategy, procedures, and coverage
+- 📋 **[Documentation Index](./.github/DOCUMENTATION.md)** - Complete documentation map
+
+### Essential Resources
+
+- **Getting Started**: [Installation](#installation) · [Quick Start](#quick-start) · [Examples](./docs/examples/)
+- **API Reference**: [Message Types](#message-type-codes) · [Validators](#usage) · [Type Guards](#type-guards-typescript)
+- **Schemas**: [Schema Directory](./docs/mqtt_schema/) · [Validation Rules](./docs/mqtt_schema/validation_rules.md)
+- **Contributing**: [Contributing Guide](./CONTRIBUTING.md) · [Code of Conduct](./CODE_OF_CONDUCT.md)
+- **Releases**: [Changelog](./CHANGELOG.md) · [Roadmap](./ROADMAP.md) · [Breaking Changes](./V080_BREAKING_CHANGES.md)
+
+### Central Documentation
+
+For organization-wide documentation and integration guides, visit the **[Alteriom Documentation Repository](https://github.com/Alteriom/alteriom-documentation)**.
 
 > **Note**: If the wiki appears empty, see [WIKI_SETUP.md](./WIKI_SETUP.md) for setup instructions. The wiki is automatically generated and synced from the repository.
 
