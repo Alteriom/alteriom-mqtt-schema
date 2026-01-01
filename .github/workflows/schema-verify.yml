@@ -58,7 +58,7 @@ jobs:
 
       - name: Upload debug artifact
         if: failure()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: schema-verify-debug-${{ matrix.node }}
           path: verify_debug.txt
