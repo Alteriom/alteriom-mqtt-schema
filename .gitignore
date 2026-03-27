@@ -4,3 +4,6 @@
 /schemas
 /coverage
 *.tgz
+/wiki_build
+/src/schema_data.ts
+/src/generated/
