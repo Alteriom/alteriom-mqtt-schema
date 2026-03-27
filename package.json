@@ -101,8 +101,8 @@
     "build": "npm run build:cjs && npm run build:esm && node scripts/copy-schemas.cjs",
     "clean": "rimraf dist schemas",
     "// Testing & Validation": "====================",
-    "lint": "eslint src --ext .ts",
-    "lint:fix": "eslint src --ext .ts --fix",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
     "test": "npm run test:unit && npm run test:fixtures",
@@ -139,9 +139,6 @@
     "typescript",
     "ota"
   ],
-  "peerDependencies": {
-    "ajv": ">=8.0.0"
-  },
   "devDependencies": {
     "@alteriom/repository-metadata-manager": "^1.2.4",
     "@eslint/js": "^9.39.1",
@@ -149,8 +146,6 @@
     "@typescript-eslint/eslint-plugin": "^8.46.3",
     "@typescript-eslint/parser": "^8.46.3",
     "@vitest/coverage-v8": "^4.0.7",
-    "ajv": "^8.17.0",
-    "ajv-formats": "^2.1.1",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
@@ -164,6 +159,7 @@
     "vitest": "^4.0.7"
   },
   "dependencies": {
-    "dotenv": "^17.2.2"
+    "ajv": "^8.17.0",
+    "ajv-formats": "^2.1.1"
   }
 }

@@ -91,18 +91,12 @@ const compressedEnvelope = compressed_envelope_schema as any;
 // Lazy singleton Ajv instance so consumers can optionally supply their own if needed.
 let _ajv: Ajv | null = null;
 
-export interface CompileOptions {
-  allErrors?: boolean;
-  strict?: boolean;
-}
-
-function getAjv(opts?: CompileOptions): Ajv {
+function getAjv(): Ajv {
   if (_ajv) return _ajv;
   _ajv = new Ajv({
     strict: false,
     allErrors: true,
     allowUnionTypes: true,
-    ...opts,
   });
   addFormats(_ajv);
   // Add base schema so $ref works for those referencing envelope

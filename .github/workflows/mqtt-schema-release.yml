@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -48,7 +48,7 @@ jobs:
 
       - name: Set up Node
         if: steps.tagcheck.outputs.exists == 'false'
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -75,7 +75,7 @@ jobs:
 
       - name: Set up Node for publish (provenance)
         if: steps.tagcheck.outputs.exists == 'false' && startsWith(steps.commit.outputs.message, 'release:')
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
