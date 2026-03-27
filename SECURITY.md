@@ -6,6 +6,7 @@ We actively support the following versions with security updates:
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 0.8.x   | :white_check_mark: |
 | 0.7.x   | :white_check_mark: |
 | 0.6.x   | :white_check_mark: |
 | < 0.6   | :x:                |
@@ -21,8 +22,7 @@ Please do not create a public GitHub issue for security vulnerabilities. Public 
 ### 2. Report Privately
 
 Send a detailed report to the maintainers via:
-- GitHub Security Advisories (preferred)
-- Email: [INSERT SECURITY EMAIL]
+- Use GitHub's [Security Advisory](https://github.com/Alteriom/alteriom-mqtt-schema/security/advisories/new) feature
 
 ### 3. Include Details
 
