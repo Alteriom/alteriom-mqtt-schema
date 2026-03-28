@@ -26,6 +26,7 @@ import {
   control_response_schema,
   command_schema,
   command_response_schema,
+  config_set_response_schema,
   // Mesh Network
   mesh_node_list_schema,
   mesh_topology_schema,
@@ -70,6 +71,7 @@ const firmwareStatus = firmware_status_schema as any;
 const controlResponse = control_response_schema as any;
 const command = command_schema as any;
 const commandResponse = command_response_schema as any;
+const configSetResponse = config_set_response_schema as any;
 // Mesh Network
 const meshNodeList = mesh_node_list_schema as any;
 const meshTopology = mesh_topology_schema as any;
@@ -144,6 +146,7 @@ const firmwareStatusValidate = ajv.compile(firmwareStatus);
 const controlResponseValidate = ajv.compile(controlResponse);
 const commandValidate = ajv.compile(command);
 const commandResponseValidate = ajv.compile(commandResponse);
+const configSetResponseValidate = ajv.compile(configSetResponse);
 // Mesh Network Validators
 const meshNodeListValidate = ajv.compile(meshNodeList);
 const meshTopologyValidate = ajv.compile(meshTopology);
@@ -186,6 +189,7 @@ export const validators = {
   controlResponse: (d: unknown) => toResult(controlResponseValidate, d),
   command: (d: unknown) => toResult(commandValidate, d),
   commandResponse: (d: unknown) => toResult(commandResponseValidate, d),
+  configSetResponse: (d: unknown) => toResult(configSetResponseValidate, d),
   // Mesh Network Validators
   meshNodeList: (d: unknown) => toResult(meshNodeListValidate, d),
   meshTopology: (d: unknown) => toResult(meshTopologyValidate, d),
@@ -241,6 +245,7 @@ const MESSAGE_TYPE_MAP: Record<number, ValidatorName> = {
   400: 'command',
   401: 'commandResponse',
   402: 'controlResponse',
+  403: 'configSetResponse', // v0.8.1 - CONFIG_SET_RESPONSE from firmware
   // Firmware Updates
   500: 'firmwareStatus',
   // Mesh Network
