@@ -752,6 +752,7 @@ For performance optimization and standardized routing, use the optional `message
 | 400 | `COMMAND` | command | control | Device control command |
 | 401 | `COMMAND_RESPONSE` | command_response | control | Command execution result |
 | 402 | `CONTROL_RESPONSE` | control_response | control | Legacy control response (deprecated) |
+| 403 | `CONFIG_SET_RESPONSE` | config_set_response | control | Firmware response to CONFIG_SET_COMMAND (v0.8.2+) |
 
 ### Firmware & OTA
 
