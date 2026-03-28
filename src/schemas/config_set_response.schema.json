@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.alteriom.io/mqtt/v1/config_set_response.schema.json",
+  "title": "Config Set Response v1",
+  "description": "Response from device after a configuration set command (Type 403). Sent by firmware after applying CONFIG_SET_COMMAND (Type 402).",
+  "allOf": [{"$ref": "envelope.schema.json"}],
+  "type": "object",
+  "properties": {
+    "message_type": {
+      "const": 403,
+      "description": "Message type code for config set response (v0.8.1+)"
+    },
+    "correlation_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "description": "Matches correlation_id from original CONFIG_SET_COMMAND (Type 402)"
+    },
+    "result": {
+      "type": "object",
+      "description": "Result of the configuration set operation",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["ok", "partial", "error", "rejected"],
+          "description": "Outcome of the config set operation"
+        },
+        "section": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "Configuration section that was targeted (e.g., 'network', 'sensors', 'ota')"
+        },
+        "applied_config": {
+          "type": "object",
+          "description": "The configuration values that were successfully applied",
+          "additionalProperties": true
+        },
+        "requires_restart": {
+          "type": "boolean",
+          "description": "Whether the device needs to restart for changes to take effect"
+        },
+        "backup_created": {
+          "type": "boolean",
+          "description": "Whether a configuration backup was created before applying changes"
+        },
+        "error_code": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "Machine-readable error code if status is error or rejected"
+        },
+        "error_message": {
+          "type": "string",
+          "maxLength": 256,
+          "description": "Human-readable error description"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

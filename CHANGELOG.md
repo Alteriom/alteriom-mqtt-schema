@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 > **Note**: For detailed schema-level changes and comprehensive version history, see [docs/mqtt_schema/CHANGELOG.md](./docs/mqtt_schema/CHANGELOG.md)
 
+## [0.8.2] - 2026-03-28
+
+### Added
+- **CONFIG_SET_RESPONSE (code 403)**: New schema, validator, and enum entry for firmware response to CONFIG_SET_COMMAND (Type 402)
+- **Three-way alignment**: Schema library verified aligned with alteriom-firmware and painlessMesh repos
+- **HTTP transport verification**: Confirmed `transport_metadata` support with 13 integration tests
+- **Full coverage for codes 600-614**: Verified all bridge management codes have corresponding schema files
+
+### Changed
+- Updated `MessageType` enum with `CONFIG_SET_RESPONSE: 403` entry
+- Updated envelope schema to include code 403 in valid message type codes
+
 ## [0.8.1] - 2025-11-11
 
 ### Changed
@@ -189,6 +201,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Type | Key Features |
 |---------|------|------|--------------|
+| 0.8.2 | 2026-03-28 | Patch | CONFIG_SET_RESPONSE (403), three-way alignment |
 | 0.8.1 | 2025-11-11 | Patch | PainlessMesh v1.8.2 compatibility |
 | 0.8.0 | 2025-11-08 | Major | Unified firmware, bridge management, HTTP transport |
 | 0.7.3 | 2025-10-30 | Minor | Message batching, compression, code quality tools |

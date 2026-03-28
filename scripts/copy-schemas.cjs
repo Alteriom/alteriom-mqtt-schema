@@ -40,6 +40,7 @@ const copyList = [
   'control_response.schema.json',
   'command.schema.json',
   'command_response.schema.json',
+  'config_set_response.schema.json', // v0.8.1
   // Mesh Network
   'mesh_node_list.schema.json',
   'mesh_topology.schema.json',

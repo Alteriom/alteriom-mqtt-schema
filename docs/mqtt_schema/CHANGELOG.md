@@ -1,5 +1,16 @@
 # MQTT Schema Artifacts Changelog
 
+## 2026-03-28 (v0.8.2 - Three-Way Alignment + CONFIG_SET_RESPONSE)
+
+### New Schema
+- **CONFIG_SET_RESPONSE (403)** — firmware response to config set commands with status, section, applied_config, requires_restart, backup_created fields
+
+### Alignment
+- Three-way consistency audit with alteriom-firmware and painlessMesh repos
+- Verified all codes 600-614 have corresponding schema files
+- Verified HTTP transport support is schema-agnostic (13 integration tests)
+- Confirmed code 250 is NOT in schema (firmware migrating to 614)
+
 ## 2025-11-11 (v0.8.1 - PainlessMesh v1.8.2 Compatibility Verification)
 
 ### Compatibility Update: PainlessMesh v1.8.2 Support Verified

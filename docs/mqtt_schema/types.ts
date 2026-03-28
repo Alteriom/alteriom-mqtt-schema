@@ -35,6 +35,7 @@ export const MessageTypeCodes = {
   COMMAND: 400,
   COMMAND_RESPONSE: 401,
   CONTROL_RESPONSE: 402,      // deprecated
+  CONFIG_SET_RESPONSE: 403,   // v0.8.1 - firmware response to CONFIG_SET_COMMAND (Type 402)
   
   // Firmware Updates
   FIRMWARE_STATUS: 500,
