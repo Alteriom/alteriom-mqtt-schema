@@ -48,7 +48,7 @@ jobs:
 
       - name: Set up Node
         if: steps.tagcheck.outputs.exists == 'false'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: 'npm'
@@ -75,7 +75,7 @@ jobs:
 
       - name: Set up Node for publish (provenance)
         if: steps.tagcheck.outputs.exists == 'false' && startsWith(steps.commit.outputs.message, 'release:')
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
