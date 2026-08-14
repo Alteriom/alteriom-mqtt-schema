@@ -35,6 +35,14 @@ updates:
 
   # Enable GitHub Actions workflow updates
   - package-ecosystem: "github-actions"
+    # Collapse routine updates into one PR per ecosystem; majors stay
+    # individual so they can be reviewed on their own merits.
+    groups:
+      github-actions-minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
     directory: "/"
     schedule:
       interval: "monthly"
