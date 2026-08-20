@@ -52,6 +52,7 @@
       "pattern": "^[a-fA-F0-9]{32,64}$",
       "description": "MD5 or SHA256 checksum of original payload for integrity verification"
     },
+    "transport_metadata": {"$ref": "transport_metadata.schema.json"},
     "metadata": {
       "type": "object",
       "description": "Optional compression metadata",

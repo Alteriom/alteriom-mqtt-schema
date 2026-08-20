@@ -51,6 +51,7 @@
       "default": "none",
       "description": "Compression algorithm applied to messages array"
     },
+    "transport_metadata": {"$ref": "transport_metadata.schema.json"},
     "messages": {
       "type": "array",
       "minItems": 1,

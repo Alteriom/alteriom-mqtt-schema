@@ -70,7 +70,7 @@ This file captures dynamic / contextual validation that is OUTSIDE pure structur
 
 ## Mesh Bridge Messages (v0.7.1+)
 - New message type for MQTT-to-mesh protocol bridging (`event: "mesh_bridge"`).
-- Must include `mesh_protocol` (painlessMesh, esp-now, ble-mesh, thread, zigbee).
+- Must include `mesh_protocol` (painlessMesh, esp-now, ble-mesh, thread, zigbee, lora).
 - Must include `mesh_message` object with at minimum `from_node_id` and `to_node_id`.
 - Node IDs can be integer (uint32 for painlessMesh) or string format.
 - RSSI must be -200 to 0 dBm if present.

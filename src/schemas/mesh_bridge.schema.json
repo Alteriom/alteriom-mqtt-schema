@@ -23,7 +23,7 @@
         },
         "mesh_protocol": {
           "type": "string",
-          "enum": ["painlessMesh", "esp-now", "ble-mesh", "thread", "zigbee"],
+          "enum": ["painlessMesh", "esp-now", "ble-mesh", "thread", "zigbee", "lora"],
           "description": "Mesh protocol being bridged"
         },
         "mesh_message": {

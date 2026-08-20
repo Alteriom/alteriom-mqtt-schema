@@ -93,7 +93,7 @@ export interface EnvironmentInfo {
 }
 
 export interface TransportMetadata {
-  protocol?: 'mqtt' | 'http' | 'https';
+  protocol?: 'mqtt' | 'http' | 'https' | 'lora' | 'painlessmesh' | 'serial' | 'ble';
   correlation_id?: string; // Request/response tracking
   http?: {
     method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -580,7 +580,7 @@ export interface MeshBridgeMessage extends BaseEnvelope {
   firmware_version: string;
   message_type?: 603;
   event: 'mesh_bridge';
-  mesh_protocol: 'painlessMesh' | 'esp-now' | 'ble-mesh' | 'thread' | 'zigbee';
+  mesh_protocol: 'painlessMesh' | 'esp-now' | 'ble-mesh' | 'thread' | 'zigbee' | 'lora';
   mesh_message: {
     from_node_id: number | string;
     to_node_id: number | string;

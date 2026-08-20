@@ -17,6 +17,7 @@ fs.mkdirSync(destDir, { recursive: true });
 
 const copyList = [
   'envelope.schema.json',
+  'transport_metadata.schema.json',
   // Unified Device Schemas (v0.8.0)
   'device_data.schema.json',        // v0.8.0
   'device_heartbeat.schema.json',   // v0.8.0
