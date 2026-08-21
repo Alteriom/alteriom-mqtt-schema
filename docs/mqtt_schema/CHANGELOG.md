@@ -9,6 +9,10 @@
 - Transport protocol identifiers for `lora`, `painlessmesh`, `serial`, and `ble`.
 - LoRa support for `mesh_bridge.mesh_protocol`.
 
+### Release Readiness
+- Updated integration and release documentation for the expanded transport contract.
+- Fixed release preparation changelog discovery and refreshed the dependency lockfile to eliminate known audit findings.
+
 **No breaking changes** - `transport_metadata` remains optional and existing protocol values are unchanged.
 
 ## 2026-03-28 (v0.8.2 - Three-Way Alignment + CONFIG_SET_RESPONSE)

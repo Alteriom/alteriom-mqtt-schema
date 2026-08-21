@@ -15,6 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - LoRa, painlessMesh, serial, and BLE transport identifiers, plus LoRa mesh bridging.
 
+### Security
+- Updated the lockfile to resolve AJV's `fast-uri` dependency to 3.1.5, addressing published host-confusion and path-traversal advisories.
+
+### Documentation and Release Tooling
+- Updated transport and release documentation for v0.8.3.
+- Fixed `release:prepare` changelog discovery and package-lock version synchronization.
+- Corrected npm repository metadata and export-condition ordering for package consumers.
+
 ## [0.8.2] - 2026-03-28
 
 ### Added
@@ -209,6 +217,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Type | Key Features |
 |---------|------|------|--------------|
+| 0.8.3 | Pending | Patch | Shared transport validation, protocol coverage, release hardening |
 | 0.8.2 | 2026-03-28 | Patch | CONFIG_SET_RESPONSE (403), three-way alignment |
 | 0.8.1 | 2025-11-11 | Patch | PainlessMesh v1.8.2 compatibility |
 | 0.8.0 | 2025-11-08 | Major | Unified firmware, bridge management, HTTP transport |
