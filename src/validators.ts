@@ -3,7 +3,6 @@ import addFormats from 'ajv-formats';
 // Schemas embedded via generated schema_data.ts (copy-schemas.cjs) to avoid filesystem dependency
 import {
   envelope_schema,
-  transport_metadata_schema,
   // Unified Device Schemas (v0.8.0)
   device_data_schema,
   device_heartbeat_schema,
@@ -49,7 +48,6 @@ import {
 // Load JSON schemas via createRequire so it works in both CJS and ESM builds without import assertions.
 // Bind embedded schema objects for Ajv consumption
 const envelope = envelope_schema as any;
-const transportMetadata = transport_metadata_schema as any;
 // Unified Device Schemas (v0.8.0)
 const deviceData = device_data_schema as any;
 const deviceHeartbeat = device_heartbeat_schema as any;
@@ -103,8 +101,7 @@ function getAjv(): Ajv {
     allowUnionTypes: true,
   });
   addFormats(_ajv);
-  // Add shared schemas so $ref works for envelopes and transport containers.
-  _ajv.addSchema(transportMetadata, 'transport_metadata.schema.json');
+  // Add the base schema so message and transport-fragment $refs resolve.
   _ajv.addSchema(envelope, 'envelope.schema.json');
   return _ajv;
 }

@@ -457,6 +457,21 @@ describe('HTTP Transport Integration', () => {
       expect(validators.meshBridge(payload).valid).toBe(true);
     });
 
+    it('should validate LoRa as a mesh status protocol', () => {
+      const payload = {
+        schema_version: 1,
+        message_type: MessageTypeCodes.MESH_STATUS,
+        device_id: 'GW001',
+        device_type: 'gateway',
+        timestamp: new Date().toISOString(),
+        firmware_version: 'GW 2.1.5',
+        mesh_status: 'healthy',
+        mesh_protocol: 'lora'
+      };
+
+      expect(validators.meshStatus(payload).valid).toBe(true);
+    });
+
     it('should validate HTTP method enum', () => {
       const validMethods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
       

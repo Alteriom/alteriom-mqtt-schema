@@ -3,7 +3,6 @@
   "version": 1,
   "schemas": {
     "envelope": "envelope.schema.json",
-    "transport_metadata": "transport_metadata.schema.json",
     "sensor_data": "sensor_data.schema.json",
     "sensor_heartbeat": "sensor_heartbeat.schema.json",
     "sensor_status": "sensor_status.schema.json",

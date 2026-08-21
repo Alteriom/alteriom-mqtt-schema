@@ -858,7 +858,7 @@ export interface MeshStatusMessage extends BaseEnvelope {
     [k: string]: unknown;
   }>;
   last_topology_change?: string;
-  mesh_protocol?: 'painlessMesh' | 'esp-now' | 'ble-mesh' | 'thread' | 'zigbee';
+  mesh_protocol?: 'painlessMesh' | 'esp-now' | 'ble-mesh' | 'thread' | 'zigbee' | 'lora';
   active_bridges?: Array<{
     bridge_node_id: number | string;
     bridge_role?: 'primary' | 'secondary' | 'backup' | 'standby';

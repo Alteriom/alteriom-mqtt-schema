@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
-- Reused the transport metadata contract for batch and compressed envelope validation.
+- Reused the envelope's locally resolvable transport metadata contract for batch and compressed envelope validation.
 
 ### Added
 - LoRa, painlessMesh, serial, and BLE transport identifiers, plus LoRa mesh bridging.

@@ -3,7 +3,7 @@
 ## Unreleased (v0.8.3 - Shared Transport Contract)
 
 ### Fixed
-- Batch and compressed envelopes now validate `transport_metadata` through the same shared contract as standard messages.
+- Batch and compressed envelopes now validate `transport_metadata` through the envelope's shared, locally resolvable definition.
 
 ### Added
 - Transport protocol identifiers for `lora`, `painlessmesh`, `serial`, and `ble`.
