@@ -6,7 +6,7 @@ Purpose: Provide stable, machine-consumable schema references and concise human 
 
 | File | Purpose | Type Code |
 |------|---------|-----------|
-| `envelope.schema.json` | Base envelope fields, reused via `$ref`. Includes optional `message_type` (v0.7.1+). | - |
+| `envelope.schema.json` | Base envelope fields and the shared `transport_metadata` definition, reused via `$ref`. Includes optional `message_type` (v0.7.1+). | - |
 | `sensor_data.schema.json` | Sensor data message (`alteriom/nodes/{device_id}/data`). | 200 |
 | `sensor_heartbeat.schema.json` | Heartbeat message (firmware_version omission allowed). | 201 |
 | `sensor_status.schema.json` | Sensor status message (`.../status`). | 202 |

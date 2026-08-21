@@ -114,6 +114,47 @@ describe('HTTP Transport Integration', () => {
       const result = validators.batchEnvelope(batchPayload);
       expect(result.valid).toBe(true);
     });
+
+    it('should reject invalid transport metadata on batch HTTP uploads', () => {
+      const batchPayload = {
+        schema_version: 1,
+        message_type: MessageTypeCodes.BATCH_ENVELOPE,
+        batch_id: 'batch-invalid-transport',
+        batch_size: 1,
+        messages: [{ schema_version: 1, device_id: 'SN001' }],
+        transport_metadata: {
+          protocol: 'https',
+          http: { method: 'CONNECT', status_code: 700 }
+        }
+      };
+
+      const result = validators.batchEnvelope(batchPayload);
+      expect(result.valid).toBe(false);
+      expect(result.errors).toEqual(expect.arrayContaining([
+        expect.stringContaining('must be equal to one of the allowed values'),
+        expect.stringContaining('must be <= 599')
+      ]));
+    });
+
+    it('should reject invalid transport metadata on compressed uploads', () => {
+      const compressedPayload = {
+        schema_version: 1,
+        message_type: MessageTypeCodes.COMPRESSED_ENVELOPE,
+        encoding: 'gzip',
+        compressed_payload: 'H4sIAAAAAAA=',
+        original_size_bytes: 64,
+        transport_metadata: {
+          protocol: 'mqtt',
+          mqtt: { qos: 3 }
+        }
+      };
+
+      const result = validators.compressedEnvelope(compressedPayload);
+      expect(result.valid).toBe(false);
+      expect(result.errors).toEqual(expect.arrayContaining([
+        expect.stringContaining('must be equal to one of the allowed values')
+      ]));
+    });
   });
   
   describe('HTTP-to-MQTT Bridge Scenarios', () => {
@@ -380,6 +421,57 @@ describe('HTTP Transport Integration', () => {
   });
   
   describe('Protocol-Specific Validation', () => {
+    it.each(['lora', 'painlessmesh', 'serial', 'ble'] as const)(
+      'should validate %s transport metadata',
+      (protocol) => {
+        const payload = {
+          schema_version: 1,
+          device_id: 'SN001',
+          device_type: 'sensor' as const,
+          timestamp: new Date().toISOString(),
+          firmware_version: 'SN 2.1.5',
+          sensors: { temperature: { value: 22.5, unit: 'C' } },
+          transport_metadata: { protocol }
+        };
+
+        expect(validators.sensorData(payload).valid).toBe(true);
+      }
+    );
+
+    it('should validate LoRa as a mesh bridge protocol', () => {
+      const payload = {
+        schema_version: 1,
+        message_type: MessageTypeCodes.MESH_BRIDGE,
+        device_id: 'GW001',
+        device_type: 'gateway',
+        timestamp: new Date().toISOString(),
+        firmware_version: 'GW 2.1.5',
+        event: 'mesh_bridge',
+        mesh_protocol: 'lora',
+        mesh_message: {
+          from_node_id: 'LORA001',
+          to_node_id: 'GW001'
+        }
+      };
+
+      expect(validators.meshBridge(payload).valid).toBe(true);
+    });
+
+    it('should validate LoRa as a mesh status protocol', () => {
+      const payload = {
+        schema_version: 1,
+        message_type: MessageTypeCodes.MESH_STATUS,
+        device_id: 'GW001',
+        device_type: 'gateway',
+        timestamp: new Date().toISOString(),
+        firmware_version: 'GW 2.1.5',
+        mesh_status: 'healthy',
+        mesh_protocol: 'lora'
+      };
+
+      expect(validators.meshStatus(payload).valid).toBe(true);
+    });
+
     it('should validate HTTP method enum', () => {
       const validMethods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
       

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 > **Note**: For detailed schema-level changes and comprehensive version history, see [docs/mqtt_schema/CHANGELOG.md](./docs/mqtt_schema/CHANGELOG.md)
 
+## [Unreleased]
+
+### Fixed
+- Reused the envelope's locally resolvable transport metadata contract for batch and compressed envelope validation.
+
+### Added
+- LoRa, painlessMesh, serial, and BLE transport identifiers, plus LoRa mesh bridging.
+
 ## [0.8.2] - 2026-03-28
 
 ### Added

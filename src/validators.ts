@@ -101,7 +101,7 @@ function getAjv(): Ajv {
     allowUnionTypes: true,
   });
   addFormats(_ajv);
-  // Add base schema so $ref works for those referencing envelope
+  // Add the base schema so message and transport-fragment $refs resolve.
   _ajv.addSchema(envelope, 'envelope.schema.json');
   return _ajv;
 }
