@@ -56,7 +56,7 @@ Firmware emits structured MQTT payloads that must remain tightly aligned with we
 - 📚 **[GitHub Wiki](https://github.com/Alteriom/alteriom-mqtt-schema/wiki)** - Comprehensive API documentation, schema references, and guides
 - 🔧 **[Development Guide](./DEVELOPMENT.md)** - Environment setup, build system, and workflow
 - 🧪 **[Testing Guide](./TESTING.md)** - Testing strategy, procedures, and coverage
-- 📋 **[Documentation Index](./.github/DOCUMENTATION.md)** - Complete documentation map
+- 📋 **[Documentation Index](./docs/README.md)** - Complete documentation map
 
 ### Essential Resources
 
@@ -64,13 +64,13 @@ Firmware emits structured MQTT payloads that must remain tightly aligned with we
 - **API Reference**: [Message Types](#message-type-codes) · [Validators](#usage) · [Type Guards](#type-guards-typescript)
 - **Schemas**: [Schema Directory](./docs/mqtt_schema/) · [Validation Rules](./docs/mqtt_schema/validation_rules.md)
 - **Contributing**: [Contributing Guide](./CONTRIBUTING.md) · [Code of Conduct](./CODE_OF_CONDUCT.md)
-- **Releases**: [Changelog](./CHANGELOG.md) · [Roadmap](./ROADMAP.md) · [Breaking Changes](./V080_BREAKING_CHANGES.md)
+- **Releases**: [Changelog](./CHANGELOG.md) · [Release Notes](./docs/releases/) · [Breaking Changes](./V080_BREAKING_CHANGES.md)
 
 ### Central Documentation
 
 For organization-wide documentation and integration guides, visit the **[Alteriom Documentation Repository](https://github.com/Alteriom/alteriom-documentation)**.
 
-> **Note**: If the wiki appears empty, see [WIKI_SETUP.md](./WIKI_SETUP.md) for setup instructions. The wiki is automatically generated and synced from the repository.
+> **Note**: Wiki content is generated from the repository documentation with `npm run wiki:generate`.
 
 ## Installation
 
@@ -1145,18 +1145,14 @@ This repository maintains comprehensive documentation across several locations:
 
 ### Root Documentation
 - **[CHANGELOG.md](./CHANGELOG.md)** - Complete version history with breaking changes and migration guides
-- **[ROADMAP.md](./ROADMAP.md)** - Planned features and development timeline
 - **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Guidelines for contributing to the project
 - **[SECURITY.md](./SECURITY.md)** - Security policy and vulnerability reporting
 - **[PUBLISH_CHECKLIST.md](./PUBLISH_CHECKLIST.md)** - Release process and verification steps
-- **[API_MONITOR_GUIDE.md](./API_MONITOR_GUIDE.md)** - Integration guide for monitoring systems
 - **[V080_BREAKING_CHANGES.md](./V080_BREAKING_CHANGES.md)** - v0.8.0 migration guide (current)
 
 ### docs/ Directory Structure
 - **[docs/README.md](./docs/README.md)** - Documentation index with quick links
 - **[docs/mqtt_schema/](./docs/mqtt_schema/)** - Authoritative schema definitions, types, and fixtures
 - **[docs/releases/](./docs/releases/)** - Historical release notes and summaries
-- **[docs/archive/](./docs/archive/)** - Development history and feature implementation documents
 
 See [docs/README.md](./docs/README.md) for the complete documentation structure.
-

@@ -575,5 +575,5 @@ The Alteriom MQTT Schema extensibility design ensures:
 
 For specific extension scenarios, see:
 - [HTTP_TRANSPORT_GUIDE.md](./HTTP_TRANSPORT_GUIDE.md) - HTTP/MQTT bridge patterns
-- [PAINLESSMESH_INTEGRATION.md](./PAINLESHMESH_INTEGRATION.md) - Mesh network extensions
-- [docs/mqtt_schema/validation_rules.md](../mqtt_schema/validation_rules.md) - Validation constraints
+- [PAINLESSMESH_INTEGRATION.md](./PAINLESSMESH_INTEGRATION.md) - Mesh network extensions
+- [docs/mqtt_schema/validation_rules.md](./mqtt_schema/validation_rules.md) - Validation constraints

@@ -101,7 +101,7 @@ To add new examples:
 - [Main README](../../../README.md) - Package documentation
 - [Schema Specification](../) - All schema files
 - [Fixtures](../fixtures/) - Test fixtures
-- [Integration Guide](../PAINLESSMESH_INTEGRATION.md) - PainlessMesh integration
+- [Integration Guide](../../PAINLESSMESH_INTEGRATION.md) - PainlessMesh integration
 
 ## Support
 

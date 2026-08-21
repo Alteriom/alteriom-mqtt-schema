@@ -448,19 +448,20 @@ const normalizedCode = LEGACY_CODE_MAP[payload.message_type] || payload.message_
 See comprehensive examples in:
 - `docs/HTTP_TRANSPORT_GUIDE.md` - Complete bridge implementation patterns
 - `docs/examples/mqtt-to-http-bridge.js` - Working MQTT-to-HTTP bridge
-- `test/integration/http-transport.test.ts` - 13 integration test scenarios
+- `test/integration/http-transport.test.ts` - 21 integration test scenarios
 
 ## Validation and Testing
 
 ### Current Test Coverage
 
-**Unit Tests:** 69 tests
+**Vitest Suite:** 96 tests
 - Validator functionality
 - Classification logic
 - Type guards
 - Error handling
+- HTTP transport and raw-schema compatibility
 
-**Integration Tests:** 13 tests (HTTP transport)
+**HTTP Integration Tests:** 21 tests
 - MQTT-to-HTTP bridging
 - HTTP-to-MQTT bridging
 - Pure HTTP scenarios
@@ -609,7 +610,7 @@ The schema enables HTTP integration:
 
 MQTT-to-HTTP bridge capability demonstrated:
 - Working implementation example provided
-- 13 integration tests covering all scenarios
+- 21 integration tests covering transport and protocol scenarios
 - Offline queuing and retry logic
 - Message validation and error handling
 - Production-ready patterns documented
@@ -622,5 +623,5 @@ MQTT-to-HTTP bridge capability demonstrated:
 - [HTTP_TRANSPORT_GUIDE.md](./HTTP_TRANSPORT_GUIDE.md) - HTTP bridge implementation guide
 - [docs/examples/mqtt-to-http-bridge.js](./examples/mqtt-to-http-bridge.js) - Working bridge example
 - [test/integration/http-transport.test.ts](../test/integration/http-transport.test.ts) - Integration tests
-- [docs/mqtt_schema/validation_rules.md](../mqtt_schema/validation_rules.md) - Validation constraints
-- [ROADMAP.md](../ROADMAP.md) - Future enhancements
+- [docs/mqtt_schema/validation_rules.md](./mqtt_schema/validation_rules.md) - Validation constraints
+- [GitHub Issues](https://github.com/Alteriom/alteriom-mqtt-schema/issues) - Future enhancements

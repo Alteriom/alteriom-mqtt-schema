@@ -31,7 +31,7 @@ The `transport_metadata` field is **optional** at the envelope level:
 ```json
 {
   "transport_metadata": {
-    "protocol": "mqtt" | "http" | "https",
+    "protocol": "mqtt" | "http" | "https" | "lora" | "painlessmesh" | "serial" | "ble",
     "correlation_id": "string",  // Optional: Request/response tracking
     
     "http": {
@@ -58,9 +58,11 @@ The `transport_metadata` field is **optional** at the envelope level:
 ### Key Principles
 
 1. **Optional Field:** Existing MQTT-only messages continue to work without modification
-2. **Protocol Agnostic:** Same message structure for both MQTT and HTTP
+2. **Protocol Agnostic:** Same message structure across MQTT, HTTP(S), LoRa, painlessMesh, serial, and BLE delivery
 3. **Context Preservation:** Transport details preserved for debugging and auditing
 4. **Bi-directional:** Supports both MQTT→HTTP and HTTP→MQTT bridges
+
+Batch and compressed envelopes accept the same optional `transport_metadata` contract. Container metadata is validated without requiring device-level envelope fields on the container itself.
 
 ## HTTP Transport Fundamentals
 
@@ -883,5 +885,5 @@ The Alteriom MQTT Schema HTTP transport support enables:
 
 For related documentation:
 - [SCHEMA_EXTENSIBILITY_GUIDE.md](./SCHEMA_EXTENSIBILITY_GUIDE.md) - Schema extension patterns
-- [PAINLESHMESH_INTEGRATION.md](./PAINLESHMESH_INTEGRATION.md) - Mesh network integration
-- [API_MONITOR_GUIDE.md](../API_MONITOR_GUIDE.md) - API monitoring integration
+- [PAINLESSMESH_INTEGRATION.md](./PAINLESSMESH_INTEGRATION.md) - Mesh network integration
+- [mqtt-to-http-bridge.js](./examples/mqtt-to-http-bridge.js) - Working bridge example
