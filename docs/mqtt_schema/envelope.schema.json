@@ -3,49 +3,14 @@
   "$id": "https://schemas.alteriom.io/mqtt/v1/envelope.schema.json",
   "title": "Alteriom MQTT Base Envelope v1",
   "type": "object",
-  "required": ["schema_version", "device_id", "device_type", "timestamp", "firmware_version"],
-  "properties": {
-    "schema_version": {"type": "integer", "const": 1},
-    "message_type": {
-      "type": "integer",
-      "description": "Optional message type code for fast classification (v0.7.2+, v0.8.0 adds 10x unified range). Legacy codes 300,301 supported during migration.",
-      "enum": [101, 102, 103, 104, 105, 200, 201, 202, 203, 204, 300, 301, 302, 303, 304, 305, 306, 400, 401, 402, 403, 500, 600, 601, 602, 603, 604, 605, 610, 611, 612, 613, 614, 700, 800, 810]
-    },
-    "device_id": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[A-Za-z0-9_-]+$"},
-    "device_type": {"type": "string", "enum": ["sensor", "gateway", "bridge", "hybrid"]},
-    "timestamp": {"type": "string", "format": "date-time"},
-    "firmware_version": {"type": "string", "minLength": 1, "maxLength": 40},
-    "hardware_version": {"type": "string", "maxLength": 80},
-    "location": {
-      "type": "object",
-      "description": "Standardized location information for geospatial tracking",
-      "properties": {
-        "latitude": {"type": "number", "minimum": -90, "maximum": 90},
-        "longitude": {"type": "number", "minimum": -180, "maximum": 180},
-        "altitude": {"type": "number", "description": "Altitude in meters"},
-        "accuracy_m": {"type": "number", "minimum": 0, "description": "Position accuracy in meters"},
-        "zone": {"type": "string", "maxLength": 64, "description": "Logical zone identifier (e.g., warehouse_A, floor_2)"},
-        "description": {"type": "string", "maxLength": 256, "description": "Human-readable location description"}
-      },
-      "additionalProperties": true
-    },
-    "environment": {
-      "type": "object",
-      "description": "Environmental and deployment context metadata",
-      "properties": {
-        "deployment_type": {"type": "string", "enum": ["indoor", "outdoor", "mobile", "mixed"], "description": "Type of deployment environment"},
-        "power_source": {"type": "string", "enum": ["battery", "mains", "solar", "mixed", "other"], "description": "Primary power source"},
-        "expected_battery_life_days": {"type": "integer", "minimum": 0, "description": "Expected battery life in days (if battery-powered)"}
-      },
-      "additionalProperties": true
-    },
+  "$defs": {
     "transport_metadata": {
       "type": "object",
-      "description": "Transport-layer metadata for HTTP/MQTT delivery context (v0.8.0+)",
+      "description": "Transport-layer metadata for HTTP, MQTT, mesh, and direct-link delivery context (v0.8.3+)",
       "properties": {
         "protocol": {
           "type": "string",
-          "enum": ["mqtt", "http", "https"],
+          "enum": ["mqtt", "http", "https", "lora", "painlessmesh", "serial", "ble"],
           "description": "Transport protocol used for message delivery"
         },
         "correlation_id": {
@@ -116,6 +81,44 @@
       },
       "additionalProperties": true
     }
+  },
+  "required": ["schema_version", "device_id", "device_type", "timestamp", "firmware_version"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "message_type": {
+      "type": "integer",
+      "description": "Optional message type code for fast classification (v0.7.2+, v0.8.0 adds 10x unified range). Legacy codes 300,301 supported during migration.",
+      "enum": [101, 102, 103, 104, 105, 200, 201, 202, 203, 204, 300, 301, 302, 303, 304, 305, 306, 400, 401, 402, 403, 500, 600, 601, 602, 603, 604, 605, 610, 611, 612, 613, 614, 700, 800, 810]
+    },
+    "device_id": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[A-Za-z0-9_-]+$"},
+    "device_type": {"type": "string", "enum": ["sensor", "gateway", "bridge", "hybrid"]},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "firmware_version": {"type": "string", "minLength": 1, "maxLength": 40},
+    "hardware_version": {"type": "string", "maxLength": 80},
+    "location": {
+      "type": "object",
+      "description": "Standardized location information for geospatial tracking",
+      "properties": {
+        "latitude": {"type": "number", "minimum": -90, "maximum": 90},
+        "longitude": {"type": "number", "minimum": -180, "maximum": 180},
+        "altitude": {"type": "number", "description": "Altitude in meters"},
+        "accuracy_m": {"type": "number", "minimum": 0, "description": "Position accuracy in meters"},
+        "zone": {"type": "string", "maxLength": 64, "description": "Logical zone identifier (e.g., warehouse_A, floor_2)"},
+        "description": {"type": "string", "maxLength": 256, "description": "Human-readable location description"}
+      },
+      "additionalProperties": true
+    },
+    "environment": {
+      "type": "object",
+      "description": "Environmental and deployment context metadata",
+      "properties": {
+        "deployment_type": {"type": "string", "enum": ["indoor", "outdoor", "mobile", "mixed"], "description": "Type of deployment environment"},
+        "power_source": {"type": "string", "enum": ["battery", "mains", "solar", "mixed", "other"], "description": "Primary power source"},
+        "expected_battery_life_days": {"type": "integer", "minimum": 0, "description": "Expected battery life in days (if battery-powered)"}
+      },
+      "additionalProperties": true
+    },
+    "transport_metadata": {"$ref": "#/$defs/transport_metadata"}
   },
   "additionalProperties": true
 }

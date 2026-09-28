@@ -66,14 +66,23 @@ function bumpVersion(current, bump) {
   }
 }
 
-function updatePackageJson(newVersion) {
+function updatePackageVersions(newVersion) {
   const pkgPath = path.resolve(__dirname, '../package.json');
   const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
   const oldVersion = pkg.version;
   if (oldVersion === newVersion) fail(`New version equals current version (${oldVersion}).`);
   pkg.version = newVersion;
   fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
-  info(`package.json version updated: ${oldVersion} -> ${newVersion}`);
+
+  const lockPath = path.resolve(__dirname, '../package-lock.json');
+  if (fs.existsSync(lockPath)) {
+    const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
+    lock.version = newVersion;
+    if (lock.packages && lock.packages['']) lock.packages[''].version = newVersion;
+    fs.writeFileSync(lockPath, JSON.stringify(lock, null, 2) + '\n');
+  }
+
+  info(`Package version updated: ${oldVersion} -> ${newVersion}`);
 }
 
 function runBuild() {
@@ -83,7 +92,7 @@ function runBuild() {
 }
 
 function ensureChangelogSection(newVersion) {
-  const changelogPath = path.resolve(__dirname, '../../../docs/mqtt_schema/CHANGELOG.md');
+  const changelogPath = path.resolve(__dirname, '../docs/mqtt_schema/CHANGELOG.md');
   if (!fs.existsSync(changelogPath)) {
     info('CHANGELOG not found, skipping placeholder insertion.');
     return;
@@ -117,7 +126,7 @@ function gitAddHint(newVersion) {
     console.log(`Dry run: current=${pkg.version} next=${newVersion}`);
     return;
   }
-  updatePackageJson(newVersion);
+  updatePackageVersions(newVersion);
   ensureChangelogSection(newVersion);
   if (!flags.has('--no-build')) {
     runBuild();

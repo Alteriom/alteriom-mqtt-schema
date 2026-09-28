@@ -575,7 +575,7 @@ cat coverage/lcov-report/index.html
 - [Testing Guide](./TESTING.md) - Testing strategy and procedures
 - [README](./README.md) - Package documentation
 - [CHANGELOG](./docs/mqtt_schema/CHANGELOG.md) - Version history
-- [ROADMAP](./ROADMAP.md) - Future development plans
+- [GitHub Issues](https://github.com/Alteriom/alteriom-mqtt-schema/issues) - Planned work and feature requests
 
 ## Getting Help
 

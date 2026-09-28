@@ -4,7 +4,12 @@ Historical release documentation for @alteriom/mqtt-schema.
 
 ## Available Releases
 
-### v0.8.1 (Current Release)
+### v0.8.3 (Next Release Candidate)
+- **[V083_RELEASE_SUMMARY.md](./V083_RELEASE_SUMMARY.md)** - Shared transport validation and protocol coverage
+
+**Highlights**: Container transport validation, LoRa/painlessMesh/serial/BLE identifiers, standalone raw-schema compatibility
+
+### v0.8.1
 - **[V081_RELEASE_SUMMARY.md](./V081_RELEASE_SUMMARY.md)** - Release notes and compatibility verification
 
 **Highlights**: PainlessMesh v1.8.2 compatibility, 161 tests passing, 6 new bridge fixtures
@@ -20,20 +25,19 @@ Historical release documentation for @alteriom/mqtt-schema.
 
 **Highlights**: Message type codes, PainlessMesh bridge schema, fast classification
 
-## Current Release
+## Next Release
 
-📍 **v0.8.1** (November 2025)
+📍 **v0.8.3 release candidate** (August 2026)
 
 See root documentation for current release:
 - **[CHANGELOG.md](../../CHANGELOG.md)** - Complete version history (redirect file)
 - **[docs/mqtt_schema/CHANGELOG.md](../mqtt_schema/CHANGELOG.md)** - Detailed changelog
 
-**v0.8.1 Highlights**:
-- ✅ PainlessMesh v1.8.2 compatibility verification
-- ✅ Multi-bridge coordination support
-- ✅ Message queue for offline mode
-- ✅ 161 total tests passing (69 unit + 92 fixtures)
-- ✅ 6 new bridge management fixtures
+**v0.8.3 Highlights**:
+- ✅ Shared `transport_metadata` validation across standard and container envelopes
+- ✅ LoRa, painlessMesh, serial, and BLE transport identifiers
+- ✅ LoRa bridge and mesh-status parity
+- ✅ 96 Vitest tests plus 98 CJS/ESM fixture validations
 
 **v0.8.0 Highlights**:
 - ⚠️ Breaking changes: Gateway code realignment (300→305, 301→306)

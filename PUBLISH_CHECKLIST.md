@@ -11,6 +11,8 @@ Reliable, repeatable release process for the MQTT schema + validators package.
 - [ ] `npm whoami` ok & scope access
 - [ ] Schemas updated in `docs/mqtt_schema/`
 - [ ] CHANGELOG updated
+- [ ] `npm audit` reports zero known vulnerabilities
+- [ ] Confirm the intended version is not already present with `npm view @alteriom/mqtt-schema@X.Y.Z version`
 
 ## 2. Version Decision
 
@@ -37,6 +39,7 @@ Optional comprehensive validation check (recommended for releases):
 ```powershell
 npm run verify        # Core validation (schema sync + changelog + fixtures)
 npm run verify:all    # Extended validation (schema compilation + OTA manifests)
+npm audit             # Dependency advisory check
 ```
 
 ## 4. Test
@@ -142,6 +145,7 @@ Date: YYYY-MM-DD
 - [ ] Mirrored to GitHub Packages
 - [ ] Registry versions verified
 - [ ] Consumer smoke test (optional)
+- [ ] If public npm skipped earlier repository tags, confirm release notes include all intervening changes
 ```
 
 ## 13. Dual Publish Notes
