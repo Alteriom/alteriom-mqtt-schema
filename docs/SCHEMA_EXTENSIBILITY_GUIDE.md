@@ -514,7 +514,7 @@ function validateCustomFields(payload) {
 
 ### Package Version (npm)
 
-**Current:** `@alteriom/mqtt-schema@0.8.1`
+**Current:** the `version` field of `package.json` (`npm view @alteriom/mqtt-schema version` shows the latest one published)
 
 **Purpose:** Tooling and validator versioning
 
