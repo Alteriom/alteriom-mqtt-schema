@@ -59,33 +59,23 @@ node -e "(async () => { const cjs = require('./dist/cjs'); const esm = await imp
 
 ## 6. Commit & Tag (Manual Path)
 
-```powershell
-git add package.json docs/mqtt_schema/CHANGELOG.md README.md
-git commit -m "release: mqtt-schema vX.Y.Z"
-git tag -a mqtt-schema-vX.Y.Z -m "@alteriom/mqtt-schema vX.Y.Z"
-git push origin main --tags
-```
+Do not commit, tag or push a release by hand. The tag `mqtt-schema-vX.Y.Z` is created by `.github/workflows/mqtt-schema-release.yml` when the release pull request merges into `main` (section 8). That workflow skips the build, tag and publish when the tag already exists, so a tag pushed by hand before the merge leaves the version unpublished.
 
 ## 7. Publish (Manual Path)
 
-Dry run:
+`npm publish` is not run by hand. To check the tarball locally:
 
 ```powershell
 npm publish --access public --dry-run
 ```
 
-Publish:
+To repair a version that was tagged but never published (its merge title did not start with `release:`), a maintainer dispatches `.github/workflows/mqtt-schema-publish-manual.yml` from the tag:
 
 ```powershell
-npm publish --access public
+gh workflow run mqtt-schema-publish-manual.yml --ref mqtt-schema-vX.Y.Z -f version=X.Y.Z
 ```
 
-Mirror manually (normally automated):
-
-```powershell
-echo "@alteriom:registry=https://npm.pkg.github.com" > .npmrc
-npm publish --registry=https://npm.pkg.github.com --ignore-scripts
-```
+Its `version` input must equal `package.json` at that ref. It builds, runs `verify:schemas` and `verify:release`, publishes to npm with provenance and mirrors to GitHub Packages, skipping a registry that already has the version (`-f mirrorOnly=true` mirrors only).
 
 ## 8. Automated Path
 
@@ -168,7 +158,7 @@ Optional `.npmrc` to test mirror:
 ## 14. Principles
 
 - Single build reused across registries
-- Keep deps minimal (Ajv peer)
+- Keep runtime deps minimal (`ajv` and `ajv-formats` only)
 - Never edit generated `schema_data.ts`
 
 ## 15. Future Enhancements
