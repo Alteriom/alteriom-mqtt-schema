@@ -8,7 +8,7 @@
 ![license](https://img.shields.io/npm/l/@alteriom/mqtt-schema.svg)
 ![npm total downloads](https://img.shields.io/npm/dt/@alteriom/mqtt-schema.svg)
 ![node version](https://img.shields.io/node/v/@alteriom/mqtt-schema.svg)
-![peer ajv](https://img.shields.io/badge/peer%20ajv-%3E%3D8.0.0-blue.svg)
+![ajv dependency](https://img.shields.io/badge/dependency-ajv%20%5E8-blue.svg)
 ![latest tag](https://img.shields.io/github/v/tag/Alteriom/alteriom-mqtt-schema?label=tag)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@alteriom/mqtt-schema)](https://bundlephobia.com/package/@alteriom/mqtt-schema)
 
@@ -31,7 +31,7 @@ Firmware emits structured MQTT payloads that must remain tightly aligned with we
 - Dual build: CommonJS + ESM (Node 16+ / bundlers)
 - Zero configuration: just import and validate
 - Helpful error paths (JSON Pointer style)
-- Lightweight (Ajv peer dependency, schemas embedded)
+- Lightweight (two runtime dependencies, `ajv` and `ajv-formats`; schemas embedded). Up to 0.8.1, `ajv` was a peer dependency; from 0.8.2 it is installed with the package.
 - Ships original schema JSON files (optional consumption)
 - **NEW in v0.8.0**: ⚠️ BREAKING: Gateway code realignment (300→305, 301→306) with automatic legacy translation
 - **NEW in v0.8.0**: Unified device schemas (10x range) for sensor/gateway/bridge/hybrid deployments
