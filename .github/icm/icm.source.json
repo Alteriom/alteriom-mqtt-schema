@@ -1,0 +1,1365 @@
+{
+  "workspace_root": "",
+  "schema_version": 2,
+  "access": "workspace",
+  "entrypoint": "CLAUDE.md",
+  "runtimes": [
+    "claude_code",
+    "codex_cli"
+  ],
+  "projects": [
+    "alteriom-mqtt-schema"
+  ],
+  "nodes": [
+    {
+      "id": "CLAUDE.md",
+      "revision": 1,
+      "kind": "route",
+      "layer": "L0",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        "CLAUDE.md"
+      ]
+    },
+    {
+      "id": "AGENTS.md",
+      "revision": 1,
+      "kind": "route",
+      "layer": "L0",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "doc-.github-copilot-instructions.md",
+      "revision": 1,
+      "kind": "fact",
+      "layer": "L3",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/copilot-instructions.md"
+      ]
+    },
+    {
+      "id": "doc-CONTRIBUTING.md",
+      "revision": 1,
+      "kind": "fact",
+      "layer": "L3",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        "CONTRIBUTING.md"
+      ]
+    },
+    {
+      "id": "doc-DEVELOPMENT.md",
+      "revision": 1,
+      "kind": "fact",
+      "layer": "L3",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        "DEVELOPMENT.md"
+      ]
+    },
+    {
+      "id": "doc-PUBLISH_CHECKLIST.md",
+      "revision": 1,
+      "kind": "fact",
+      "layer": "L3",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        "PUBLISH_CHECKLIST.md"
+      ]
+    },
+    {
+      "id": "doc-README.md",
+      "revision": 1,
+      "kind": "fact",
+      "layer": "L3",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        "README.md"
+      ]
+    },
+    {
+      "id": "doc-SECURITY.md",
+      "revision": 1,
+      "kind": "fact",
+      "layer": "L3",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        "SECURITY.md"
+      ]
+    },
+    {
+      "id": "doc-TESTING.md",
+      "revision": 1,
+      "kind": "fact",
+      "layer": "L3",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        "TESTING.md"
+      ]
+    },
+    {
+      "id": "doc-V080_BREAKING_CHANGES.md",
+      "revision": 1,
+      "kind": "fact",
+      "layer": "L3",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        "V080_BREAKING_CHANGES.md"
+      ]
+    },
+    {
+      "id": "doc-docs-HTTP_TRANSPORT_GUIDE.md",
+      "revision": 1,
+      "kind": "fact",
+      "layer": "L3",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        "docs/HTTP_TRANSPORT_GUIDE.md"
+      ]
+    },
+    {
+      "id": "doc-docs-OTA_MANIFEST.md",
+      "revision": 1,
+      "kind": "fact",
+      "layer": "L3",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        "docs/OTA_MANIFEST.md"
+      ]
+    },
+    {
+      "id": "doc-docs-PAINLESSMESH_INTEGRATION.md",
+      "revision": 1,
+      "kind": "fact",
+      "layer": "L3",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        "docs/PAINLESSMESH_INTEGRATION.md"
+      ]
+    },
+    {
+      "id": "doc-docs-SCHEMA_COVERAGE_AND_EXTENSIBILITY.md",
+      "revision": 1,
+      "kind": "fact",
+      "layer": "L3",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        "docs/SCHEMA_COVERAGE_AND_EXTENSIBILITY.md"
+      ]
+    },
+    {
+      "id": "doc-docs-SCHEMA_EXTENSIBILITY_GUIDE.md",
+      "revision": 1,
+      "kind": "fact",
+      "layer": "L3",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        "docs/SCHEMA_EXTENSIBILITY_GUIDE.md"
+      ]
+    },
+    {
+      "id": "doc-docs-SCHEMA_MAP.md",
+      "revision": 1,
+      "kind": "fact",
+      "layer": "L3",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        "docs/SCHEMA_MAP.md"
+      ]
+    },
+    {
+      "id": "doc-docs-mqtt_schema-validation_rules.md",
+      "revision": 1,
+      "kind": "fact",
+      "layer": "L3",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        "docs/mqtt_schema/validation_rules.md"
+      ]
+    },
+    {
+      "id": "01-fix-CLAUDE.md",
+      "revision": 1,
+      "kind": "route",
+      "layer": "L1",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/01-fix/CLAUDE.md"
+      ]
+    },
+    {
+      "id": "01-fix-CONTEXT.md",
+      "revision": 1,
+      "kind": "route",
+      "layer": "L1",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/01-fix/CONTEXT.md"
+      ]
+    },
+    {
+      "id": "01-fix-stages-01_reproduce-CONTEXT.md",
+      "revision": 1,
+      "kind": "stage",
+      "layer": "L2",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/01-fix/stages/01_reproduce/CONTEXT.md"
+      ]
+    },
+    {
+      "id": "01-fix-stages-02_fix-CONTEXT.md",
+      "revision": 1,
+      "kind": "stage",
+      "layer": "L2",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/01-fix/stages/02_fix/CONTEXT.md"
+      ]
+    },
+    {
+      "id": "01-fix-stages-03_verify-CONTEXT.md",
+      "revision": 1,
+      "kind": "stage",
+      "layer": "L2",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/01-fix/stages/03_verify/CONTEXT.md"
+      ]
+    },
+    {
+      "id": "02-schema-CLAUDE.md",
+      "revision": 1,
+      "kind": "route",
+      "layer": "L1",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/02-schema/CLAUDE.md"
+      ]
+    },
+    {
+      "id": "02-schema-CONTEXT.md",
+      "revision": 1,
+      "kind": "route",
+      "layer": "L1",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/02-schema/CONTEXT.md"
+      ]
+    },
+    {
+      "id": "02-schema-stages-01_spec-CONTEXT.md",
+      "revision": 1,
+      "kind": "stage",
+      "layer": "L2",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/02-schema/stages/01_spec/CONTEXT.md"
+      ]
+    },
+    {
+      "id": "02-schema-stages-02_change-CONTEXT.md",
+      "revision": 1,
+      "kind": "stage",
+      "layer": "L2",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/02-schema/stages/02_change/CONTEXT.md"
+      ]
+    },
+    {
+      "id": "02-schema-stages-03_verify-CONTEXT.md",
+      "revision": 1,
+      "kind": "stage",
+      "layer": "L2",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/02-schema/stages/03_verify/CONTEXT.md"
+      ]
+    },
+    {
+      "id": "03-release-CLAUDE.md",
+      "revision": 1,
+      "kind": "route",
+      "layer": "L1",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/03-release/CLAUDE.md"
+      ]
+    },
+    {
+      "id": "03-release-CONTEXT.md",
+      "revision": 1,
+      "kind": "route",
+      "layer": "L1",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/03-release/CONTEXT.md"
+      ]
+    },
+    {
+      "id": "03-release-stages-01_plan-CONTEXT.md",
+      "revision": 1,
+      "kind": "stage",
+      "layer": "L2",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/03-release/stages/01_plan/CONTEXT.md"
+      ]
+    },
+    {
+      "id": "03-release-stages-02_prepare-CONTEXT.md",
+      "revision": 1,
+      "kind": "stage",
+      "layer": "L2",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/03-release/stages/02_prepare/CONTEXT.md"
+      ]
+    },
+    {
+      "id": "03-release-stages-03_publish-CONTEXT.md",
+      "revision": 1,
+      "kind": "stage",
+      "layer": "L2",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/03-release/stages/03_publish/CONTEXT.md"
+      ]
+    },
+    {
+      "id": "04-deps-CLAUDE.md",
+      "revision": 1,
+      "kind": "route",
+      "layer": "L1",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/04-deps/CLAUDE.md"
+      ]
+    },
+    {
+      "id": "04-deps-CONTEXT.md",
+      "revision": 1,
+      "kind": "route",
+      "layer": "L1",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/04-deps/CONTEXT.md"
+      ]
+    },
+    {
+      "id": "04-deps-stages-01_review-CONTEXT.md",
+      "revision": 1,
+      "kind": "stage",
+      "layer": "L2",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/04-deps/stages/01_review/CONTEXT.md"
+      ]
+    },
+    {
+      "id": "shared-CONTEXT.md",
+      "revision": 1,
+      "kind": "route",
+      "layer": "L1",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/_shared/CONTEXT.md"
+      ]
+    },
+    {
+      "id": "shared-architecture.md",
+      "revision": 1,
+      "kind": "fact",
+      "layer": "L3",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/_shared/architecture.md"
+      ],
+      "evidence": [
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": ".gitignore",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "DEVELOPMENT.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "package.json",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "scripts/check-schema-sync.cjs",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "scripts/copy-schemas.cjs",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "scripts/post-esm.cjs",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "src/index.ts",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "src/types.ts",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "src/validators.ts",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "tsconfig.esm.json",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "tsconfig.json",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "types/ota-manifest.d.ts",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        }
+      ]
+    },
+    {
+      "id": "shared-build-and-test.md",
+      "revision": 1,
+      "kind": "fact",
+      "layer": "L3",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/_shared/build-and-test.md"
+      ],
+      "evidence": [
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": ".github/workflows/icm-check.yml",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": ".github/workflows/metadata-compliance.yml",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": ".github/workflows/mqtt-schema-release.yml",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": ".github/workflows/pr-validation.yml",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": ".github/workflows/schema-verify.yml",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": ".github/workflows/validate-ota-manifest.yml",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": ".github/workflows/wiki-sync.yml",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": ".prettierignore",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": ".prettierrc.json",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "PUBLISH_CHECKLIST.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "README.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "TESTING.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "eslint.config.mjs",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "package.json",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "scripts/copy-schemas.cjs",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "scripts/generate-wiki.cjs",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "scripts/validate-ota-manifest.js",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "scripts/verify_all.cjs",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "src/validators.ts",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "test/integration/http-transport.test.ts",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "test/unit/classification.test.ts",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "test/unit/transport-schema-coverage.test.ts",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "test/unit/validators.test.ts",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "test/validate-fixtures.cjs",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "vitest.config.mts",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        }
+      ]
+    },
+    {
+      "id": "shared-documents.md",
+      "revision": 1,
+      "kind": "fact",
+      "layer": "L3",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/_shared/documents.md"
+      ],
+      "evidence": [
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": ".github/workflows/mqtt-schema-release.yml",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "CONTRIBUTING.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "DEVELOPMENT.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "PUBLISH_CHECKLIST.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "README.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "SECURITY.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "TESTING.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "V080_BREAKING_CHANGES.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/HTTP_TRANSPORT_GUIDE.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/OTA_MANIFEST.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/PAINLESSMESH_INTEGRATION.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/SCHEMA_COVERAGE_AND_EXTENSIBILITY.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/SCHEMA_EXTENSIBILITY_GUIDE.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/SCHEMA_MAP.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/mqtt_schema/envelope.schema.json",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/mqtt_schema/mesh_bridge.schema.json",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/mqtt_schema/ota/ota-manifest.schema.json",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/mqtt_schema/validation_rules.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "eslint.config.mjs",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "package.json",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "scripts/copy-schemas.cjs",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "src/validators.ts",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "tsconfig.json",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "vitest.config.mts",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        }
+      ]
+    },
+    {
+      "id": "shared-gotchas.md",
+      "revision": 1,
+      "kind": "fact",
+      "layer": "L3",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/_shared/gotchas.md"
+      ],
+      "evidence": [
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": ".github/dependabot.yml",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": ".github/workflows/pr-validation.yml",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": ".github/workflows/schema-verify.yml",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/mqtt_schema/mqtt_v1_bundle.json",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "package.json",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "scripts/check-schema-sync.cjs",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "scripts/copy-schemas.cjs",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        }
+      ]
+    },
+    {
+      "id": "shared-release.md",
+      "revision": 1,
+      "kind": "fact",
+      "layer": "L3",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/_shared/release.md"
+      ],
+      "evidence": [
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": ".github/workflows/mqtt-schema-create-release.yml",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": ".github/workflows/mqtt-schema-publish-manual.yml",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": ".github/workflows/mqtt-schema-release.yml",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "CHANGELOG.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "PUBLISH_CHECKLIST.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "README.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/mqtt_schema/CHANGELOG.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "package.json",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "scripts/check-release-integrity.cjs",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "scripts/release-prepare.cjs",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        }
+      ]
+    },
+    {
+      "id": "shared-schema-rules.md",
+      "revision": 1,
+      "kind": "fact",
+      "layer": "L3",
+      "state": "accepted",
+      "project_id": "alteriom-mqtt-schema",
+      "verified_at": "2026-10-15",
+      "review_after": "2027-01-13",
+      "files": [
+        ".github/icm/_shared/schema-rules.md"
+      ],
+      "evidence": [
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "CONTRIBUTING.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "DEVELOPMENT.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "PUBLISH_CHECKLIST.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "V080_BREAKING_CHANGES.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/HTTP_TRANSPORT_GUIDE.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/OTA_MANIFEST.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/SCHEMA_EXTENSIBILITY_GUIDE.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/SCHEMA_MAP.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/mqtt_schema/envelope.schema.json",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/mqtt_schema/firmware_status.schema.json",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/mqtt_schema/ota/ota-manifest.schema.json",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/mqtt_schema/sensor_data.schema.json",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/mqtt_schema/sensor_heartbeat.schema.json",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/mqtt_schema/types.ts",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "docs/mqtt_schema/validation_rules.md",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "scripts/copy-schemas.cjs",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "src/validators.ts",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "test/unit/classification.test.ts",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "test/unit/transport-schema-coverage.test.ts",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        },
+        {
+          "repo": "Alteriom/alteriom-mqtt-schema",
+          "path": "types/ota-manifest.d.ts",
+          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
+        }
+      ]
+    }
+  ],
+  "forms": [
+    {
+      "form": "umbrella",
+      "root": "",
+      "pipelines": [
+        ".github/icm/01-fix",
+        ".github/icm/02-schema",
+        ".github/icm/03-release",
+        ".github/icm/04-deps"
+      ],
+      "unit": "run"
+    },
+    {
+      "form": "pipeline",
+      "root": ".github/icm/01-fix",
+      "unit": "run"
+    },
+    {
+      "form": "pipeline",
+      "root": ".github/icm/02-schema",
+      "unit": "run"
+    },
+    {
+      "form": "pipeline",
+      "root": ".github/icm/03-release",
+      "unit": "run"
+    },
+    {
+      "form": "pipeline",
+      "root": ".github/icm/04-deps",
+      "unit": "run"
+    }
+  ],
+  "stages": {
+    "fix-reproduce": {
+      "order": 1,
+      "contract": ".github/icm/01-fix/stages/01_reproduce/CONTEXT.md",
+      "inputs": {
+        "working": [],
+        "reference": [
+          ".github/icm/_shared/architecture.md",
+          ".github/icm/_shared/build-and-test.md"
+        ]
+      },
+      "do_not_load": [
+        ".github/icm/02-schema/",
+        ".github/icm/03-release/",
+        ".github/icm/04-deps/",
+        ".github/icm/_shared/release.md"
+      ],
+      "outputs": [
+        ".github/icm/01-fix/stages/01_reproduce/output/reproduction.md"
+      ],
+      "human_check": "A person runs the command or reads its output and confirms it fails for the reported reason and not a neighbouring one, and agrees whether the contract stays as it is.",
+      "required": [
+        "01-fix-stages-01_reproduce-CONTEXT.md"
+      ],
+      "optional": [
+        "shared-schema-rules.md",
+        "shared-gotchas.md"
+      ]
+    },
+    "fix-fix": {
+      "order": 2,
+      "contract": ".github/icm/01-fix/stages/02_fix/CONTEXT.md",
+      "inputs": {
+        "working": [
+          ".github/icm/01-fix/stages/01_reproduce/output/reproduction.md"
+        ],
+        "reference": [
+          ".github/icm/_shared/architecture.md",
+          ".github/icm/_shared/build-and-test.md"
+        ]
+      },
+      "do_not_load": [
+        ".github/icm/02-schema/",
+        ".github/icm/03-release/",
+        ".github/icm/04-deps/",
+        ".github/icm/_shared/release.md"
+      ],
+      "outputs": [
+        ".github/icm/01-fix/stages/02_fix/output/change.md"
+      ],
+      "human_check": "A person reads the diff beside the reproduction: it removes the cause, not only the symptom the test sees, and no payload that validated before is now rejected. Edit `change.md` if the explanation is wrong; stage 03 reads it.",
+      "required": [
+        "01-fix-stages-02_fix-CONTEXT.md"
+      ],
+      "optional": [
+        "shared-schema-rules.md"
+      ]
+    },
+    "fix-verify": {
+      "order": 3,
+      "contract": ".github/icm/01-fix/stages/03_verify/CONTEXT.md",
+      "inputs": {
+        "working": [
+          ".github/icm/01-fix/stages/02_fix/output/change.md"
+        ],
+        "reference": [
+          ".github/icm/_shared/build-and-test.md",
+          ".github/icm/_shared/gotchas.md"
+        ]
+      },
+      "do_not_load": [
+        ".github/icm/02-schema/",
+        ".github/icm/03-release/",
+        ".github/icm/04-deps/"
+      ],
+      "outputs": [
+        ".github/icm/01-fix/stages/03_verify/output/pull-request.md"
+      ],
+      "human_check": "A person reads `pull-request.md` and its evidence, then says whether to open it. The reviewer, not the author, merges, once every check on the last commit is green.",
+      "required": [
+        "01-fix-stages-03_verify-CONTEXT.md"
+      ],
+      "optional": [
+        "shared-release.md"
+      ]
+    },
+    "schema-spec": {
+      "order": 1,
+      "contract": ".github/icm/02-schema/stages/01_spec/CONTEXT.md",
+      "inputs": {
+        "working": [],
+        "reference": [
+          ".github/icm/_shared/schema-rules.md",
+          ".github/icm/_shared/architecture.md"
+        ]
+      },
+      "do_not_load": [
+        ".github/icm/01-fix/",
+        ".github/icm/03-release/",
+        ".github/icm/04-deps/",
+        "docs/releases/"
+      ],
+      "outputs": [
+        ".github/icm/02-schema/stages/01_spec/output/spec.md"
+      ],
+      "human_check": "A maintainer approves the schema text, the code and the version class. A code or a required field is permanent once published: a mistake later costs a major version, never an edit.",
+      "required": [
+        "02-schema-stages-01_spec-CONTEXT.md"
+      ],
+      "optional": [
+        "doc-docs-HTTP_TRANSPORT_GUIDE.md"
+      ]
+    },
+    "schema-change": {
+      "order": 2,
+      "contract": ".github/icm/02-schema/stages/02_change/CONTEXT.md",
+      "inputs": {
+        "working": [
+          ".github/icm/02-schema/stages/01_spec/output/spec.md"
+        ],
+        "reference": [
+          ".github/icm/_shared/schema-rules.md",
+          ".github/icm/_shared/build-and-test.md"
+        ]
+      },
+      "do_not_load": [
+        ".github/icm/01-fix/",
+        ".github/icm/03-release/",
+        ".github/icm/04-deps/"
+      ],
+      "outputs": [
+        ".github/icm/02-schema/stages/02_change/output/change.md"
+      ],
+      "human_check": "A person reads the schema diff beside the approved spec: nothing more, nothing less, and no existing fixture or test edited to pass. Edit `change.md` if it is wrong; stage 03 reads it.",
+      "required": [
+        "02-schema-stages-02_change-CONTEXT.md"
+      ],
+      "optional": [
+        "doc-DEVELOPMENT.md"
+      ]
+    },
+    "schema-verify": {
+      "order": 3,
+      "contract": ".github/icm/02-schema/stages/03_verify/CONTEXT.md",
+      "inputs": {
+        "working": [
+          ".github/icm/02-schema/stages/02_change/output/change.md"
+        ],
+        "reference": [
+          ".github/icm/_shared/build-and-test.md",
+          ".github/icm/_shared/gotchas.md",
+          ".github/icm/_shared/release.md"
+        ]
+      },
+      "do_not_load": [
+        ".github/icm/01-fix/",
+        ".github/icm/03-release/",
+        ".github/icm/04-deps/"
+      ],
+      "outputs": [
+        ".github/icm/02-schema/stages/03_verify/output/pull-request.md"
+      ],
+      "human_check": "A person reads `pull-request.md`, confirms the old fixtures passed against the new build, and says whether to open it. The reviewer merges once every check is green; a breaking change waits for the release that carries its migration.",
+      "required": [
+        "02-schema-stages-03_verify-CONTEXT.md"
+      ]
+    },
+    "release-plan": {
+      "order": 1,
+      "contract": ".github/icm/03-release/stages/01_plan/CONTEXT.md",
+      "inputs": {
+        "working": [],
+        "reference": [
+          ".github/icm/_shared/release.md",
+          ".github/icm/_shared/schema-rules.md",
+          "PUBLISH_CHECKLIST.md"
+        ]
+      },
+      "do_not_load": [
+        ".github/icm/01-fix/",
+        ".github/icm/02-schema/",
+        ".github/icm/04-deps/",
+        "docs/releases/"
+      ],
+      "outputs": [
+        ".github/icm/03-release/stages/01_plan/output/release-plan.md"
+      ],
+      "human_check": "A maintainer approves the version number and the changelog wording. The number is permanent once tagged: a mistake later costs a new version, never a retag.",
+      "required": [
+        "03-release-stages-01_plan-CONTEXT.md"
+      ]
+    },
+    "release-prepare": {
+      "order": 2,
+      "contract": ".github/icm/03-release/stages/02_prepare/CONTEXT.md",
+      "inputs": {
+        "working": [
+          ".github/icm/03-release/stages/01_plan/output/release-plan.md"
+        ],
+        "reference": [
+          ".github/icm/_shared/release.md",
+          ".github/icm/_shared/build-and-test.md",
+          "PUBLISH_CHECKLIST.md"
+        ]
+      },
+      "do_not_load": [
+        ".github/icm/01-fix/",
+        ".github/icm/02-schema/",
+        ".github/icm/04-deps/"
+      ],
+      "outputs": [
+        ".github/icm/03-release/stages/02_prepare/output/release-pr.md"
+      ],
+      "human_check": "A maintainer reviews the final commit with every check green and the title exactly `release: mqtt-schema vX.Y.Z`. Merging it is the publish decision; the maintainer makes it, squash-merging so that the title is the commit's first line.",
+      "required": [
+        "03-release-stages-02_prepare-CONTEXT.md"
+      ]
+    },
+    "release-publish": {
+      "order": 3,
+      "contract": ".github/icm/03-release/stages/03_publish/CONTEXT.md",
+      "inputs": {
+        "working": [
+          ".github/icm/03-release/stages/02_prepare/output/release-pr.md"
+        ],
+        "reference": [
+          ".github/icm/_shared/release.md"
+        ]
+      },
+      "do_not_load": [
+        ".github/icm/01-fix/",
+        ".github/icm/02-schema/",
+        ".github/icm/04-deps/"
+      ],
+      "outputs": [
+        ".github/icm/03-release/stages/03_publish/output/publication.md"
+      ],
+      "human_check": "A person confirms the version is on npm, on GitHub Packages and in the GitHub releases before it is announced, and has run every dispatch the agent listed.",
+      "required": [
+        "03-release-stages-03_publish-CONTEXT.md"
+      ]
+    },
+    "deps-review": {
+      "order": 1,
+      "contract": ".github/icm/04-deps/stages/01_review/CONTEXT.md",
+      "inputs": {
+        "working": [],
+        "reference": [
+          ".github/icm/_shared/gotchas.md",
+          ".github/icm/_shared/build-and-test.md"
+        ]
+      },
+      "do_not_load": [
+        ".github/icm/01-fix/",
+        ".github/icm/02-schema/",
+        ".github/icm/03-release/"
+      ],
+      "outputs": [
+        ".github/icm/04-deps/stages/01_review/output/review.md"
+      ],
+      "human_check": "A person reads `review.md` and decides: merge, wait, or close. A runtime bump that changes any validator's result is never merged from here.",
+      "required": [
+        "04-deps-stages-01_review-CONTEXT.md"
+      ],
+      "optional": [
+        "shared-release.md"
+      ]
+    }
+  }
+}
