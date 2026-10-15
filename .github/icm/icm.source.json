@@ -524,17 +524,7 @@
         },
         {
           "repo": "Alteriom/alteriom-mqtt-schema",
-          "path": "src/generated/types.ts",
-          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
-        },
-        {
-          "repo": "Alteriom/alteriom-mqtt-schema",
           "path": "src/index.ts",
-          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
-        },
-        {
-          "repo": "Alteriom/alteriom-mqtt-schema",
-          "path": "src/schema_data.ts",
           "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
         },
         {
@@ -669,11 +659,6 @@
         },
         {
           "repo": "Alteriom/alteriom-mqtt-schema",
-          "path": "src/schema_data.ts",
-          "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
-        },
-        {
-          "repo": "Alteriom/alteriom-mqtt-schema",
           "path": "src/validators.ts",
           "commit": "e5f0862bf733f7847ce67b653b66ab23468e071b"
         },
@@ -711,7 +696,7 @@
     },
     {
       "id": "shared-documents.md",
-      "revision": 2,
+      "revision": 1,
       "kind": "fact",
       "layer": "L3",
       "state": "accepted",
@@ -961,7 +946,7 @@
     },
     {
       "id": "shared-schema-rules.md",
-      "revision": 2,
+      "revision": 1,
       "kind": "fact",
       "layer": "L3",
       "state": "accepted",
